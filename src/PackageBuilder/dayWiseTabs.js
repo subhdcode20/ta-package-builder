@@ -10,16 +10,16 @@ import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
 import { onCurrDayIndexChange, createEmptyPackageDataDayWise, handleHotelSelect } from './packBuilderSlice.js';
 
-const DayWiseTabs = ({reqData = {}}) => {
+const DayWiseTabs = ({reqDatass = {}}) => {
 	// const [currentDayIndex, setCurrentDayIndex] = useState(0);
 	// const [daysArray, setDaysArray] = useState([]);
 	// const [selectedHotels, setSelectedHotels] = useState([]);
+	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArray = useSelector((state) => state.packBuilderData.daysArr);
 	const dispatch = useDispatch();
 
-	const { noOfNights = 3 } = reqData;
-
+	const { noOfNights = 1 } = reqData;
 
   	const handleChange = (event, newValue) => {
     	dispatch(onCurrDayIndexChange(newValue));
@@ -39,21 +39,21 @@ const DayWiseTabs = ({reqData = {}}) => {
   		// setSelectedHotels(newHotelsArr);
   	}, [noOfNights])
 
-  	const handleDataChange = (hotelIndex, data) => {
-  		console.log("handleDataChange ", hotelIndex, data);
-  		dispatch(handleHotelSelect({hotelIndex, data}));
-  		// setSelectedHotels(prev => {
-  		// 	let newData = [...prev];
-  		// 	newData[dayIndex] = data;
-  		// 	return newData;
-  		// })
-  	} 
+  	// const handleDataChange = (hotelIndex, data) => {
+  	// 	console.log("handleDataChange ", hotelIndex, data);
+  	// 	dispatch(handleHotelSelect({hotelIndex, data}));
+  	// 	// setSelectedHotels(prev => {
+  	// 	// 	let newData = [...prev];
+  	// 	// 	newData[dayIndex] = data;
+  	// 	// 	return newData;
+  	// 	// })
+  	// } 
 
 	const contextValue = {
 		currentDayIndex
 	}
 
-  	console.log("tabs render ", currentDayIndex, daysArray);
+  	console.log("reqtest- tabs render ", reqData, noOfNights, currentDayIndex, daysArray);
 	return (<DayWiseItineraryContext.Provider value={contextValue}>
 		<AppBar position="static">
 	        <Tabs
@@ -68,14 +68,14 @@ const DayWiseTabs = ({reqData = {}}) => {
 	        </Tabs>
 	    </AppBar>
 	    <br />
-	    <Card container>
+	    {
+			(daysArray && daysArray.length > 0) && (<Card container>
 	    	<CardContent>
 			    <PackDetailsFor1Day 
 			    	key={`day-${currentDayIndex}`} 
-			    	handleDataChange={handleDataChange}
 			    />
 			</CardContent>
-	    </Card>
+	    </Card>)}
 	</DayWiseItineraryContext.Provider>)
 }
 

@@ -6,7 +6,6 @@ import {
 import { store } from './appStore/store.js';
 import { Provider } from 'react-redux'
 
-import logo from './logo.svg';
 import './App.css';
 import Routes from './Routes.js';
 

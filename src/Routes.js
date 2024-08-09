@@ -55,7 +55,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/itinerary",
+    path: "/itinerary/:reqId",
     element: (
       <AppLayout>
         <DayWisePackageBuilder />

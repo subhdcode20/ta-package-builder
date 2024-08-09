@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.5.0",
     "date-fns": "^2.30.0",
     "firebase": "^10.12.4",
+    "nanoid": "^5.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",

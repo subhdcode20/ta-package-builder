@@ -49,5 +49,6 @@ export const DestinationNames = [
   DestNameMeghalaya,
   DestNameAssam,
   DestNameArunanchal
-
 ];
+
+export const MAX_CHILD_AGE = 12;

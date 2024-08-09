@@ -8,7 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { isEmptyObject } from '../Utility.js';
-import { addNewRoomToHotel } from './packBuilderSlice.js';
+import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy } from './packBuilderSlice.js';
 
 const roomsList = [
 	{
@@ -27,20 +27,27 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 	// ]);
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const hotelData = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex][hotelIndex]);
-	const roomsData = hotelData?.selectedRooms || [];
+	const roomsData = Object.values(hotelData?.roomRates || {});
 	const dispatch = useDispatch();
 
-	const handleRoomChange = (data) => {
+	console.log("hotel rooms render ", currentDayIndex, hotelData, hotelIndex, roomsData);
+	const handleRoomChange = (roomIndex, data) => {
 		// handleDataChange(dayIndex, data);
+		dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
 	}
 
 	const handleAddRoom = () => {
 		dispatch(addNewRoomToHotel({hotelIndex}));
-		// let newRData = [...roomsData];
-		// newRData.push({
-		// 	key: `H-${dayIndex + 1}-R-${roomsData.length + 1}`
-		// });
-		// setRoomsData(newRData);
+	}
+
+	const handleOccChange = (e, rindex, keyType) => {
+		console.log("occ handleOccChange", e.target.value, keyType, rindex);
+		dispatch(selectedRoomOccupancy({
+			hotelIndex, 
+			roomIndex: rindex, 
+			keyType, 
+			value: e.target.value
+		}))
 	}
 
 	console.log("room builder render ", hotelData, hotelData.selectedRooms, roomsData);
@@ -56,27 +63,27 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 							<Autocomplete
 						      fullWidth
 						      size="small"
-						      value={ rItem.name || null }
+						      value={ rItem || null }
 						      onChange={(event, newValue) => {
 						      	 console.log("hotel selected", newValue)
-						         handleRoomChange(newValue);
+						         handleRoomChange(rindex, newValue);
 						      }}
 						      selectOnFocus
 						      clearOnBlur
 						      handleHomeEndKeys
 						      id="hotel-name"
-						      options={roomsList}
+						      options={roomsData}
 						      getOptionLabel={(option) => {
 						        console.log("hotel getOptionLabel ", option, typeof option);
 						        // Regular option
-						        return option.name;
+						        return option.roomName;
 						      }}
 						      renderOption={(props, option) => {
 						        console.log("maindest renderOption ", props, option);
 						        const { key, ...optionProps } = props;
 						        return (
 						          <li key={key} {...optionProps}>
-						            {option.name}
+						            {option.roomName}
 						          </li>
 						        );
 						      }}
@@ -89,13 +96,17 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Adults:
 							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" />
+							<TextField variant="outlined" type="number" size="small" 
+								onChange={(e) => handleOccChange(e, rindex, "adults")} 
+							/>
 						</Grid>
 						<Grid item xs={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Children:
 							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" />
+							<TextField variant="outlined" type="number" size="small" 
+								onChange={(e) => handleOccChange(e, rindex, "child")} 
+							/>
 						</Grid>
 				    </Grid>
 				</Grid>)
