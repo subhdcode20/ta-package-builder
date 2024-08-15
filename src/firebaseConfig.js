@@ -22,7 +22,7 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig);
 const auth = getAuth(firebase);
 const db = getFirestore(firebase);
-const messaging = getMessaging(firebase);
+// const messaging = getMessaging(firebase);
 const analytics = getAnalytics(firebase);
 
 // connectFirestoreEmulator(db, '127.0.0.1', 8080);
@@ -32,6 +32,6 @@ export {
   firebase,
   auth,
   db,
-  messaging,
+  // messaging,
   analytics
 };
