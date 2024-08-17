@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import Autocomplete from '@mui/material/Autocomplete';
+import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
 import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
 
 import MainDestSelect from "./mainDestSearch.js";
-import { MAX_CHILD_AGE } from '../Constants.js'
+import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
 import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 
@@ -26,6 +27,7 @@ const initialFormData = {
   pickUp: "",
   startDate: "",
   trackingId: "",
+  starCategory: ""
 };
 
 const requiredFields = [
@@ -34,6 +36,7 @@ const requiredFields = [
   "noOfNights",
   "startDate",
   "trackingId",
+  "starCategory"
 ];
 
 const AppHome = () => {
@@ -88,26 +91,36 @@ const AppHome = () => {
 	}, [reqData.childPax])
 
 	const handlePost = async () => {
-		console.log("new Req post: ", reqData);
+		console.log("new Req post: ", reqData, childAges);
 		// TODO: handle data validation, show validation errors
 
 		let newReqId = nanoid();
-		let newReqData = {...reqData, reqId: newReqId};
+		let newReqData = {...reqData, reqId: newReqId, childAges};
 		dispatch(submitReqData({reqData: newReqData}));
-		let docRef = await setDoc(doc(db, "requests", newReqId), newReqData);
-		console.log("new Req post 2: ", reqData, docRef);
+		let reqRef = await setDoc(doc(db, "requests", newReqId), {
+			...newReqData,
+			reqId: newReqId,
+			userId: userData?.phone,
+			createdAt: Date.now()
+		}, {merge: true});
+		let userPackRef = await setDoc(doc(db, "userPackages", userData?.phone), {
+			packagesList: arrayUnion(newReqId),
+			updatedAt: Date.now()
+		}, {merge: true});
+		console.log("new Req post 2: ", reqData, newReqId, reqRef, userPackRef);
 		// return;
 		setTimeout(() => navigate("/itinerary/"+newReqId));
 	}
 
 	const handleChildAgeChange = (age, childIndex) => {
-		if(!age || !childIndex) return;
+		console.log("child age change", age, childIndex, !isNaN(age), age > MAX_CHILD_AGE);
+		if(isNaN(age)) return;
 		if(age > MAX_CHILD_AGE) {
 			// TODO: show error
 			return;
 		}
 		let newChildAges = [...childAges];
-		newChildAges[childIndex] = age;
+		newChildAges[childIndex] = Number(age);
 		setChildAges(newChildAges);
 	}
 
@@ -120,7 +133,7 @@ const AppHome = () => {
 		<br />
 		<Grid container spacing={2}>
 			<Grid item xs={6}>
-	        	<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{fontSize: 12}}>No Of Nights*</InputLabel>
+	        	<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{fontSize: 12}}>Total Nights*</InputLabel>
 				<TextField
 					error={formErrors["noOfNights"]}
 					sx={{ width: "100%" }}
@@ -134,7 +147,7 @@ const AppHome = () => {
 				/>
 	        </Grid>
 			<Grid item xs={6}>
-				<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{fontSize: 12}}>Adult Pax*</InputLabel>
+				<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{fontSize: 12}}>Total Adult Pax*</InputLabel>
 	            <TextField
 					error={formErrors["adultPax"]}
 					sx={{ width: "100%" }}
@@ -147,8 +160,8 @@ const AppHome = () => {
 					}}
 	            />
 	        </Grid>
-	        <Grid item xs={3}>
-	        	<InputLabel id="childPax" error={formErrors["childPax"]} sx={{fontSize: 12}}>Child Pax*</InputLabel>
+	        <Grid item xs={4}>
+	        	<InputLabel id="childPax" error={formErrors["childPax"]} sx={{fontSize: 12}}>Total Child Pax*</InputLabel>
 				<TextField
 					error={formErrors["childPax"]}
 					sx={{ width: "100%" }}
@@ -176,6 +189,7 @@ const AppHome = () => {
 							inputProps={{
 								type: "number",
 							}}
+							value={c}
 						/>
 					</Grid>)
 				})
@@ -212,35 +226,39 @@ const AppHome = () => {
 		            />
 		        </LocalizationProvider>
 	        </Grid>
-	        {/* <Grid item xs={12} sx={{ display: "flex" }}>
-	        		        	<Autocomplete
-	        			            disablePortal
-	        			            id="pickUp"
-	        			            includeInputInList
-	        			            onChange={(e, val) =>
-	        			              handleFormChange({ target: { value: val } }, "pickUp")
-	        			            }
-	        			            renderInput={(params) => (
-	        			              <TextField
-	        			                error={formErrors["pickUp"]}
-	        			                {...params}
-	        			                label="Pick Up*"
-	        			                size="small"
-	        			                variant="outlined"
-	        			              />
-	        			            )}
-	        			            options={pickUpOpts}
-	        			            value={reqData.pickUp}
-	        			            defaultValue={""}
-	        		        	/>
-	        		        </Grid> */}
+	        <Grid item xs={4}>
+				<Autocomplete
+					disablePortal
+					id="hotelStar"
+					includeInputInList
+					onChange={(e, val) =>{
+						console.log("star change ", e, val)
+						setReqData(prev => {
+							return {...prev, "starCategory": val};
+						})}
+					}
+					renderInput={(params) => (
+						<TextField
+							error={formErrors["starCategory"]}
+							{...params}
+							label="Hotel Category*"
+							size="small"
+							variant="outlined"
+						/>
+					)}
+					options={HOTEL_STAR_CAT_OPTS}
+					value={reqData.starCategory}
+					defaultValue={""}
+				/>
+			</Grid>
 	        
 	        <Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
 	        	<Button
-			        sx={{ mt: 4, mb: 2, width: "40%", textAlign: "right" }}
+			        sx={{ mt: 4, mb: 2, textAlign: "right" }}
 			        loading={buttonLoading}
 			        onClick={handlePost}
 			        variant="contained"
+					size="small"
 			    >
 			        Save Request&nbsp; >
 			    </Button>

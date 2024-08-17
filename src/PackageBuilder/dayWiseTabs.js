@@ -4,11 +4,14 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
 import { onCurrDayIndexChange, createEmptyPackageDataDayWise, handleHotelSelect } from './packBuilderSlice.js';
+import useTotalPackPrice from "./totalPriceBreakup.js";
 
 const DayWiseTabs = ({reqDatass = {}}) => {
 	// const [currentDayIndex, setCurrentDayIndex] = useState(0);
@@ -17,6 +20,8 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArray = useSelector((state) => state.packBuilderData.daysArr);
+	const totalPackPrice = useTotalPackPrice();
+
 	const dispatch = useDispatch();
 
 	const { noOfNights = 1 } = reqData;
@@ -39,21 +44,11 @@ const DayWiseTabs = ({reqDatass = {}}) => {
   		// setSelectedHotels(newHotelsArr);
   	}, [noOfNights])
 
-  	// const handleDataChange = (hotelIndex, data) => {
-  	// 	console.log("handleDataChange ", hotelIndex, data);
-  	// 	dispatch(handleHotelSelect({hotelIndex, data}));
-  	// 	// setSelectedHotels(prev => {
-  	// 	// 	let newData = [...prev];
-  	// 	// 	newData[dayIndex] = data;
-  	// 	// 	return newData;
-  	// 	// })
-  	// } 
-
 	const contextValue = {
 		currentDayIndex
 	}
 
-  	console.log("reqtest- tabs render ", reqData, noOfNights, currentDayIndex, daysArray);
+  	console.log("reqtest- tabs render ", reqData, noOfNights, currentDayIndex, daysArray, totalPackPrice);
 	return (<DayWiseItineraryContext.Provider value={contextValue}>
 		<AppBar position="static">
 	        <Tabs
@@ -70,12 +65,14 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	    <br />
 	    {
 			(daysArray && daysArray.length > 0) && (<Card container>
-	    	<CardContent>
-			    <PackDetailsFor1Day 
-			    	key={`day-${currentDayIndex}`} 
-			    />
-			</CardContent>
-	    </Card>)}
+				<CardContent>
+					<PackDetailsFor1Day 
+						key={`day-${currentDayIndex}`} 
+					/>
+				</CardContent>
+			</Card>)
+		}
+		<Typography variant="body1" sx={{m: 1}}>Total Package Price - Rs {totalPackPrice}</Typography>
 	</DayWiseItineraryContext.Provider>)
 }
 

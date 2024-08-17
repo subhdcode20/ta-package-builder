@@ -5,10 +5,14 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { isEmptyObject } from '../Utility.js';
-import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy } from './packBuilderSlice.js';
+import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy, 
+	setMealPlanFor1Room, setPriceFor1Room } from './packBuilderSlice.js';
 
 const roomsList = [
 	{
@@ -47,13 +51,34 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 			roomIndex: rindex, 
 			keyType, 
 			value: e.target.value
-		}))
+		}));
+	}
+	
+	const handleMealPlanChange = (e, rindex) => {
+		const selectedMp = e.target.checked ? e.target.name : '';
+		console.log("handleMealPlanChange", e.target.checked, e.target.name, selectedMp);
+		dispatch(setMealPlanFor1Room({
+			hotelIndex, 
+			roomIndex: rindex,
+			mealPlan: selectedMp
+		}));
+	}
+
+	const handleRoomPriceChange = (e, rIndex) => {
+		const roomPrice = e.target.value;
+		console.log("handleMealPlanChange",  hotelIndex, rIndex, roomPrice);
+		dispatch(setPriceFor1Room({
+			hotelIndex, 
+			roomIndex: rIndex,
+			roomPrice
+		}));
 	}
 
 	console.log("room builder render ", hotelData, hotelData.selectedRooms, roomsData);
 	return (<Grid container spacing={2} sx={{padding: 2}}>
 		{
 			(hotelData?.selectedRooms || []).map((rItem, rindex) => {
+				console.log("rItem render ", rItem, rindex);
 				return (<Grid item xs={12}>
 					<Grid container spacing={2}>
 						<Grid item xs={4}>
@@ -98,6 +123,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "adults")} 
+								value={rItem?.selectedOccupancy?.adults}
 							/>
 						</Grid>
 						<Grid item xs={2}>
@@ -106,9 +132,35 @@ const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "child")} 
+								value={rItem?.selectedOccupancy?.child}
 							/>
 						</Grid>
 				    </Grid>
+					<Grid item xs={12}>
+						<FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+							<FormControlLabel
+								control={
+									<Checkbox checked={rItem?.mp == "mapai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="mapai" />
+								}
+								label="MAPAI"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox checked={rItem?.mp == "cpai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="cpai" />
+								}
+								label="CPAI"
+							/>
+						</FormGroup>
+					</Grid>
+					<Grid item xs={12}>
+						<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
+							Room Price:
+						</InputLabel>
+						<TextField variant="outlined" type="number" size="small" 
+							onChange={(e) => handleRoomPriceChange(e, rindex)} 
+							value={rItem?.roomPrice}
+						/>
+					</Grid>
 				</Grid>)
 			})
 		}

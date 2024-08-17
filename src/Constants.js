@@ -51,4 +51,22 @@ export const DestinationNames = [
   DestNameArunanchal
 ];
 
-export const MAX_CHILD_AGE = 12;
+export const MAX_CHILD_AGE = 13;
+export const HOTEL_STAR_CAT_OPTS = [
+  {
+    label: "5 ⭐",
+    value: 5
+  },
+  {
+    label: "4 ⭐",
+    value: 4
+  },
+  {
+    label: "3 ⭐",
+    value: 3
+  },
+  {
+    label: "2 ⭐",
+    value: 2
+  }
+]

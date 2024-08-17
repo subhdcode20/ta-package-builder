@@ -5,6 +5,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -12,7 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import {store} from '../appStore/store.js';
-import { handleHotelSelect, addNewHotelToCurrDay } from './packBuilderSlice.js'; //setUserHotelRates
+import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 
 const hotelsList = [
@@ -26,14 +29,18 @@ const hotelsList = [
 
 const PackageDetailsFor1Day = ({key}) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
+	const daysArr = useSelector((state) => state.packBuilderData.daysArr) || [];
 	const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]);
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const userData = useSelector((state) => state.packBuilderData.userData) || {};
+	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
 	// const userHotelRates = useSelector((state) => state.packBuilderData.hotelRates) || [];
 	const [userHotelRates, setUserHotelRates] = useState([]);
+	const [selectedDaysToCopyDetails, setSelectedDaysToCopyDetails] = useState({});
 	const dispatch = useDispatch();
-	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, store.getState());
-	
+	const currDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || '';
+	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, totalDayPrices, currDayPrice);
+
 	useEffect(() => {
 		if(!reqData || !reqData?.destination || !userData?.phone) return;
 		console.log("reqtest- get Hotel rates", reqData, userData);
@@ -76,13 +83,37 @@ const PackageDetailsFor1Day = ({key}) => {
 	}
 
 	const checkPricefor1Day = () => {
-		// const mealType = "mapai";
-		// let hotelPricesArr = selectedHotels.map((h) => {
-		// 	let roomsPriceArr = h.selectedRooms.map(r => {
-		// 		let rPrice = r.stdRoomPrice[mealType];
-		// 		if(reqData?.adults > ) 
-		// 	})
-		// })
+		console.log("checkPricefor1Day", selectedHotels);
+		let totalHotelPriceForCurrDay = selectedHotels.reduce((acc, h) => {
+			let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
+				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {},  } = r;
+				if(!mp) {
+					// TODO: show validation error
+					return 0;
+				}
+				// if(stdRoomPrice) {
+				// 	let rPrice = stdRoomPrice[mp], childPrice = extraRates["extraChild"];
+				// 	console.log("checkPricefor1Day 1Room", mp, rPrice, rAcc + Number(rPrice) * Number(selectedOccupancy?.adults));
+				// 	rAcc += Number(rPrice) * Number(selectedOccupancy?.adults);
+				// 	return rAcc + Number(childPrice) * Number(selectedOccupancy?.child);
+				// } else if(roomPrice) {
+					return rAcc + Number(roomPrice);
+				// }
+			}, 0);
+			console.log("checkPricefor1Day 1Hotel", acc + totalRoomsPriceForCurrHotel);
+			return acc + totalRoomsPriceForCurrHotel;
+		}, 0);
+		dispatch(setHotelPriceForCurrDay({totalHotelPriceForCurrDay, selectedHotelCurrDay: selectedHotels, copyDetailsToDays: selectedDaysToCopyDetails}));
+	}
+
+	const handleCopyDetailsFromCurrDay = (dayIndex, selectedState) => {
+		console.log("copy day data", dayIndex, selectedState);
+		setSelectedDaysToCopyDetails((prev) => {
+			return {
+				...prev,
+				[dayIndex]: selectedState
+			}
+		})
 	}
 
 	return (<Grid container spacing={1} key={key}>
@@ -137,7 +168,27 @@ const PackageDetailsFor1Day = ({key}) => {
 		<Grid item xs={12}>
 			<Box display="flex" justifyContent="space-between">
 				<Button size="small" variant="outlined" onClick={addHoteltoCurrDay}>Add Hotel +</Button>
-				<Button size="small" variant="outlined" onClick={checkPricefor1Day}>{`Check Price for Day ${currentDayIndex + 1}`}</Button>
+				<Box display="flex">
+					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: </Typography>
+					<FormGroup row={true} sx={{display: "flex"}}>
+						{
+							(daysArr || []).map((aa, aIndex) => {
+								let dayNo = aIndex + 1;
+								console.log("copy day render ",daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
+								if(aIndex > currentDayIndex) {
+									return (<FormControlLabel 
+											control={<Checkbox  />} 
+											label={`Day ${dayNo}`}
+											checked={selectedDaysToCopyDetails[dayNo]}
+											onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
+											inputProps={{ 'aria-label': 'controlled' }}
+										/>)
+								} else return null
+							})
+						}
+					</FormGroup>
+				</Box>
+				<Button size="small" variant="outlined" onClick={checkPricefor1Day}>Save</Button>
 			</Box>
 		</Grid>
 	</Grid>)
