@@ -59,7 +59,11 @@ export const todoSlice = createSlice({
         newDaysArr.push({
           key: `Day ${i}`
         });
-        newHotelsArr.push( [{ key: `D-${i + 1}_H-${1}` }] );
+        newHotelsArr.push({ 
+          hotels: [
+            { key: `D-${i + 1}_H-${1}` }
+          ] 
+        });
       }
       state.daysArr = newDaysArr;
       // const defaultHotelsArr = [ ...newDaysArr.map((i, iIndex) => [{ key: `D-${iIndex + 1}_H-${1}` }] ) ];
@@ -70,9 +74,10 @@ export const todoSlice = createSlice({
     },
     handleHotelSelect: (state, action) => {
       let { hotelIndex = null, data = null } = action.payload;
-      const currHotelData = state.selectedHotels[state.currDayIndex][hotelIndex];
       console.log("hotel select slice 1", state, state.currDayIndex, state.selectedHotels, hotelIndex, data)
-      state.selectedHotels[state.currDayIndex][hotelIndex] = {
+      let currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currHotelData = currDayHotels[hotelIndex];
+      currDayHotels[hotelIndex] = {
         ...data, 
         key: currHotelData?.key,
         "selectedRooms": [{ key: `D-${state.currDayIndex + 1}_H-${hotelIndex + 1}-R-${1}` }]
@@ -82,14 +87,15 @@ export const todoSlice = createSlice({
     },
     addNewRoomToHotel: (state, action) => {
       const hotelIndex = action.payload?.hotelIndex;
-      const currentHotelRooms = state.selectedHotels[state.currDayIndex][hotelIndex]["selectedRooms"];
+      let currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       currentHotelRooms.push({
         key: `D-${state.currDayIndex + 1}_H-${action.payload?.hotelIndex + 1}-R-${currentHotelRooms.length + 1}`
       })
     },
     addNewHotelToCurrDay: (state, action) => {
-      const hotelIndex = action.payload?.hotelIndex;
-      const currHotels = state.selectedHotels[state.currDayIndex];
+      // const hotelIndex = action.payload?.hotelIndex;
+      let currHotels = state.selectedHotels[state.currDayIndex]?.hotels;
       currHotels.push({
         "key": `D-${state.currDayIndex + 1}_H-${currHotels.length + 1}`,  //`D-${state.currDayIndex + 1}_H-${action.payload?.hotelIndex + 1}-R-${currentHotelRooms.length + 1}`,
         "selectedRooms": [{ key: `D-${state.currDayIndex + 1}_H-${currHotels.length + 1}_R-${1}` }]
@@ -105,8 +111,8 @@ export const todoSlice = createSlice({
       const { hotelIndex = null, roomIndex = null, data = null } = action.payload;
       if(hotelIndex === null || roomIndex === null || !data || isEmptyObject(data) ) return;
       console.log("room select reducer initial ", hotelIndex, roomIndex, data);
-      const currentHotelRooms = state.selectedHotels[state.currDayIndex][hotelIndex]["selectedRooms"];
-      let currentRoom = currentHotelRooms[roomIndex];
+      const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       currentHotelRooms[roomIndex] = {
         ...currentHotelRooms[roomIndex],
         ...data
@@ -116,7 +122,8 @@ export const todoSlice = createSlice({
       let { hotelIndex = null, roomIndex = null, keyType = null, value = null } = action.payload;
       console.log("room occ select reducer initial ", hotelIndex, roomIndex, keyType, value);
       if(hotelIndex === null || roomIndex === null || !keyType || !value) return;
-      const currentHotelRooms = state.selectedHotels[state.currDayIndex][hotelIndex]["selectedRooms"];
+      const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       const selectedOccupancy = currentHotelRooms[roomIndex].selectedOccupancy 
         ? {
           ...currentHotelRooms[roomIndex].selectedOccupancy,
@@ -148,13 +155,16 @@ export const todoSlice = createSlice({
           //   let newDaySelectedRooms = 
           // })
           console.log("save day daya 2", dayNo, selectedHotelCurrDay)
-          state.selectedHotels[Number(dayNo) - 1] = selectedHotelCurrDay;
+          state.selectedHotels[Number(dayNo) - 1] = {
+            "hotels": selectedHotelCurrDay
+          };
         })
       }
     },
     setMealPlanFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;
-      const currentHotelRooms = state.selectedHotels[state.currDayIndex][hotelIndex]["selectedRooms"];
+      const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       currentHotelRooms[roomIndex] = {
         ...currentHotelRooms[roomIndex],
         mp: mealPlan
@@ -162,7 +172,8 @@ export const todoSlice = createSlice({
     },
     setPriceFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, roomPrice = null } = action.payload;
-      const currentHotelRooms = state.selectedHotels[state.currDayIndex][hotelIndex]["selectedRooms"];
+      const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       currentHotelRooms[roomIndex] = {
         ...currentHotelRooms[roomIndex],
         roomPrice: Number(roomPrice)

@@ -12,20 +12,21 @@ const SavePackagePdf = () => {
     const savePackageWithPdf = async () => {
 		// TODO: handle data validation, show validation errors
 		let newPackId = nanoid();
-		let newPackData = { 
-            hotels: selectedPackDetails, 
-            packageId: newPackId,
-			userId: userData?.phone
-        };
-        console.log("new pack save pdf", newPackData);
+        console.log("new pack save pdf", newPackId);
+		let finalPackDetails = selectedPackDetails
+		// .map((p) => {
+		// 	return {
+		// 		"hotels": p
+		// 	}
+		// });
 		// dispatch(submitReqData({reqData: newReqData}));
+		console.log("new pack post 2: ", newPackId, finalPackDetails);
 		let packRef = await setDoc(doc(db, "packages", newPackId), {
-			hotels: selectedPackDetails, 
+			hotels: finalPackDetails, 
             packageId: newPackId,
 			userId: userData?.phone,
 			createdAt: Date.now()
 		});
-		console.log("new pack post 2: ", newPackData, newPackId, packRef);
 
 		// return;
 		// setTimeout(() => navigate("/itinerary/"+newReqId));

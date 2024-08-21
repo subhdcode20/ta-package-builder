@@ -23,14 +23,15 @@ const roomsList = [
 	},
 ]
 
-const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
+const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	// const [roomsData, setRoomsData] = useState([
 	// 	{
 	// 		key: `H-${dayIndex + 1}-R-${0}`
 	// 	}
 	// ]);
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
-	const hotelData = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex][hotelIndex]);
+	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
+	const hotelData = currDayHotels[hotelIndex];
 	const roomsData = Object.values(hotelData?.roomRates || {});
 	const dispatch = useDispatch();
 

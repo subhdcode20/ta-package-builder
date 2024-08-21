@@ -18,19 +18,10 @@ import {store} from '../appStore/store.js';
 import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 
-const hotelsList = [
-	{	
-		name: "Le Meridian"
-	},
-	{
-		name: "Pullman"
-	}
-]
-
 const PackageDetailsFor1Day = ({key}) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArr = useSelector((state) => state.packBuilderData.daysArr) || [];
-	const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]);
+	const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const userData = useSelector((state) => state.packBuilderData.userData) || {};
 	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
@@ -73,10 +64,6 @@ const PackageDetailsFor1Day = ({key}) => {
 		dispatch(handleHotelSelect({hotelIndex, data}));
 	}
 
-	const addRoomsDataToHotelData = () => {
-
-	}
-
 	const addHoteltoCurrDay = () => {
 		console.log("addHoteltoCurrDay");
   		dispatch(addNewHotelToCurrDay());
@@ -103,7 +90,11 @@ const PackageDetailsFor1Day = ({key}) => {
 			console.log("checkPricefor1Day 1Hotel", acc + totalRoomsPriceForCurrHotel);
 			return acc + totalRoomsPriceForCurrHotel;
 		}, 0);
-		dispatch(setHotelPriceForCurrDay({totalHotelPriceForCurrDay, selectedHotelCurrDay: selectedHotels, copyDetailsToDays: selectedDaysToCopyDetails}));
+		dispatch(setHotelPriceForCurrDay({
+			totalHotelPriceForCurrDay, 
+			selectedHotelCurrDay: selectedHotels, 
+			copyDetailsToDays: selectedDaysToCopyDetails
+		}));
 	}
 
 	const handleCopyDetailsFromCurrDay = (dayIndex, selectedState) => {
@@ -156,7 +147,7 @@ const PackageDetailsFor1Day = ({key}) => {
 						      )}
 						    />
 						</Grid>
-						{ !isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} addRoomsDataToHotelData={addRoomsDataToHotelData} />)}
+						{ !isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
 					<Grid item xs={12}>
 						<hr />
