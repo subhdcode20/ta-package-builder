@@ -8,20 +8,12 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import React, { useState, useRef, useEffect } from "react";
-// import { Helmet } from "react-helmet";
-
 import { doc, getDoc } from "firebase/firestore";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-// import SnackbarMsg from "../Commons/snackbarMsg";
-
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-// import LoadingButton from "../Commons/LoadingButton";
-// import CopyrightFooter from "../Commons/copyright-footer";
 import { auth, db } from "../firebaseConfig";
-// import LoadingView from "../loading";
-// import CabEasyLogo from "../utills/logoImgBox";
-
-// const backgroundLogin = require("./11291.jpg");
+import LoadingButton from "../Commons/LoadingButton";
+import Alert from '@mui/material/Alert';
 
 export default function Login() {
   // Inputs
@@ -29,27 +21,29 @@ export default function Login() {
   const [otp, setotp] = useState("");
   const [showOtpView, setShowOtpView] = useState(false);
   const [isLoginError, setLoginError] = useState(false);
-
+  const [correctNumber, setCorrectNumber] = useState(false);
   const [final, setfinal] = useState(null);
   const [userType, setUserType] = useState("agent");
   const [optVerified, setOptVerified] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hideGetOtpBtn, setHideOtpButton] = useState(false);
+  const [newNumber, setNewNumber] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
-  // const signInConfirm = useRef(null);
 
   const userData = JSON.parse(localStorage.getItem("user") || null);
   const isLoggedIn = useRef(Boolean(userData));
 
   useEffect(() => {
     console.log("isLoggedIn Login", isLoggedIn.current)
-    if(isLoggedIn.current) navigate("/home");
+    if (isLoggedIn.current) navigate("/home");
   }, [isLoggedIn.current])
 
   // Sent OTP
   const signin = async () => {
-    if (mynumber === "" || mynumber.length < 10) return;
+    if (mynumber === "" || mynumber.length < 10) {
+      return
+    };
     const finalPhone = `+91${mynumber}`;
     setLoading(true);
     let verify = null;
@@ -89,7 +83,7 @@ export default function Login() {
     if (docSnap.exists()) {
       console.log("save user data ", docSnap.data());
       localStorage.setItem("user", JSON.stringify(docSnap.data()));
-      // navigate("/home");
+      navigate("/home");
     } else {
       console.log("doc doesnt exist..redirecting to signup");
       navigate("/signup");
@@ -105,12 +99,11 @@ export default function Login() {
       .then(async (result) => {
         console.log("otp success", result, result._tokenResponse);
         await saveUserDetails();
-        setTimeout(() => {
-          //   // setOptVerified(true);
-          setLoading(false);
-          navigate("/home");
-        }, 2000);
-        // redirect('/home');
+        // setTimeout(() => {
+        //   //   // setOptVerified(true);
+        //   setLoading(false);
+        //   navigate("/home");
+        // }, 2000);
       })
       .catch((err) => {
         console.log("otp error catch ", err);
@@ -120,6 +113,17 @@ export default function Login() {
       });
   };
 
+  const handleSetNumber = (e) => {
+    let updatedNumber = e.target.value;
+    setnumber(updatedNumber);
+    if (mynumber === "" || updatedNumber.length < 10) {
+      setCorrectNumber(true);
+    }
+    else {
+      setCorrectNumber(false);
+    }
+
+  }
   // if (!auth) return <LoadingView />;
 
   return (
@@ -127,11 +131,6 @@ export default function Login() {
 
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
-        {/* <SnackbarMsg
-            open={isLoginError}
-            message={"OTP is not correct."}
-            severity="error"
-          /> */}
         <Grid
           item
           xs={false}
@@ -148,7 +147,7 @@ export default function Login() {
               alignItems: "center",
             }}
           >
-            
+
 
             <Typography
               component="h5"
@@ -163,13 +162,15 @@ export default function Login() {
             </Typography>
             <Box sx={{ mt: 5, my: 8, minWidth: 300 }}>
               <div style={{ display: !showOtpView ? "block" : "none" }}>
+                {correctNumber && <Alert severity="error">Number is not valid </Alert>}
+                {newNumber && <Alert severity="error">You are not registered with this number. Please sign-up first. </Alert>}
                 <TextField
                   id="phone"
                   label="Phone"
                   fullWidth
                   placeholder="1234567890"
                   variant="outlined"
-                  onChange={(e) => setnumber(e.target.value.trim())}
+                  onChange={handleSetNumber}
                   autoFocus
                   InputProps={{
                     startAdornment: (
@@ -177,17 +178,22 @@ export default function Login() {
                     ),
                   }}
                 />
-                <Box sx={{ mt: 2 }}>
-                  <div id="recaptcha-container"></div>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+
+                  <Box sx={{ mt: 2 }}>
+                    <div id="recaptcha-container"></div>
+                  </Box>
+                  <LoadingButton
+                    loading={loading}
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 4, mb: 2 }}
+                    onClick={signin}
+                  >
+                    GET OTP
+                  </LoadingButton>
                 </Box>
-                <Button
-                  loading={loading}
-                  type="submit"
-                  sx={{ mt: 4, mb: 2 }}
-                  onClick={signin}
-                >
-                  Get Otp
-                </Button>
               </div>
 
               <div style={{ display: showOtpView ? "block" : "none" }}>
@@ -203,14 +209,15 @@ export default function Login() {
                   }}
                 />
 
-                <Button
+                <LoadingButton
                   loading={loading}
                   type="submit"
+                  variant="contained"
                   sx={{ mt: 4, mb: 2 }}
                   onClick={validateOtp}
                 >
                   Verify & Proceed
-                </Button>
+                </LoadingButton>
               </div>
               <Grid justifyContent="center" sx={{ mt: 6 }}>
                 <Grid item>
