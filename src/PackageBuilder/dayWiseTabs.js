@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
 import { onCurrDayIndexChange, createEmptyPackageDataDayWise, handleHotelSelect } from './packBuilderSlice.js';
+import SavePackagePdf from './savePackagePdf.js';
 import useTotalPackPrice from "./totalPriceBreakup.js";
 
 const DayWiseTabs = ({reqDatass = {}}) => {
@@ -73,6 +74,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 			</Card>)
 		}
 		<Typography variant="body1" sx={{m: 1}}>Total Package Price - Rs {totalPackPrice}</Typography>
+		<SavePackagePdf />
 	</DayWiseItineraryContext.Provider>)
 }
 
