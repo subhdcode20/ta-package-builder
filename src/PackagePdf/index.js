@@ -6,25 +6,24 @@ import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import InfoRounded from '@mui/icons-material/InfoRounded';
 import PersonRounded from '@mui/icons-material/PersonRounded';
 import LocationOn from '@mui/icons-material/LocationOn';
 import Phone from '@mui/icons-material/Phone';
 
 const PackagePdf = () => {
-    const { reqId } = useParams();
+    const { packageId } = useParams();
     const [packageData, setPackageData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchPackageData = async () => {
-        const docRef = collection(db, 'packages');
-        const q = query(docRef, where('reqId', '==', reqId));
-        const docSnap = await getDocs(q);
-        const packageData = [];
-        docSnap.forEach((doc) => {
-            const data = doc.data();
-            packageData.push({
+        let docRef = doc(db, "packages", packageId);
+        let docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            setPackageData([{
                 createdAt: data.createdAt,
                 userId: data.userId,
                 packaged: data.packaged,
@@ -37,21 +36,21 @@ const PackagePdf = () => {
                         occupancy: hotel.hotels[0].roomRates.family_suite.occupancy,
                     };
                 }),
-            });
-        });
-        setPackageData(packageData);
-        setLoading(false);
+            }]);
+            setLoading(false);
+        } else {
+            console.log("No DAta available");
+        }
     };
     useEffect(() => {
         fetchPackageData();
-    }, [reqId]);
+    }, [packageId]);
 
     if (loading) {
         return <Typography>Loading...</Typography>;
     }
 
     console.log("packageData => ", packageData);
-    console.log("ReqId =>", reqId);
 
     return (
         <Paper elevation={0} sx={{ padding: "10px" }}>
