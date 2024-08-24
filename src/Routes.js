@@ -75,7 +75,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/package/:reqId/pdf",
+    path: "/package/:packageId/pdf",
     element: (
       <PackagePdf/>
     ),
