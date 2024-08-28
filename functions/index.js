@@ -19,7 +19,7 @@ const configMap = {
     networkPageWaitUntil: 'networkidle2',
     basePdfFileName: 'pkg-{packageCode}.pdf',
     bucketDirName: 'package-pdfs',
-    bucketPublicBaseUrl: 'https://storage.googleapis.com/{bucketName}/uploads/{pdfFileName}'
+    bucketPublicBaseUrl: 'https://storage.googleapis.com/{bucketName}/package-pdfs/{pdfFileName}'
 }
 
 exports.generatePackagePdf = onDocumentCreated(
@@ -90,7 +90,7 @@ exports.generatePackagePdf = onDocumentCreated(
                                 const publicUrl = configMap.bucketPublicBaseUrl.replace('{bucketName}',
                                     bucket.name).replace('{pdfFileName}', pdfFileName)
 
-                                // example url -> https://storage.googleapis.com/stayeasy-7ac2c.appspot.com/uploads/pkg-wO25N4QUMqvxrYxb3bxo.pdf
+                                // example url -> https://storage.googleapis.com/stayeasy-7ac2c.appspot.com/package-pdfs/pkg-lz0hzMb3a3wAme4vQlEH.pdf
 
                                 logger.log("File Download Link:", publicUrl);
                             })
