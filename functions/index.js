@@ -6,57 +6,99 @@
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-import puppeteer from 'puppeteer';
+const puppeteer = require("puppeteer")
+const logger = require("firebase-functions/logger")
+const {onDocumentCreated} = require("firebase-functions/v2/firestore")
+const admin = require("firebase-admin")
 
-// const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
-// const {
-//     setDoc,
-//     addDoc,
-//     collection,
-//     query,
-//     where,
-//     getDocs,
-//     arrayUnion
-//   } = require("firebase-admin/firestore");
-const {
-  onDocumentCreated,
-  // onDocumentUpdated,
-} = require("firebase-functions/v2/firestore");
-const admin = require("firebase-admin");
+admin.initializeApp()
+const bucket = admin.storage().bucket()
 
-admin.initializeApp();
-// const db = admin.firestore();
-
+const configMap = {
+    baseViewPackageUrl: 'https://stayeasy-7ac2c.web.app/package/{packageCode}/pdf',
+    networkPageWaitUntil: 'networkidle2',
+    basePdfFileName: 'pkg-{packageCode}.pdf',
+    bucketDirName: 'package-pdfs',
+    bucketPublicBaseUrl: 'https://storage.googleapis.com/{bucketName}/package-pdfs/{pdfFileName}'
+}
 
 exports.generatePackagePdf = onDocumentCreated(
-  "/packages/{packId}",
-  async (event) => {
-    if (!event.params.packId) return null;
-    if (!event.data) {
-          logger.log("No data associated with the event");
-          return;
-      }
-      const packData = event.data.data();
-      logger.log("pack data found ", packData);
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.goto('https://news.ycombinator.com', {
-          waitUntil: 'networkidle2',
-      });
-      // Saves the PDF to hn.pdf.
-      let pdfData = await page.pdf({
-          path: 'test.pdf',
-      });
-      logger.log("pdf data ", pdfData);
-      await browser.close();
-  }
+    "/packages/{packId}",
+    async (event) => {
+        if (!event.params.packId) return null;
+        if (!event.data) {
+            logger.log("No data associated with the event")
+            return;
+        }
+
+        return puppeteer.launch({
+            headless: true,
+            args: ['--disable-features=IsolateOrigins',
+                '--disable-site-isolation-trials',
+                '--autoplay-policy=user-gesture-required',
+                '--disable-background-networking',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-breakpad',
+                '--disable-client-side-phishing-detection',
+                '--disable-component-update',
+                '--disable-default-apps',
+                '--disable-dev-shm-usage',
+                '--disable-domain-reliability',
+                '--disable-extensions',
+                '--disable-features=AudioServiceOutOfProcess',
+                '--disable-hang-monitor',
+                '--disable-ipc-flooding-protection',
+                '--disable-notifications',
+                '--disable-offer-store-unmasked-wallet-cards',
+                '--disable-popup-blocking',
+                '--disable-print-preview',
+                '--disable-prompt-on-repost',
+                '--disable-renderer-backgrounding',
+                '--disable-setuid-sandbox',
+                '--disable-speech-api',
+                '--disable-sync',
+                '--hide-scrollbars',
+                '--ignore-gpu-blacklist',
+                '--metrics-recording-only',
+                '--mute-audio',
+                '--no-default-browser-check',
+                '--no-first-run',
+                '--no-pings',
+                '--no-sandbox',
+                '--no-zygote',
+                '--password-store=basic',
+                '--use-gl=swiftshader',
+                '--use-mock-keychain']
+        }).then(async (browser) => {
+            return browser.newPage().then(async (page) => {
+
+                // dummy page = `https://stayeasy-7ac2c.web.app/package/LYAaU5n1zgDaDUaDHPX1U/pdf`
+
+                return page.goto(configMap.baseViewPackageUrl.replace('{packageCode}', event.params.packId),
+                    {waitUntil: configMap.networkPageWaitUntil}).then(async () => {
+
+                    const pdfFileName = configMap.basePdfFileName.replace('{packageCode}', event.params.packId)
+                    return page.pdf({path: pdfFileName, printBackground: true}).then(async () => {
+                        return browser.close().then(async () => {
+
+                            // todo: take care of file security rules for files in firebase bucket
+
+                            return bucket.upload(pdfFileName, {
+                                destination: `${configMap.bucketDirName}/${pdfFileName}`,
+                            }).then(async () => {
+                                const publicUrl = configMap.bucketPublicBaseUrl.replace('{bucketName}',
+                                    bucket.name).replace('{pdfFileName}', pdfFileName)
+
+                                // example url -> https://storage.googleapis.com/stayeasy-7ac2c.appspot.com/package-pdfs/pkg-lz0hzMb3a3wAme4vQlEH.pdf
+
+                                logger.log("File Download Link:", publicUrl);
+                            })
+                        })
+                    })
+                })
+            })
+        })
+
+    }
 )
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
