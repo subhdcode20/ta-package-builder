@@ -6,7 +6,7 @@
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-import puppeteer from 'puppeteer';
+const puppeteer = require('puppeteer');
 
 // const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
@@ -37,7 +37,7 @@ exports.generatePackagePdf = onDocumentCreated(
           logger.log("No data associated with the event");
           return;
       }
-      const packData = event.data.data();
+      // const packData = event.data.data();
       logger.log("pack data found ", packData);
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
@@ -50,6 +50,13 @@ exports.generatePackagePdf = onDocumentCreated(
       });
       logger.log("pdf data ", pdfData);
       await browser.close();
+
+      return event.data.ref.set(
+        {
+          pdfData
+        },
+        { merge: true }
+      );
   }
 )
 // Create and deploy your first functions

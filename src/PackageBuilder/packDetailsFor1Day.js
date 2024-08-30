@@ -15,6 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import {store} from '../appStore/store.js';
+import HotelSearchFree from "./hotelSearchCommon.js";
 import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 
@@ -107,6 +108,11 @@ const PackageDetailsFor1Day = ({key}) => {
 		})
 	}
 
+	const handleHotelSelect = (hIndex, selectedHotel) => {
+		console.log("selectedHotel req ", selectedHotel);
+		handleHotelChange(hIndex, selectedHotel);
+   }
+
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
@@ -115,7 +121,8 @@ const PackageDetailsFor1Day = ({key}) => {
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
 							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{fontSize: 12}}>Select Hotel*</InputLabel>
-							<Autocomplete
+							<HotelSearchFree selectedHotel={ selectedHotels[hIndex] || null } handleHotelSelect={(e) => handleHotelSelect(hIndex, e?.target?.value)}  />
+							{/* {<Autocomplete
 						      fullWidth
 						      size="small"
 						      value={ selectedHotels[hIndex] || null }
@@ -145,7 +152,7 @@ const PackageDetailsFor1Day = ({key}) => {
 						      renderInput={(params) => (
 						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
 						      )}
-						    />
+						    />} */}
 						</Grid>
 						{ !isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
