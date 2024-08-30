@@ -109,7 +109,7 @@ exports.generatePackagePdf = onDocumentCreated(
 
                 // dummy page = `https://stayeasy-7ac2c.web.app/package/LYAaU5n1zgDaDUaDHPX1U/pdf`
 
-                return page.goto(configMap.baseViewPackageUrl.replace('{packageCode}', event.params.packId),
+                return page.goto('https://stayeasy-7ac2c.web.app/package/LYAaU5n1zgDaDUaDHPX1U/pdf',
                     {waitUntil: configMap.networkPageWaitUntil}).then(async () => {
 
                     const pdfFileName = configMap.basePdfFileName.replace('{packageCode}', event.params.packId)
