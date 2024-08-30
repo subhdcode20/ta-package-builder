@@ -87,17 +87,23 @@ exports.generatePackagePdf = onDocumentCreated(
                             return bucket.upload(pdfFileName, {
                                 destination: `${configMap.bucketDirName}/${pdfFileName}`,
                             }).then(async () => {
-                                const publicUrl = configMap.bucketPublicBaseUrl.replace('{bucketName}',
+                                const publicDownloadUrl = configMap.bucketPublicBaseUrl.replace('{bucketName}',
                                     bucket.name).replace('{pdfFileName}', pdfFileName)
 
                                 // example url -> https://storage.googleapis.com/stayeasy-7ac2c.appspot.com/package-pdfs/pkg-lz0hzMb3a3wAme4vQlEH.pdf
 
-                                logger.log("File Download Link:", publicUrl);
+                                logger.log("File Download Link:", publicDownloadUrl)
+
+                                return event.data.ref.update({
+                                    pdfDownloadUrl: publicDownloadUrl
+                                }).then(async () => true)
                             })
                         })
                     })
                 })
             })
+        }).catch((err) => {
+            logger.log("Package PDF creation failed: ", err)
         })
 
     }
