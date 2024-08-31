@@ -57,7 +57,8 @@ const SignUp = () => {
   };
 
   const handleFileUpload = async (file, fileName) => {
-    const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);  // ->  userDocs/phone/fileName
+    const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);  
+    // ->  userDocs/phone/fileName
     await uploadBytes(fileRef, file);
     return await getDownloadURL(fileRef);
   };
