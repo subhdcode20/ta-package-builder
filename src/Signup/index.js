@@ -44,6 +44,8 @@ const SignUp = () => {
     email: "",
   });
 
+  const navigate = useNavigate();
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -98,7 +100,10 @@ const SignUp = () => {
     
     let docRef = doc(db, "userDetails", `+91${personalInfo.phone}`)
     await setDoc(docRef, formData);
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/signin");
+    }, 1000);
     // alert("Form submitted successfully!");
   };
 
