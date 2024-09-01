@@ -54,6 +54,28 @@ const AppHome = () => {
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
 
+	useEffect(() => {
+		const fetchUserIdToken = async () => {
+		  try {
+			auth.onAuthStateChanged(async (user) => {
+			  if (user) {
+				// user.getIdToken().then(function(data) {
+				//   console.log(data)
+				// });
+				let signedInIdToken = await auth.currentUser.getIdToken(
+				  /* forceRefresh */ true,
+				);
+				console.log("signedInIdToken ", signedInIdToken);
+			  }
+			});
+		  } catch (e) {
+			console.log("signedInIdToken error ", e);
+		  }
+		};
+	
+		fetchUserIdToken();
+	}, []);
+
 	const handleDestSelect = (e) => {
 	    let selectedDest = e?.target?.value;
 	    if(!selectedDest) return;
