@@ -62,7 +62,7 @@ const PackagePdf = () => {
                 <Box sx={{ margin: 'auto', }}>
                     <Box sx={{ width: "900px" }}>
                         {packageData.map((data, index) => (
-                            <Box key={index} sx={{ padding: 2, border: '1px solid #ddd', backgroundColor: "white", margin: "10px", maxHeight: "600px", overflow: "scroll" }}>
+                            <Box id="packagePdfContainer" key={index} sx={{ padding: 2, border: '1px solid #ddd', backgroundColor: "white", margin: "10px", maxHeight: "600px", overflow: "scroll" }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Typography variant="h6">Itinerary</Typography>
                                     <Box display="flex" alignItems="center">

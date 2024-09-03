@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 import { DestinationNames } from "../Constants.js";
@@ -14,11 +13,9 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
     if(value !== null) handleDestSelect({ "target": { "value": value } });
   }, [value])
 
-  return (<>
-    <InputLabel id="dest" sx={{fontSize: 12}}>Select Destination*</InputLabel>
+  return (
     <Autocomplete
       fullWidth
-      size="small"
       value={value}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
@@ -47,7 +44,7 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
         if (inputValue !== '' && !isExisting) {
           filtered.push({
             inputValue,
-            label: `Find B2B cab quotes for "${inputValue}"`,
+            label: `Enter price manually for "${inputValue}"`,
           });
         }
 
@@ -56,7 +53,7 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
-      id="free-solo-dest"
+      id="free-solo-with-text-demo"
       options={DestinationNames}
       getOptionLabel={(option) => {
         console.log("maindest getOptionLabel ", option, typeof option);
@@ -82,10 +79,10 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
+        <TextField {...params} label="Type any destination.. 🌍" />
       )}
     />
-  </>);
+  );
 }
 
 export default FreeSoloCreateOption;

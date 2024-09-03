@@ -25,7 +25,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 
 	const dispatch = useDispatch();
 
-	const { noOfNights = 1 } = reqData;
+	const { noOfNights = 0 } = reqData;
 
   	const handleChange = (event, newValue) => {
     	dispatch(onCurrDayIndexChange(newValue));

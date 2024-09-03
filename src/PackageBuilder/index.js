@@ -9,6 +9,7 @@ import DayWiseTabs from "./dayWiseTabs.js";
 import { db, auth } from "../firebaseConfig";
 import { isEmptyObject } from '../Utility.js';
 import { submitReqData } from './packBuilderSlice.js';
+import ReqDataView from '../Commons/reqCard.js';
 
 const DayWisePackageBuilder = () => {
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData);
@@ -55,9 +56,9 @@ const DayWisePackageBuilder = () => {
 	console.log("package builder index render ", reqId, reqData, storeReqData)
 	return (<>
 		<Box sx={{"display": "flex", mb: 2}}>
-			<Typography variant="h6" sx={{margin: 'auto'}}><b>Select Details Day-wise</b></Typography>
+			<Typography variant="h6" sx={{margin: 'auto'}}><b>Select Itinerary Details</b></Typography>
 		</Box>
-		
+		{reqData && <ReqDataView reqData={reqData} /> }
 		{ reqData && !isEmptyObject(reqData) && <DayWiseTabs /> }
 	</>)
 

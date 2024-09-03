@@ -61,7 +61,7 @@ export const todoSlice = createSlice({
         });
         newHotelsArr.push({ 
           hotels: [
-            { key: `D-${i + 1}_H-${1}` }
+            { key: `D-${i + 1}_H-${1}`, label: "" }
           ] 
         });
       }
@@ -165,9 +165,21 @@ export const todoSlice = createSlice({
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;
       const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
       const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
+      let { selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {} } = {...currentHotelRooms[roomIndex]};
+      let currRoomPrice = 0
+      if(stdRoomPrice) {
+        let rPrice = stdRoomPrice[mealPlan], childPrice = extraRates["extraChild"];
+        console.log("setMealPlanFor1Room 1Room", currentHotelRooms[roomIndex], currRoomPrice, stdRoomPrice[mealPlan], mealPlan, rPrice, extraRates["extraChild"], childPrice, Number(rPrice), Number(selectedOccupancy?.adults));
+        currRoomPrice += ( Number(rPrice) * Number(selectedOccupancy?.adults) );
+        console.log("setMealPlanFor1Room 1Room only Adults", currRoomPrice );
+        currRoomPrice += ( Number(childPrice) * Number(selectedOccupancy?.child) );
+        console.log("setMealPlanFor1Room 1Room - Adults + child", currRoomPrice );
+      }
+
       currentHotelRooms[roomIndex] = {
         ...currentHotelRooms[roomIndex],
-        mp: mealPlan
+        mp: mealPlan,
+        roomPrice: currRoomPrice
       }
     },
     setPriceFor1Room: (state, action) => {
