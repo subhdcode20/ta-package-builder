@@ -18,6 +18,7 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
     <InputLabel id="dest" sx={{fontSize: 12}}>Select Destination*</InputLabel>
     <Autocomplete
       fullWidth
+      size="small"
       value={value}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
