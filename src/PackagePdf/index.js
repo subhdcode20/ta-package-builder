@@ -42,6 +42,7 @@ const PackagePdf = () => {
             console.log("No DAta available");
         }
     };
+    
     useEffect(() => {
         fetchPackageData();
     }, [packageId]);
@@ -53,7 +54,7 @@ const PackagePdf = () => {
     console.log("packageData => ", packageData);
 
     return (
-        <Paper elevation={0} sx={{ padding: "10px" }}>
+        <Paper elevation={0} sx={{ padding: "10px" }} id="pdfHead">
             <Box sx={{ marginBottom: 2 }}>
                 <Typography variant="h5">Package Details</Typography>
             </Box>
