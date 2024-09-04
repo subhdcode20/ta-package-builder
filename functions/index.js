@@ -30,7 +30,7 @@ const auth = getAuth()
 
 const configMap = {
     baseViewPackageUrl: 'https://stayeasy-7ac2c.web.app/package/{packageCode}/pdf',
-    networkPageWaitUntil: 'networkidle2',
+    networkPageWaitUntil: 'domcontentloaded',
     basePdfFileName: 'pkg-{packageCode}.pdf',
     bucketDirName: 'package-pdfs',
     bucketPublicBaseUrl: 'https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{fileName}?alt=media&token={downloadToken}',
@@ -118,6 +118,7 @@ exports.generatePackagePdf = onDocumentCreated(
 
                 await page.goto('https://stayeasy-7ac2c.web.app/package/LYAaU5n1zgDaDUaDHPX1U/pdf',
                     {waitUntil: configMap.networkPageWaitUntil}).then(async () => {
+                    await page.waitForSelector('#packagePdfContainer', {visible: true})
 
                     const pdfFileName = configMap.basePdfFileName.replace('{packageCode}', event.params.packId)
                     return page.pdf({path: pdfFileName, printBackground: true}).then(async () => {
