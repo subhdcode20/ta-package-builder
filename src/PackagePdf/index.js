@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebaseConfig';
-import Paper from '@mui/material/Paper';
-import Chip from '@mui/material/Chip';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import { doc, getDoc } from 'firebase/firestore';
-import InfoRounded from '@mui/icons-material/InfoRounded';
-import PersonRounded from '@mui/icons-material/PersonRounded';
-import LocationOn from '@mui/icons-material/LocationOn';
-import Phone from '@mui/icons-material/Phone';
+
 import PdfView from './pdfView';
-import { Category } from '@mui/icons-material';
 
 
 const PackagePdf = () => {
