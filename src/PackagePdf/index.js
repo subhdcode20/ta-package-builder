@@ -53,6 +53,7 @@ const PackagePdf = () => {
             console.log("No DAta available");
         }
     };
+    
     useEffect(() => {
         fetchPackageData();
     }, [packageId]);
@@ -64,7 +65,7 @@ const PackagePdf = () => {
     console.log("packageData => ", packageData);
 
     return (
-        <PdfView packageData = {packageData}/>
+        <PdfView packageData={packageData} />
     );
 };
 

@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { isEmptyObject } from '../Utility.js';
 import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy, 
 	setMealPlanFor1Room, setPriceFor1Room } from './packBuilderSlice.js';
+import RoomSearchFree from "./roomSearchCommon.js";
 
 const roomsList = [
 	{
@@ -86,7 +87,13 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`}
 							</InputLabel>
-							<Autocomplete
+							
+							<RoomSearchFree 
+								userRoomRates={ rItem.roomName ? rItem : null } 
+								onChange={(val) => handleRoomChange(rindex, val)}  
+								userRoomRates={roomsData}
+							/>
+							{/* <Autocomplete
 						      fullWidth
 						      size="small"
 						      value={ rItem || null }
@@ -116,7 +123,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 						      renderInput={(params) => (
 						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
 						      )}
-						    />
+						    /> */}
 						</Grid>
 						<Grid item xs={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>

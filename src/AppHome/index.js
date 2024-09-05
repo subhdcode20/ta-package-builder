@@ -54,6 +54,28 @@ const AppHome = () => {
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
 
+	useEffect(() => {
+		const fetchUserIdToken = async () => {
+		  try {
+			auth.onAuthStateChanged(async (user) => {
+			  if (user) {
+				// user.getIdToken().then(function(data) {
+				//   console.log(data)
+				// });
+				let signedInIdToken = await auth.currentUser.getIdToken(
+				  /* forceRefresh */ true,
+				);
+				console.log("signedInIdToken ", signedInIdToken);
+			  }
+			});
+		  } catch (e) {
+			console.log("signedInIdToken error ", e);
+		  }
+		};
+	
+		fetchUserIdToken();
+	}, []);
+
 	const handleDestSelect = (e) => {
 	    let selectedDest = e?.target?.value;
 	    if(!selectedDest) return;
@@ -127,7 +149,7 @@ const AppHome = () => {
 	console.log("child home render ", childAges, storeReqData)
 	return (<>
 		<Box sx={{"display": "flex", mb: 2}}>
-			<Typography variant="h6" sx={{margin: 'auto'}}><b>Create New Itinerary</b></Typography>
+			<Typography variant="h6" sx={{margin: 'auto'}}><b>Create New Request</b></Typography>
 		</Box>
 		<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 		<br />
@@ -174,32 +196,35 @@ const AppHome = () => {
 					}}
 				/>
 	        </Grid>	
-				
-			{
-				childAges.map((c, cIndex) => {
-					return (<Grid item xs={3}>
-						<InputLabel id="childPax" error={formErrors["childPax"]} sx={{fontSize: 12}}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-						<TextField
-							error={formErrors["childPax"]}
-							sx={{ width: "100%" }}
-							id="childPax"
-							variant="outlined"
-							size="small"
-							onChange={(e) => handleChildAgeChange(e.target.value, cIndex)}
-							inputProps={{
-								type: "number",
-							}}
-							value={c}
-						/>
-					</Grid>)
-				})
-			}
+			
+			<Grid item xs={4}>
+				{
+					childAges.map((c, cIndex) => {
+						return (<Grid item xs={3}>
+							<InputLabel id="childPax" error={formErrors["childPax"]} sx={{fontSize: 12}}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+							<TextField
+								error={formErrors["childPax"]}
+								sx={{ width: "100%" }}
+								id="childPax"
+								variant="outlined"
+								size="small"
+								onChange={(e) => handleChildAgeChange(e.target.value, cIndex)}
+								inputProps={{
+									type: "number",
+								}}
+								value={c}
+							/>
+						</Grid>)
+					})
+				}
+			</Grid>
 
-	        <Grid item xs={12} sx={{ display: "flex", flexDirection: "column" }}>
+	        <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
 	        	<InputLabel id="startDate" error={formErrors["startDate"]} sx={{fontSize: 12}}>{"Start Date*"}</InputLabel>
 		        <LocalizationProvider dateAdapter={AdapterDateFns}>
 		            <MobileDatePicker
 		              fullWidth
+					  size="small"
 		              onChange={(newValue) => {
 		                let timestamp = Date.parse(new Date(newValue));
 		                console.log("startDate value: ", newValue, timestamp);
@@ -226,7 +251,8 @@ const AppHome = () => {
 		            />
 		        </LocalizationProvider>
 	        </Grid>
-	        <Grid item xs={4}>
+	        <Grid item xs={6}>
+				<InputLabel id="startDate" error={formErrors["startDate"]} sx={{fontSize: 12}}>{"Hotel Category*"}</InputLabel>
 				<Autocomplete
 					disablePortal
 					id="hotelStar"
@@ -241,8 +267,6 @@ const AppHome = () => {
 						<TextField
 							error={formErrors["starCategory"]}
 							{...params}
-							label="Hotel Category*"
-							size="small"
 							variant="outlined"
 						/>
 					)}

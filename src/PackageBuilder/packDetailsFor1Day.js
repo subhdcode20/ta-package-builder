@@ -15,6 +15,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import {store} from '../appStore/store.js';
+import HotelSearchFree from "./hotelSearchCommon.js";
 import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 
@@ -73,7 +74,7 @@ const PackageDetailsFor1Day = ({key}) => {
 		console.log("checkPricefor1Day", selectedHotels);
 		let totalHotelPriceForCurrDay = selectedHotels.reduce((acc, h) => {
 			let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
-				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {},  } = r;
+				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {}  } = r;
 				if(!mp) {
 					// TODO: show validation error
 					return 0;
@@ -115,7 +116,12 @@ const PackageDetailsFor1Day = ({key}) => {
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
 							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{fontSize: 12}}>Select Hotel*</InputLabel>
-							<Autocomplete
+							<HotelSearchFree 
+								selectedHotel={ selectedHotels[hIndex] || null } 
+								onChange={(val) => handleHotelChange(hIndex, val)}  
+								userHotelRates={userHotelRates}
+							/>
+							{/* {<Autocomplete
 						      fullWidth
 						      size="small"
 						      value={ selectedHotels[hIndex] || null }
@@ -145,7 +151,7 @@ const PackageDetailsFor1Day = ({key}) => {
 						      renderInput={(params) => (
 						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
 						      )}
-						    />
+						    />} */}
 						</Grid>
 						{ !isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
@@ -160,7 +166,7 @@ const PackageDetailsFor1Day = ({key}) => {
 			<Box display="flex" justifyContent="space-between">
 				<Button size="small" variant="outlined" onClick={addHoteltoCurrDay}>Add Hotel +</Button>
 				<Box display="flex">
-					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: </Typography>
+					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography>
 					<FormGroup row={true} sx={{display: "flex"}}>
 						{
 							(daysArr || []).map((aa, aIndex) => {

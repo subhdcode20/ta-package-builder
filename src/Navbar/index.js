@@ -16,7 +16,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Toolbar from "@mui/material/Toolbar";
 import Avatar from '@mui/material/Avatar';
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Chip from "@mui/material/Chip";
 
 const drawerWidth = 250;
@@ -29,10 +29,29 @@ const pages = [
     link: "/home",
   },
   {
+    name: "My Requests",
+    link: "/my-reqs",
+  },
+  {
+    name: "Upload Your Rates",
+    link: "/my-rates",
+  },
+  {
     name: "Logout",
     link: "/logout",
-  }, 
+  }
 ];
+
+const priorityPages = [
+  {
+    name: "Dashboard",
+    link: "/home",
+  },
+  {
+    name: "My Requests",
+    link: "/my-reqs",
+  }
+]
 
 function NavBar(props) {
   const { window } = props;
@@ -74,9 +93,11 @@ function NavBar(props) {
           >
             <ListItemButton>
               <ListItemText className="fw-600" primary={page.name} />
-              {page?.highlight && <ListItemIcon>
-              <Chip label="New" color="primary"/>
-              </ListItemIcon> }
+              {
+                page?.highlight && (<ListItemIcon>
+                  <Chip label="New" color="primary"/>
+                </ListItemIcon>)
+              }
             </ListItemButton>
           </ListItem>
         ))}
@@ -99,7 +120,7 @@ function NavBar(props) {
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "block" } }}
           >
-            <MenuIcon sx={{ color: "#fff" }} />
+            <MenuIcon color="primary" />
           </IconButton>
           {/* <Typography
             variant="h6"
@@ -111,11 +132,11 @@ function NavBar(props) {
             {/* logo */}
           </div>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
+            {priorityPages.map((item) => (<Link to={item.link}>
               <Button key={item} sx={{ color: "#000" }}>
-                {item}
+                {item.name}
               </Button>
-            ))}
+            </Link>))}
           </Box>
         </Toolbar>
       </AppBar>
