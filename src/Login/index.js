@@ -116,13 +116,11 @@ export default function Login() {
   const handleSetNumber = (e) => {
     let updatedNumber = e.target.value;
     setnumber(updatedNumber);
-    if (mynumber === "" || updatedNumber.length < 10) {
+    if (updatedNumber === "" || updatedNumber.length < 10) {
       setCorrectNumber(true);
-    }
-    else {
+    } else {
       setCorrectNumber(false);
     }
-
   }
   // if (!auth) return <LoadingView />;
 
@@ -147,8 +145,6 @@ export default function Login() {
               alignItems: "center",
             }}
           >
-
-
             <Typography
               component="h5"
               variant="h5"
@@ -179,8 +175,6 @@ export default function Login() {
                   }}
                 />
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-
                   <Box sx={{ mt: 2 }}>
                     <div id="recaptcha-container"></div>
                   </Box>

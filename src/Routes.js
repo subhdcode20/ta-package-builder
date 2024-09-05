@@ -10,6 +10,8 @@ import Logout from "./logout.js";
 import AppLayout from "./Layout/index.js";
 import ErrorPage from "./errorPage.js";
 import DayWisePackageBuilder from "./PackageBuilder/index.js";
+import ViewReqsList from "./ViewRequests/index.js";
+import PackagePdf from "./PackagePdf/index.js";
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -55,11 +57,27 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/itinerary",
+    path: "/itinerary/:reqId",
     element: (
       <AppLayout>
         <DayWisePackageBuilder />
       </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/my-reqs",
+    element: (
+      <AppLayout> 
+        <ViewReqsList />
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/package/:packageId/pdf",
+    element: (
+      <PackagePdf/>
     ),
     errorElement: <ErrorPage />,
   },

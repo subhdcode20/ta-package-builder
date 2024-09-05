@@ -6,7 +6,6 @@ import {
 import { store } from './appStore/store.js';
 import { Provider } from 'react-redux'
 
-import logo from './logo.svg';
 import './App.css';
 import Routes from './Routes.js';
 
@@ -17,7 +16,7 @@ const theme = createTheme({
     },
     secondary: {
       main: "#000000bf",
-    },
+    },  
     text: {
       primary: "#212121", //'#212121',  //'#7c3647',  //'rgba(124, 54, 71, 1)',
       secondary: "#000000", //'#384E89',  //'#FBAD23',  //'#ffffff',   //'rgba(255, 255, 255, 1)',

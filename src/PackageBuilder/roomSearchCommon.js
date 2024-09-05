@@ -1,41 +1,40 @@
 import React, {useEffect} from "react";
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-
-import { DestinationNames } from "../Constants.js";
 
 const filter = createFilterOptions();
 
-const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
-  const [value, setValue] = React.useState(destination || null);
+const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []}) => {
+  const [value, setValue] = React.useState(selectedRoom || null);
+  const [roomsDropdownList, setHotelsDropdownList] = React.useState(userRoomRates || []);
 
   useEffect(() => {
-    if(value !== null) handleDestSelect({ "target": { "value": value } });
+    if(userRoomRates && userRoomRates.length > 0) setHotelsDropdownList(userRoomRates);
+  }, [userRoomRates])
+
+  useEffect(() => {
+    if(value !== null) onChange(value);
   }, [value])
 
-  return (<>
-    <InputLabel id="dest" sx={{fontSize: 12}}>Select Destination*</InputLabel>
+  console.log("hotel drop down ", value, selectedRoom, roomsDropdownList, userRoomRates);
+  return (
     <Autocomplete
       fullWidth
       size="small"
-      value={value}
+      value={value || null}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
-        if (typeof newValue === 'string') {
-          setValue(newValue); 
-          // setValue({
-          //   title: newValue,
-          // });
-        } else if (newValue && newValue.inputValue) {
+        if (newValue && newValue.roomName) {
           // Create a new value from the user input
-          setValue(newValue.inputValue);
+          setValue(newValue.roomName);
           // setValue({
           //   title: newValue.inputValue,
           // });
         } else {
           setValue(newValue);
         }
+
+        setValue(newValue);
       }}
       filterOptions={(options, params) => {
         console.log("maindest filterOptions ", options, params, filter(options, params))
@@ -43,11 +42,11 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
 
         const { inputValue } = params;
         // Suggest the creation of a new value
-        const isExisting = options.some((option) => inputValue === option.title);
+        const isExisting = options.some((option) => inputValue === option.roomName);
         if (inputValue !== '' && !isExisting) {
           filtered.push({
-            inputValue,
-            label: `Find B2B cab quotes for "${inputValue}"`,
+            roomName: inputValue,
+            label: inputValue  //`Enter price manually for "${inputValue}"`,
           });
         }
 
@@ -56,36 +55,32 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
-      id="free-solo-dest"
-      options={DestinationNames}
+      id="free-solo-with-text-demo"
+      options={roomsDropdownList}
       getOptionLabel={(option) => {
         console.log("maindest getOptionLabel ", option, typeof option);
-        // Value selected with enter, right from the input
-        if (typeof option === 'string') {
-          return option;
-        }
         // Add "xxx" option created dynamically
-        if (option.inputValue) {
-          return option.inputValue;
+        if (option.label) {
+          return option.label;
         }
         // Regular option
-        return option.label;
+        return option.roomName;
       }}
       renderOption={(props, option) => {
         console.log("maindest renderOption ", props, option);
         const { key, ...optionProps } = props;
         return (
           <li key={key} {...optionProps}>
-            {typeof option === 'string' ? option : option.label}
+            {option.label ? option.label : option.roomName}
           </li>
         );
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
+        <TextField {...params} placeholder="Seach room types.. " />
       )}
     />
-  </>);
+  );
 }
 
 export default FreeSoloCreateOption;

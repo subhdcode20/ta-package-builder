@@ -5,10 +5,15 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { isEmptyObject } from '../Utility.js';
-import { addNewRoomToHotel } from './packBuilderSlice.js';
+import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy, 
+	setMealPlanFor1Room, setPriceFor1Room } from './packBuilderSlice.js';
+import RoomSearchFree from "./roomSearchCommon.js";
 
 const roomsList = [
 	{
@@ -19,85 +24,151 @@ const roomsList = [
 	},
 ]
 
-const HotelRoomsBuilder = ({ hotelIndex = null, addRoomsDataToHotelData }) => {
+const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	// const [roomsData, setRoomsData] = useState([
 	// 	{
 	// 		key: `H-${dayIndex + 1}-R-${0}`
 	// 	}
 	// ]);
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
-	const hotelData = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex][hotelIndex]);
-	const roomsData = hotelData?.selectedRooms || [];
+	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
+	const hotelData = currDayHotels[hotelIndex];
+	const roomsData = Object.values(hotelData?.roomRates || {});
 	const dispatch = useDispatch();
 
-	const handleRoomChange = (data) => {
+	console.log("hotel rooms render ", currentDayIndex, hotelData, hotelIndex, roomsData);
+	const handleRoomChange = (roomIndex, data) => {
 		// handleDataChange(dayIndex, data);
+		dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
 	}
 
 	const handleAddRoom = () => {
 		dispatch(addNewRoomToHotel({hotelIndex}));
-		// let newRData = [...roomsData];
-		// newRData.push({
-		// 	key: `H-${dayIndex + 1}-R-${roomsData.length + 1}`
-		// });
-		// setRoomsData(newRData);
+	}
+
+	const handleOccChange = (e, rindex, keyType) => {
+		console.log("occ handleOccChange", e.target.value, keyType, rindex);
+		dispatch(selectedRoomOccupancy({
+			hotelIndex, 
+			roomIndex: rindex, 
+			keyType, 
+			value: e.target.value
+		}));
+	}
+	
+	const handleMealPlanChange = (e, rindex) => {
+		const selectedMp = e.target.checked ? e.target.name : '';
+		console.log("handleMealPlanChange", e.target.checked, e.target.name, selectedMp);
+		dispatch(setMealPlanFor1Room({
+			hotelIndex, 
+			roomIndex: rindex,
+			mealPlan: selectedMp
+		}));
+	}
+
+	const handleRoomPriceChange = (e, rIndex) => {
+		const roomPrice = e.target.value;
+		console.log("handleMealPlanChange",  hotelIndex, rIndex, roomPrice);
+		dispatch(setPriceFor1Room({
+			hotelIndex, 
+			roomIndex: rIndex,
+			roomPrice
+		}));
 	}
 
 	console.log("room builder render ", hotelData, hotelData.selectedRooms, roomsData);
 	return (<Grid container spacing={2} sx={{padding: 2}}>
 		{
 			(hotelData?.selectedRooms || []).map((rItem, rindex) => {
+				console.log("rItem render ", rItem, rindex);
 				return (<Grid item xs={12}>
 					<Grid container spacing={2}>
 						<Grid item xs={4}>
 							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`}
 							</InputLabel>
-							<Autocomplete
+							
+							<RoomSearchFree 
+								userRoomRates={ rItem.roomName ? rItem : null } 
+								onChange={(val) => handleRoomChange(rindex, val)}  
+								userRoomRates={roomsData}
+							/>
+							{/* <Autocomplete
 						      fullWidth
 						      size="small"
-						      value={ rItem.name || null }
+						      value={ rItem || null }
 						      onChange={(event, newValue) => {
 						      	 console.log("hotel selected", newValue)
-						         handleRoomChange(newValue);
+						         handleRoomChange(rindex, newValue);
 						      }}
 						      selectOnFocus
 						      clearOnBlur
 						      handleHomeEndKeys
 						      id="hotel-name"
-						      options={roomsList}
+						      options={roomsData}
 						      getOptionLabel={(option) => {
 						        console.log("hotel getOptionLabel ", option, typeof option);
 						        // Regular option
-						        return option.name;
+						        return option.roomName;
 						      }}
 						      renderOption={(props, option) => {
 						        console.log("maindest renderOption ", props, option);
 						        const { key, ...optionProps } = props;
 						        return (
 						          <li key={key} {...optionProps}>
-						            {option.name}
+						            {option.roomName}
 						          </li>
 						        );
 						      }}
 						      renderInput={(params) => (
 						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
 						      )}
-						    />
+						    /> */}
 						</Grid>
 						<Grid item xs={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Adults:
 							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" />
+							<TextField variant="outlined" type="number" size="small" 
+								onChange={(e) => handleOccChange(e, rindex, "adults")} 
+								value={rItem?.selectedOccupancy?.adults}
+							/>
 						</Grid>
 						<Grid item xs={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Children:
 							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" />
+							<TextField variant="outlined" type="number" size="small" 
+								onChange={(e) => handleOccChange(e, rindex, "child")} 
+								value={rItem?.selectedOccupancy?.child}
+							/>
 						</Grid>
 				    </Grid>
+					<Grid item xs={12}>
+						<FormGroup sx={{ display: "flex", flexDirection: "row" }}>
+							<FormControlLabel
+								control={
+									<Checkbox checked={rItem?.mp == "mapai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="mapai" />
+								}
+								label="MAPAI"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox checked={rItem?.mp == "cpai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="cpai" />
+								}
+								label="CPAI"
+							/>
+						</FormGroup>
+					</Grid>
+					<Grid item xs={12}>
+						<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
+							Room Price:
+						</InputLabel>
+						<TextField variant="outlined" type="number" size="small" 
+							onChange={(e) => handleRoomPriceChange(e, rindex)} 
+							value={rItem?.roomPrice}
+						/>
+					</Grid>
 				</Grid>)
 			})
 		}
