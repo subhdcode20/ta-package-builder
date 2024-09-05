@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-
+import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 
 import Typography from "@mui/material/Typography";
@@ -34,10 +34,10 @@ const SignUp = () => {
     panCard: null,
     gst: null,
   });
-  const [others, setOthers] = useState({
-    uploadRateSheet: false,
-    enterPriceManually: false,
-  });
+  // const [others, setOthers] = useState({
+  //   uploadRateSheet: false,
+  //   enterPriceManually: false,
+  // });
 
   const [errors, setErrors] = useState({
     phone: "",
@@ -57,14 +57,14 @@ const SignUp = () => {
   };
 
   const handleFileUpload = async (file, fileName) => {
-    const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);  
+    const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);
     // ->  userDocs/phone/fileName
     await uploadBytes(fileRef, file);
     return await getDownloadURL(fileRef);
   };
 
   const handleNext = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep < 2) setCurrentStep(currentStep + 1);
   };
 
   const handleBack = () => {
@@ -83,7 +83,7 @@ const SignUp = () => {
     ];
 
     const [companyLogoUrl, businessDocsUrl, panCardUrl, gstUrl] = await Promise.all(uploadPromises);
-    
+
 
     const formData = {
       ...personalInfo,
@@ -93,17 +93,17 @@ const SignUp = () => {
         panCard: panCardUrl,
         gst: gstUrl,
       },
-      others,
-      "phone" : `+91${personalInfo.phone}`,
-      "createdAt" : Date.now(),
-      userId : `U-${nanoid()}`
+      // others,
+      "phone": `+91${personalInfo.phone}`,
+      "createdAt": Date.now(),
+      userId: `U-${nanoid()}`
     };
-    
+
     let docRef = doc(db, "userDetails", `+91${personalInfo.phone}`)
     await setDoc(docRef, formData);
     setTimeout(() => {
       setLoading(false);
-      navigate("/signin");
+      navigate("/login");
     }, 1000);
     // alert("Form submitted successfully!");
   };
@@ -113,147 +113,152 @@ const SignUp = () => {
       <CssBaseline />
       <Box>
 
-      <Typography variant="h4" sx={{fontWeight: 600, marginBottom:"20px", textAlign:"center"}} >Sign Up</Typography>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="90vh"
-        paddingX={3}
-        borderRadius={2}
-        boxShadow={3}
-        bgcolor="#f9f9f9"
-      >
- 
-        {currentStep === 1 && (
-          <Box width="100%">
-            <Typography variant="h5" align="center" gutterBottom>
-              Personal Info
-            </Typography>
-            <TextField
-              label="Name*"
-              fullWidth
-              margin="normal"
-              value={personalInfo.name}
-              onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
-            />
+        <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: "20px", textAlign: "center" }} >Sign Up</Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="90vh"
+          paddingX={3}
+          borderRadius={2}
+          boxShadow={3}
+          bgcolor="#f9f9f9"
+        >
 
-            <TextField
-              label="Company Name*"
-              fullWidth
-              margin="normal"
-              value={personalInfo.companyName}
-              onChange={(e) => setPersonalInfo({ ...personalInfo, companyName: e.target.value })}
-            />
-            <TextField
-              label="Phone*"
-              fullWidth
-              margin="normal"
-              value={personalInfo.phone}
-              onChange={(e) => {
-                const phone = e.target.value;
-                setPersonalInfo({ ...personalInfo, phone });
-                if (!validatePhone(phone)) {
-                  setErrors({ ...errors, phone: "Invalid phone number (10 digits required)" });
-                } else {
-                  setErrors({ ...errors, phone: "" });
-                }
+          {currentStep === 1 && (
+            <Box width="100%">
+              <Typography variant="h5" align="center" gutterBottom>
+                Personal Info
+              </Typography>
+              <TextField
+                label="Name*"
+                fullWidth
+                margin="normal"
+                value={personalInfo.name}
+                onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
+              />
+
+              <TextField
+                label="Company Name*"
+                fullWidth
+                margin="normal"
+                value={personalInfo.companyName}
+                onChange={(e) => setPersonalInfo({ ...personalInfo, companyName: e.target.value })}
+              />
+              <TextField
+                label="Phone*"
+                fullWidth
+                margin="normal"
+                value={personalInfo.phone}
+                onChange={(e) => {
+                  const phone = e.target.value;
+                  setPersonalInfo({ ...personalInfo, phone });
+                  if (!validatePhone(phone)) {
+                    setErrors({ ...errors, phone: "Invalid phone number (10 digits required)" });
+                  } else {
+                    setErrors({ ...errors, phone: "" });
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">+91</InputAdornment>
+                  ),
+                }}
+                error={!!errors.phone}
+                helperText={errors.phone}
+              />
+              <TextField
+                label="Email*"
+                fullWidth
+                margin="normal"
+                value={personalInfo.email}
+                onChange={(e) => {
+                  const email = e.target.value;
+                  setPersonalInfo({ ...personalInfo, email });
+                  if (!validateEmail(email)) {
+                    setErrors({ ...errors, email: "Invalid email address" });
+                  } else {
+                    setErrors({ ...errors, email: "" });
+                  }
+                }}
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+              <TextField
+                label="Address*"
+                fullWidth
+                margin="normal"
+                value={personalInfo.address}
+                onChange={(e) => setPersonalInfo({ ...personalInfo, address: e.target.value })}
+              />
+            </Box>
+          )}
+          {currentStep === 2 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                // alignItems: "center",
+                padding: 3,
               }}
-              error={!!errors.phone}
-              helperText={errors.phone}
-            />
-            <TextField
-              label="Email*"
-              fullWidth
-              margin="normal"
-              value={personalInfo.email}
-              onChange={(e) => {
-                const email = e.target.value;
-                setPersonalInfo({ ...personalInfo, email });
-                if (!validateEmail(email)) {
-                  setErrors({ ...errors, email: "Invalid email address" });
-                } else {
-                  setErrors({ ...errors, email: "" });
-                }
-              }}
-              error={!!errors.email}
-              helperText={errors.email}
-            />
-            <TextField
-              label="Address*"
-              fullWidth
-              margin="normal"
-              value={personalInfo.address}
-              onChange={(e) => setPersonalInfo({ ...personalInfo, address: e.target.value })}
-            />
-          </Box>
-        )}
-        {currentStep === 2 && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              // alignItems: "center",
-              padding: 3,
-            }}
-          >
-            <Typography variant="h5" align="center"  gutterBottom >
-              Company Info
-            </Typography>
-
-            <Typography sx={{marginTop:"20px" }}>Add Logo*</Typography>
-            <Button
-              variant="contained"
-              component="label"
-              sx={{ width: "100%"}}
             >
-              
-              <input
-                type="file"
-                onChange={(e) => setCompanyInfo({ ...companyInfo, companyLogo: e.target.files[0] })}
-              />
-            </Button>
+              <Typography variant="h5" align="center" gutterBottom >
+                Company Info
+              </Typography>
 
-            <Typography sx={{marginTop:"20px" }}>Attach Business Registration Documents*</Typography>
-            <Button
-              variant="contained"
-              component="label"
-              sx={{ width: "100%" }}
-            >
-              <input
-                type="file"
-                onChange={(e) => setCompanyInfo({ ...companyInfo, businessDocs: e.target.files[0] })}
-              />
-            </Button>
+              <Typography sx={{ marginTop: "20px" }}>Add Logo*</Typography>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ width: "100%" }}
+              >
 
-            <Typography sx={{marginTop:"20px" }}>Add PAN Card*</Typography>
-            <Button
-              variant="contained"
-              component="label"
-              sx={{ width: "100%" }}
-            >
-              <input
-                type="file"
-                onChange={(e) => setCompanyInfo({ ...companyInfo, panCard: e.target.files[0] })}
-              />
-            </Button>
+                <input
+                  type="file"
+                  onChange={(e) => setCompanyInfo({ ...companyInfo, companyLogo: e.target.files[0] })}
+                />
+              </Button>
 
-            <Typography sx={{marginTop:"20px" }}>GST (If Applicable)</Typography>
-            <Button
-              variant="contained"
-              component="label"
-              sx={{ width: "100%" }}
-            >
-              <input
-                type="file"
-                onChange={(e) => setCompanyInfo({ ...companyInfo, gst: e.target.files[0] })}
-              />
-            </Button>
-          </Box>
+              <Typography sx={{ marginTop: "20px" }}>Attach Business Registration Documents*</Typography>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ width: "100%" }}
+              >
+                <input
+                  type="file"
+                  onChange={(e) => setCompanyInfo({ ...companyInfo, businessDocs: e.target.files[0] })}
+                />
+              </Button>
 
-        )}
-        {currentStep === 3 && (
+              <Typography sx={{ marginTop: "20px" }}>Add PAN Card*</Typography>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ width: "100%" }}
+              >
+                <input
+                  type="file"
+                  onChange={(e) => setCompanyInfo({ ...companyInfo, panCard: e.target.files[0] })}
+                />
+              </Button>
+
+              <Typography sx={{ marginTop: "20px" }}>GST (If Applicable)</Typography>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ width: "100%" }}
+              >
+                <input
+                  type="file"
+                  onChange={(e) => setCompanyInfo({ ...companyInfo, gst: e.target.files[0] })}
+                />
+              </Button>
+            </Box>
+
+          )}
+          {/* {currentStep === 3 && (
           <Box width="100%" >
             <Typography variant="h4" align="center" gutterBottom>
               Others
@@ -290,22 +295,22 @@ const SignUp = () => {
             </Box>
 
           </Box>
-        )}
-        <Box mt={3} display="flex" justifyContent="space-between" width="100%">
-          <Button onClick={handleBack} disabled={currentStep === 1}>
-            Back
-          </Button>
-          {currentStep < 3 ? (
-            <Button variant="contained" color="primary" onClick={handleNext}>
-              Next
+        )} */}
+          <Box mt={3} display="flex" justifyContent="space-between" width="100%">
+            <Button onClick={handleBack} disabled={currentStep === 1}>
+              Back
             </Button>
-          ) : (
-            <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
-              SignUp
-            </LoadingButton>
-          )}
+            {currentStep < 2 ? (
+              <Button variant="contained" color="primary" onClick={handleNext}>
+                Next
+              </Button>
+            ) : (
+              <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
+                SignUp
+              </LoadingButton>
+            )}
+          </Box>
         </Box>
-      </Box>
       </Box>
     </Container>
   );
