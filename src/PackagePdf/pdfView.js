@@ -1,11 +1,14 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Chip } from '@mui/material';
-import { InfoRounded, PersonRounded, LocationOn, Phone } from '@mui/icons-material';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
+import PersonRounded from '@mui/icons-material/PersonRounded';
+import LocationOn from '@mui/icons-material/LocationOn';
+import Phone from '@mui/icons-material/Phone';
 import PriceBreakdown from './priceBreakdown';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PeopleIcon from '@mui/icons-material/People';
-import Brightness2 from '@mui/icons-material/Brightness2';
 import ContactSection from './contactSection';
 
 const PdfView = ({ packageData }) => {
