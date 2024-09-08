@@ -8,6 +8,7 @@ import { doc, setDoc } from "firebase/firestore";
 const SavePackagePdf = () => {
     const selectedPackDetails = useSelector((state) => state.packBuilderData.selectedHotels) || {};
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
+	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 
     const savePackageWithPdf = async () => {
 		// TODO: handle data validation, show validation errors
@@ -20,12 +21,15 @@ const SavePackagePdf = () => {
 		// 	}
 		// });
 		// dispatch(submitReqData({reqData: newReqData}));
-		console.log("new pack post 2: ", newPackId, finalPackDetails);
+		console.log("new pack post 2: ", newPackId, finalPackDetails, reqData);
 		let packRef = await setDoc(doc(db, "packages", newPackId), {
 			hotels: finalPackDetails, 
             packageId: newPackId,
 			userId: userData?.phone,
-			createdAt: Date.now()
+			createdAt: Date.now(),
+			req: {
+				...reqData
+			}
 		});
 
 		// return;

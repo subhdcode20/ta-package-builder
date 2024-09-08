@@ -275,6 +275,17 @@ const AppHome = () => {
 					defaultValue={""}
 				/>
 			</Grid>
+			<Grid item xs={6}>
+				<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{fontSize: 12}}>Tracking Id*</InputLabel>
+	            <TextField
+					error={formErrors["trackingId"]}
+					sx={{ width: "100%" }}
+					id="trackingId"
+					variant="outlined"
+					size="small"
+					onChange={(e) => handleFormChange(e, "trackingId")}
+	            />
+	        </Grid>
 	        
 	        <Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
 	        	<Button
