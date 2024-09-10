@@ -68,7 +68,7 @@ const router = createBrowserRouter([
   {
     path: "/my-reqs",
     element: (
-      <AppLayout>
+      <AppLayout> 
         <ViewReqsList />
       </AppLayout>
     ),

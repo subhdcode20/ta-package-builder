@@ -5,6 +5,8 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getMessaging } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,6 +26,7 @@ const auth = getAuth(firebase);
 const db = getFirestore(firebase);
 // const messaging = getMessaging(firebase);
 const analytics = getAnalytics(firebase);
+const storage = getStorage(firebase);
 
 // connectFirestoreEmulator(db, '127.0.0.1', 8080);
 // firebase.
@@ -33,5 +36,6 @@ export {
   auth,
   db,
   // messaging,
-  analytics
+  analytics,
+  storage
 };
