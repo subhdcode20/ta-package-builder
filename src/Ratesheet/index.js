@@ -24,8 +24,7 @@ const UploadRatesheet = () => {
     });
     const [loading, setLoading] = useState(false);
     const [submitMsg, setSubmitMsg] = useState(false);
-    // Link TO Be ADDed .
-    const url = ""; 
+    const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0 "; 
 
 
     const handleInputChange = (event) => {
