@@ -83,7 +83,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/:userId/upload-ratesheet",
+    path: "/upload-ratesheet",
     element: (
       <UploadRatesheet/>
     ),

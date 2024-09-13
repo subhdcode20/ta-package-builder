@@ -11,7 +11,12 @@ import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../firebaseConfig';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import PopUp from '../Commons/messagePopUp';
-import Link  from '@mui/material/Link';
+import Link from '@mui/material/Link';
+import Alert from '@mui/material/Alert';
+import LoadingButton from "../Commons/LoadingButton";
+import InfoIcon from '@mui/icons-material/Info';
+
+
 
 const UploadRatesheet = () => {
     const { userId } = useParams();
@@ -24,7 +29,8 @@ const UploadRatesheet = () => {
     });
     const [loading, setLoading] = useState(false);
     const [submitMsg, setSubmitMsg] = useState(false);
-    const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0 "; 
+    const [missingInput, setMissingInput] = useState(false);
+    const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0 ";
 
 
     const handleInputChange = (event) => {
@@ -32,21 +38,36 @@ const UploadRatesheet = () => {
         setRatesheet((prevRatesheet) => ({ ...prevRatesheet, [name]: value }));
     };
 
-    const handleUploadRatesheet = async () => {
-        setLoading(true);
-        const fileRef = ref(storage, `userRateSheets/${userId}`);
-        await uploadBytes(fileRef, ratesheet.ratesheetRef);
+    const handleUploadRatesheet = async (file) => {
+        const fileRef = ref(storage, `userRateSheets/${userId}-${ratesheet.destination}`);
+        await uploadBytes(fileRef, file);
         const downloadURL = await getDownloadURL(fileRef);
         setRatesheet((prevRatesheet) => ({ ...prevRatesheet, ratesheetRef: downloadURL }));
-        setLoading(false);
     };
 
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            handleUploadRatesheet(file);
+        }
+    };
+
+
     const handleSubmit = async () => {
+
+        if (!ratesheet.destination || !ratesheet.hotelName || !ratesheet.startDate || !ratesheet.endDate) {
+            setMissingInput(true);
+            return;
+        }
+
         setLoading(true);
-        let docRef = doc(db, "userDetails", `+91${userId}`);
-        await updateDoc(docRef, {
-            "companyInfo.rateSheet": ratesheet,
-        });
+
+        // ==> TO CHANGE <==
+
+        // let docRef = doc(db, "userHotels", `+91${userId}`); 
+        // await updateDoc(docRef, {
+        //     "companyInfo.rateSheet": ratesheet,
+        // });
         console.log("Ratesheet ->", ratesheet);
         setLoading(false);
         setSubmitMsg(true);
@@ -57,9 +78,6 @@ const UploadRatesheet = () => {
     return (
         <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
             <CssBaseline />
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                <Typography variant="h5" sx={{ fontWeight: 600 }}>Upload Ratesheet</Typography>
-            </Box>
 
             <Box sx={{
                 display: "flex",
@@ -71,30 +89,37 @@ const UploadRatesheet = () => {
                 boxShadow: 3,
                 bgcolor: "#f9f9f9"
             }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4, mt: 0 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: "5px", marginTop: "0px" }}>
+                        Upload Ratesheet
+                    </Typography>
+                </Box>
                 <Box sx={{ mb: 2 }}>
                     <TextField
-                        label="Destination*"
+                        label="Destination"
                         name="destination"
                         value={ratesheet.destination}
                         onChange={handleInputChange}
                         fullWidth
                         size="small"
+                        required
                     />
                 </Box>
 
                 <Box sx={{ mb: 3 }}>
                     <TextField
-                        label="Hotel Name*"
+                        label="Hotel Name"
                         name="hotelName"
                         value={ratesheet.hotelName}
                         onChange={handleInputChange}
                         fullWidth
                         size="small"
+                        required
                     />
                 </Box>
 
                 <Box sx={{ mb: 3 }}>
-                    <Typography sx={{ fontSize: "17px" }}>
+                    <Typography sx={{ fontSize: "16px" }}>
                         Rate Sheet Validity*
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
@@ -109,6 +134,7 @@ const UploadRatesheet = () => {
                                 onChange={handleInputChange}
                                 fullWidth
                                 size="small"
+                                required
                             />
                         </Box>
                         <Typography sx={{ mx: 1 }}>-</Typography>
@@ -123,34 +149,36 @@ const UploadRatesheet = () => {
                                 onChange={handleInputChange}
                                 fullWidth
                                 size="small"
+                                required
                             />
                         </Box>
                     </Box>
                 </Box>
 
                 <Box sx={{ mb: 3 }}>
-                    <Typography sx={{ fontSize: "17px", marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                        <Box sx={{ border: "1px solid #ccc", padding: "5px", borderRadius: 2 }}>
-                            <input
-                                type="file"
-                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                onChange={(event) => {
-                                    setRatesheet((prevRatesheet) => ({ ...prevRatesheet, ratesheetRef: event.target.files[0] }));
-                                }}
-                                style={{ width: '100%' }}
-                            />
-                        </Box>
-                        <Button variant="contained" size="small" color="primary" onClick={handleUploadRatesheet}>
-                            {loading ? 'Uploading...' : 'Upload Ratesheet'}
-                        </Button>
-                    </Box>
+                    <Typography sx={{ fontSize: "16px", marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
+                    <Button
+                        variant="contained"
+                        component="label"
+                        sx={{ width: "50%" }}
+                    >
+                        <input
+                            type="file"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            onChange={handleFileChange}
+                            style={{ width: '100%' }}
+                            required
+                        />
+                    </Button>
                 </Box>
+
 
                 <Box sx={{ mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: "center", flexWrap: 'wrap', gap: 1 }}>
-                        <Typography>⚫ To Download RateSheet Template</Typography>
-                        <Link href={url} target="_blank">
+                        <Typography>
+                            <InfoIcon color='primary' style={{ verticalAlign: 'middle', marginRight: "3px" }} />
+                            To Download RateSheet Template
+                        </Typography>                     <Link href={url} target="_blank">
                             <Button variant="outlined" size="small" color="primary">
                                 Click here
                             </Button>
@@ -158,10 +186,17 @@ const UploadRatesheet = () => {
                     </Box>
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5, mb: 2 }}>
-                    <Button variant="contained" color="primary" onClick={handleSubmit}>
-                        {loading ? 'Submitting...' : 'Submit'}
-                    </Button>
+
+
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', mt: 5, mb: 2 }}>
+                    <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
+                        Submit
+                    </LoadingButton>
+                    {missingInput && (
+                        <Alert severity="error" sx={{ mt: 2 }}>
+                            Fill all the required data.
+                        </Alert>
+                    )}
                 </Box>
             </Box>
             <PopUp
