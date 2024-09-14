@@ -67,6 +67,24 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/itinerary/:reqId/copy",
+    element: (
+      <AppLayout>
+        <DayWisePackageBuilder />
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/itinerary/:reqId/copy-new",
+    element: (
+      <AppLayout>
+        <DayWisePackageBuilder />
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/my-reqs",
     element: (
       <AppLayout> 
