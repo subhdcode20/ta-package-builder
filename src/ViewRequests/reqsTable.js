@@ -15,11 +15,38 @@ const columns = [
     headerName: 'Travel Date',
     width: 150,
     editable: true,
+    valueGetter: (value, row) => `${new Date(value)}`
   },
   {
     field: 'noOfNights',
     headerName: 'Nights',
     type: 'number',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'Pax',
+    headerName: 'Pax',
+    width: 110,
+    editable: true,
+    valueGetter: (value, row) => `${row.adultPax} Adults - ${row.childPax || 0} Child`
+  },
+  {
+    field: 'pickUp',
+    headerName: 'Pick Up',
+    width: 110,
+    editable: true,
+  },
+  {
+    field: 'starCategory',
+    headerName: 'Hotel Category',
+    width: 110,
+    editable: true,
+    valueGetter: (value) => `${value?.label}`
+  },
+  {
+    field: 'trackingId',
+    headerName: 'Tracking Id',
     width: 110,
     editable: true,
   },
