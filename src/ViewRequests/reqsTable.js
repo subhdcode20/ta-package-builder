@@ -11,7 +11,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
 
 const handleCopy = (reqId) => {
   console.log("REQID: ", reqId);
-  navigate(`/itinerary/${reqId}/copy`)
+  navigate(`/itinerary/${reqId}/edit`)
 };
 const handleCopyNew = (reqId) => {
   console.log("REQID: ", reqId);
