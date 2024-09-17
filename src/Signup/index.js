@@ -4,7 +4,6 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
@@ -21,6 +20,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [missingInput, setMissingInput] = useState(false);
   const [personalInfo, setPersonalInfo] = useState({
     phone: "",
     email: "",
@@ -72,8 +72,13 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
 
+    if(!personalInfo.name || !personalInfo.phone || !personalInfo.companyName || !personalInfo.address || !personalInfo.email || !personalInfo.companyLogo || !personalInfo.businessDocs || !personalInfo.panCard){
+      setMissingInput(true);
+      return;
+    }
+
+    setLoading(true);
 
     const uploadPromises = [
       companyInfo.companyLogo ? handleFileUpload(companyInfo.companyLogo, "companyLogo") : null,
@@ -113,7 +118,6 @@ const SignUp = () => {
       <CssBaseline />
       <Box>
 
-        <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: "20px", textAlign: "center" }} >Sign Up</Typography>
         <Box
           display="flex"
           flexDirection="column"
@@ -124,30 +128,34 @@ const SignUp = () => {
           borderRadius={2}
           boxShadow={3}
           bgcolor="#f9f9f9"
+          marginTop={3}
         >
 
+          <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: "20px", textAlign: "center" }} >Sign Up</Typography>
           {currentStep === 1 && (
             <Box width="100%">
               <Typography variant="h5" align="center" gutterBottom>
                 Personal Info
               </Typography>
               <TextField
-                label="Name*"
+                label="Name"
                 fullWidth
                 margin="normal"
                 value={personalInfo.name}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
+                required
               />
 
               <TextField
-                label="Company Name*"
+                label="Company Name"
                 fullWidth
                 margin="normal"
                 value={personalInfo.companyName}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, companyName: e.target.value })}
+                required
               />
               <TextField
-                label="Phone*"
+                label="Phone"
                 fullWidth
                 margin="normal"
                 value={personalInfo.phone}
@@ -167,9 +175,10 @@ const SignUp = () => {
                 }}
                 error={!!errors.phone}
                 helperText={errors.phone}
+                required
               />
               <TextField
-                label="Email*"
+                label="Email"
                 fullWidth
                 margin="normal"
                 value={personalInfo.email}
@@ -184,13 +193,15 @@ const SignUp = () => {
                 }}
                 error={!!errors.email}
                 helperText={errors.email}
+                required
               />
               <TextField
-                label="Address*"
+                label="Address"
                 fullWidth
                 margin="normal"
                 value={personalInfo.address}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, address: e.target.value })}
+                required
               />
             </Box>
           )}
@@ -217,6 +228,7 @@ const SignUp = () => {
                 <input
                   type="file"
                   onChange={(e) => setCompanyInfo({ ...companyInfo, companyLogo: e.target.files[0] })}
+                  required
                 />
               </Button>
 
@@ -229,6 +241,7 @@ const SignUp = () => {
                 <input
                   type="file"
                   onChange={(e) => setCompanyInfo({ ...companyInfo, businessDocs: e.target.files[0] })}
+                  required
                 />
               </Button>
 
@@ -241,6 +254,7 @@ const SignUp = () => {
                 <input
                   type="file"
                   onChange={(e) => setCompanyInfo({ ...companyInfo, panCard: e.target.files[0] })}
+                  required
                 />
               </Button>
 
@@ -305,9 +319,15 @@ const SignUp = () => {
                 Next
               </Button>
             ) : (
-              <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
-                SignUp
-              </LoadingButton>
+              <div>
+                <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
+                  SignUp
+                </LoadingButton>
+                {missingInput &&
+                <Alert severity="error">Fill all the required data.</Alert>
+                }
+              </div>
+
             )}
           </Box>
         </Box>
