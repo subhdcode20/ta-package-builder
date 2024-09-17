@@ -12,6 +12,7 @@ import ErrorPage from "./errorPage.js";
 import DayWisePackageBuilder from "./PackageBuilder/index.js";
 import ViewReqsList from "./ViewRequests/index.js";
 import PackagePdf from "./PackagePdf/index.js";
+import UploadRatesheet from "./Ratesheet/index.js";
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -78,6 +79,13 @@ const router = createBrowserRouter([
     path: "/package/:packageId/pdf",
     element: (
       <PackagePdf/>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/upload-ratesheet",
+    element: (
+      <UploadRatesheet/>
     ),
     errorElement: <ErrorPage />,
   },
