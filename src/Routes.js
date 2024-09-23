@@ -103,7 +103,9 @@ const router = createBrowserRouter([
   {
     path: "/upload-ratesheet",
     element: (
-      <UploadRatesheet/>
+      <AppLayout>
+        <UploadRatesheet/>
+      </AppLayout>
     ),
     errorElement: <ErrorPage />,
   },

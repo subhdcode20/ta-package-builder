@@ -92,13 +92,13 @@ const ViewRequest = () => {
 		getReqs();
 	}, [])
 
-    return <>
-        <Box sx={{"display": "flex", mb: 2}}>
-			<Typography variant="h6" sx={{margin: 'auto'}}><b>Your Request History</b></Typography>
-		</Box>
-        { userReqList && (<ReqsTable reqsList={userReqList} />)}
+    return (<>
+      <Box sx={{"display": "flex", mb: 2}}>
+        <Typography variant="h6" sx={{margin: 'auto'}}><b>Your Request History</b></Typography>
+      </Box>
+      { userReqList && (<ReqsTable reqsList={userReqList} />) }
         
-    </>
+    </>)
 }
 
 export default ViewRequest;
