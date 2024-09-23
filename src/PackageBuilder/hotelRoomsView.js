@@ -85,11 +85,11 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 					<Grid container spacing={2}>
 						<Grid item xs={4}>
 							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
-								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`}
+								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
 							</InputLabel>
 							
 							<RoomSearchFree 
-								userRoomRates={ rItem.roomName ? rItem : null } 
+								selectedRoom={ rItem.roomName ? rItem.roomName : null } 
 								onChange={(val) => handleRoomChange(rindex, val)}  
 								userRoomRates={roomsData}
 							/>

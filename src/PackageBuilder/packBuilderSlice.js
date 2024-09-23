@@ -30,13 +30,14 @@ export const todoSlice = createSlice({
     userData: { phone: "+917880473111", name: "Subham Dey", userId: "ajaj" },
     reqData: null,
     packageData: null,
+    newPackageData: {},
     currDayIndex: 0,
     daysArr: [],
     selectedHotels: [], // [ [day 1 hotels], [day 2 hotels].. ]
     selectedRooms: [],  // [ [ [day 1 hotel 1 room 1] , [day 1 hotel 2 room 1] ], .. ]
     hotelRates: [],
     totalDayPrices: [],
-    reqHistory: []
+    reqHistory: [],
   },
   reducers: {
     submitReqData: (state, action) => {
@@ -47,6 +48,32 @@ export const todoSlice = createSlice({
     submitPackageData: (state, action) => { // Added this line
       console.log("setPackageData reducer", state, action.payload);
       state.packageData = action.payload?.packageData;
+      console.log("PackageDataInsidePackageData:", state.packageData);
+    },
+    savePackageData: (state, action) => {
+      // const { packageData, noOfNights } = action.payload;
+
+      const newHotelArr = state.packageData.hotels[0].hotels;
+      // state.savedHotels = newSelectedHotelsArr;
+      let length = newHotelArr.length;
+      let newSelectedHotels = [];
+      let newSelectedRooms = [];
+      console.log("LENGTHIN", length);
+      for (let i = 0; i < length; i++) {
+        console.log("EACHDATA", newHotelArr[i]);
+        newSelectedHotels.push({
+          hotels: [
+            { key: newHotelArr[i].key || "", hotelName : newHotelArr[i].hotelName || "", selectedRooms: newHotelArr[i].selectedRooms || "", roomRates: newHotelArr[i].roomRates || ""}
+          ]
+        });
+        newSelectedRooms.push(newHotelArr[i].selectedRooms);
+      }
+      state.selectedHotels = newSelectedHotels;
+      state.selectedRooms = newSelectedRooms;
+      console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
+      console.log("savedHotelsCHECK2", state.selectedHotels);
+      console.log("savedHotelsCHECK3", state.selectedRooms);
+      // console.log("savedHotelsCHECK3", JSON.parse(JSON.stringify(state.selectedRooms)));
     },
     setReqsHistory: (state, action) => {
       // if(!action.reqData || isEmptyObject(action.reqData)) return;
@@ -203,6 +230,7 @@ export const todoSlice = createSlice({
 export const {
   submitReqData,
   submitPackageData,
+  savePackageData,
   onCurrDayIndexChange,
   createEmptyPackageDataDayWise,
   handleHotelSelect,
