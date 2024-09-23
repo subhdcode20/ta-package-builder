@@ -1,52 +1,51 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 const filter = createFilterOptions();
 
-const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = []}) => {
+const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates = [] }) => {
   const [value, setValue] = React.useState(selectedHotel || null);
   const [hotelsDropdownList, setHotelsDropdownList] = React.useState(userHotelRates || []);
 
   useEffect(() => {
-    if(userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
-  }, [userHotelRates])
+    if (userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
+  }, [userHotelRates]);
 
   useEffect(() => {
-    if(value !== null) onChange(value);
-  }, [value])
+    if (value !== null) onChange(value); // Call onChange with the complete hotel object
+  }, [value]);
+
+  useEffect(() => {
+    if (selectedHotel && selectedHotel.hotelName) {
+      setValue(selectedHotel.hotelName);
+    }
+  }, [selectedHotel]);
 
   console.log("hotel drop down ", value, selectedHotel, hotelsDropdownList, userHotelRates);
+
   return (
     <Autocomplete
       fullWidth
       size="small"
-      value={value || null}
+      value={value || ''}
       onChange={(event, newValue) => {
-        console.log("maindest onChange ", newValue, typeof newValue);
-        if (newValue && newValue.hotelName) {
-          // Create a new value from the user input
-          setValue(newValue.hotelName);
-          // setValue({
-          //   title: newValue.inputValue,
-          // });
-        } else {
+        if (newValue && typeof newValue === 'object' && newValue.hotelName) {
+          setValue(newValue.hotelName); // Store the hotelName as a string
+        } else if (typeof newValue === 'string') {
           setValue(newValue);
         }
-
-        setValue(newValue);
       }}
       filterOptions={(options, params) => {
-        console.log("maindest filterOptions ", options, params, filter(options, params))
         const filtered = filter(options, params);
-
         const { inputValue } = params;
+
         // Suggest the creation of a new value
         const isExisting = options.some((option) => inputValue === option.hotelName);
         if (inputValue !== '' && !isExisting) {
           filtered.push({
             hotelName: inputValue,
-            label: inputValue  //`Enter price manually for "${inputValue}"`,
+            label: inputValue,
           });
         }
 
@@ -58,16 +57,15 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       id="free-solo-with-text-demo"
       options={hotelsDropdownList}
       getOptionLabel={(option) => {
-        console.log("maindest getOptionLabel ", option, typeof option);
-        // Add "xxx" option created dynamically
-        if (option.label) {
-          return option.label;
+        if (typeof option === 'string') {
+          return option;
         }
-        // Regular option
-        return option.hotelName;
+        if (option && option.hotelName) {
+          return option.hotelName;
+        }
+        return '';
       }}
       renderOption={(props, option) => {
-        console.log("maindest renderOption ", props, option);
         const { key, ...optionProps } = props;
         return (
           <li key={key} {...optionProps}>
@@ -77,7 +75,7 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} placeholder="Seach any hotel.. " />
+        <TextField {...params} value={value || ""} placeholder="Enter hotel..." />
       )}
     />
   );
