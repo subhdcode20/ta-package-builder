@@ -11,11 +11,11 @@ const ReqsListTable = ({ reqsList = [] }) => {
 
   const handleCopy = (reqId) => {
     console.log("REQID: ", reqId);
-    navigate(`/itinerary/${reqId}/edit`)
+    navigate(`/request/${reqId}/edit`)
   };
   const handleCopyNew = (reqId) => {
     console.log("REQID: ", reqId);
-    navigate(`/itinerary/${reqId}/copy-new`)
+    navigate(`/request/${reqId}/copy-new`)
   };
 
   const columns = [
