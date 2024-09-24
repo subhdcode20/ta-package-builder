@@ -13,7 +13,7 @@ import DayWisePackageBuilder from "./PackageBuilder/index.js";
 import ViewReqsList from "./ViewRequests/index.js";
 import PackagePdf from "./PackagePdf/index.js";
 import UploadRatesheet from "./Ratesheet/index.js";
-import ReqCopy from "./AppHome/reqCopy.js";
+import ReqCopy from "./AppHome/updateReq.js";
 import ReqCopyNew from "./AppHome/reqCopyNew.js";
 
 const PBHome = loadable(

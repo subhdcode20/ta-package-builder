@@ -28,7 +28,7 @@ const ReqCopyNew = () => {
             fetchReqData(); // Call the function to fetch data when reqId is available
         }
     }, [reqId]);
-    console.log("REQDATA:", reqData)
+    console.log("REQDATA COPYNEW:", reqData)
     // let checkFlow = (!reqData) ? false : true
     let checkFlow = true;
     return (

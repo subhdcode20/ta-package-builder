@@ -77,7 +77,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 	}, []);
 
 	useEffect(() => {
-		if (isUpdateflow && requestData) {
+		if (requestData) {
 			setReqData(requestData);
 			setStartDate(new Date(requestData.startDate));
 			setChildAges(requestData.childAges || []);
@@ -172,7 +172,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 		} else {
 			console.log("No changes detected, nothing to update.");
 		}
-		// setTimeout(() => navigate("/itinerary/" + reqData.reqId));
+		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 	}
 	const handleChildAgeChange = (age, childIndex) => {
 		console.log("child age change", age, childIndex, !isNaN(age), age > MAX_CHILD_AGE);
@@ -327,7 +327,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 					error={formErrors["trackingId"]}
 					sx={{ width: "100%" }}
 					id="trackingId"
-					value={reqData.trackingId || ''}
+					value={(isUpdateflow && reqData.trackingId) || ''}
 					variant="outlined"
 					size="small"
 					onChange={(e) => handleFormChange(e, "trackingId")}
