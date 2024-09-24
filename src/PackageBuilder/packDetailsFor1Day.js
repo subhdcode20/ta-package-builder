@@ -118,7 +118,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 						<Grid item xs={12}>
 							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
 							<HotelSearchFree
-								selectedHotel={selectedHotels[hIndex] || 'Default Hotel'}
+								selectedHotel={selectedHotels[hIndex] || ''}
 								onChange={(val) => handleHotelChange(hIndex, val)}
 								userHotelRates={userHotelRates}
 							/>

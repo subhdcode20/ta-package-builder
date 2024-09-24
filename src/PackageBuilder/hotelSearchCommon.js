@@ -24,17 +24,26 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       value={value || null}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
-        if (newValue && newValue.hotelName) {
-          // Create a new value from the user input
-          setValue(newValue.hotelName);
-          // setValue({
-          //   title: newValue.inputValue,
-          // });
+        // if (newValue && newValue.hotelName) {
+        //   // Create a new value from the user input
+        //   setValue(newValue.hotelName);
+        //   // setValue({
+        //   //   title: newValue.inputValue,
+        //   // });
+        // } else {
+        //   setValue(newValue);
+        // }
+
+         // If `newValue` is a custom input, set the value accordingly
+         if (typeof newValue === 'string') {
+          setValue({ hotelName: newValue });
+        } else if (newValue && newValue.inputValue) {
+          setValue({ hotelName: newValue.inputValue });
         } else {
           setValue(newValue);
         }
 
-        setValue(newValue);
+        // setValue(newValue);
       }}
       filterOptions={(options, params) => {
         console.log("maindest filterOptions ", options, params, filter(options, params))
@@ -60,11 +69,13 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       getOptionLabel={(option) => {
         console.log("maindest getOptionLabel ", option, typeof option);
         // Add "xxx" option created dynamically
+        if (typeof option === "string") {
+          return option;
+        }
         if (option.label) {
           return option.label;
         }
-        // Regular option
-        return option.hotelName;
+        return option.hotelName || "";
       }}
       renderOption={(props, option) => {
         console.log("maindest renderOption ", props, option);
@@ -77,7 +88,7 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} placeholder="Seach any hotel.. " />
+        <TextField {...params}  placeholder={ selectedHotel?.hotelName || "Seach any hotel.. "} />
       )}
     />
   );
