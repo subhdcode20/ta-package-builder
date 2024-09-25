@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import { db, auth } from "../firebaseConfig";
 import { isEmptyObject } from '../Utility.js';
 import { nanoid } from 'nanoid';
+import  Button from '@mui/material/Button';
 // import ReqsTable from "./reqsTable.js";
 
 const ReqsTable = loadable(
@@ -91,12 +92,13 @@ const ViewRequest = () => {
 		getReqs();
 	}, [])
 
-    return <>
-        <Box sx={{"display": "flex", mb: 2}}>
-			<Typography variant="h6" sx={{margin: 'auto'}}><b>Your Request History</b></Typography>
-		</Box>
-        { userReqList && (<ReqsTable reqsList={userReqList} />)}
-    </>
+    return (<>
+      <Box sx={{"display": "flex", mb: 2}}>
+        <Typography variant="h6" sx={{margin: 'auto'}}><b>Your Request History</b></Typography>
+      </Box>
+      { userReqList && (<ReqsTable reqsList={userReqList} />) }
+        
+    </>)
 }
 
 export default ViewRequest;

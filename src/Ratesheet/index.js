@@ -16,8 +16,6 @@ import Alert from '@mui/material/Alert';
 import LoadingButton from "../Commons/LoadingButton";
 import InfoIcon from '@mui/icons-material/Info';
 
-
-
 const UploadRatesheet = () => {
     const { userId } = useParams();
     const [ratesheet, setRatesheet] = useState({

@@ -89,7 +89,6 @@ const SignUp = () => {
 
     const [companyLogoUrl, businessDocsUrl, panCardUrl, gstUrl] = await Promise.all(uploadPromises);
 
-
     const formData = {
       ...personalInfo,
       companyInfo: {
@@ -161,7 +160,7 @@ const SignUp = () => {
                 value={personalInfo.phone}
                 onChange={(e) => {
                   const phone = e.target.value;
-                  setPersonalInfo({ ...personalInfo, phone });
+                  setPersonalInfo({ ...personalInfo, "phone": `+91${phone}` });
                   if (!validatePhone(phone)) {
                     setErrors({ ...errors, phone: "Invalid phone number (10 digits required)" });
                   } else {

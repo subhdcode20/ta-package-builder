@@ -16,7 +16,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
     if(value !== null) onChange(value);
   }, [value])
 
-  console.log("hotel drop down ", value, selectedRoom, roomsDropdownList, userRoomRates);
+  console.log("hotel drop down Room", value, selectedRoom, roomsDropdownList, userRoomRates);
   return (
     <Autocomplete
       fullWidth
@@ -77,7 +77,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} placeholder="Seach room types.. " />
+        <TextField {...params} placeholder={selectedRoom || "Seach room types.. "} />
       )}
     />
   );

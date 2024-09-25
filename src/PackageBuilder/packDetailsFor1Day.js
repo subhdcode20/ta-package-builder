@@ -14,12 +14,12 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
-import {store} from '../appStore/store.js';
+import { store } from '../appStore/store.js';
 import HotelSearchFree from "./hotelSearchCommon.js";
-import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice } from './packBuilderSlice.js'; //setUserHotelRates
+import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice, savePackageData } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 
-const PackageDetailsFor1Day = ({key}) => {
+const PackageDetailsFor1Day = ({ key }) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArr = useSelector((state) => state.packBuilderData.daysArr) || [];
 	const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
@@ -32,24 +32,25 @@ const PackageDetailsFor1Day = ({key}) => {
 	const dispatch = useDispatch();
 	const currDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || '';
 	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, totalDayPrices, currDayPrice);
+	console.log("userHotelRates", userHotelRates, "\ncurrentDayIndex", currentDayIndex, "\nselectedHotels", selectedHotels, "\ntotalDayPrices", totalDayPrices, "\ncurrDayPrice", currDayPrice);
 
 	useEffect(() => {
-		if(!reqData || !reqData?.destination || !userData?.phone) return;
+		if (!reqData || !reqData?.destination || !userData?.phone) return;
 		console.log("reqtest- get Hotel rates", reqData, userData);
 		const getUserHotelRates = async () => {
-			const { destination} = reqData || {};
+			const { destination } = reqData || {};
 			console.log("reqtest- getUserHotelRates reducer", destination, userData?.phone);
-			if(!destination || !userData?.phone) return; // TODO show page error
+			if (!destination || !userData?.phone) return; // TODO show page error
 			let docName = `${userData?.phone}-${destination.toLowerCase()}`;
 			let docSnap = await getDoc(doc(db, "userHotels", docName));
 			if (docSnap.exists()) {
-			    let ratesData = docSnap.data();
+				let ratesData = docSnap.data();
 				console.log("reqtest- user hotel rates data ", ratesData);
 				// setBookingPartnerDetails(docSnap.data());
 				// setReqData(docSnap.data());
-			    // state.hotelRates = ratesData?.hotels || [];
+				// state.hotelRates = ratesData?.hotels || [];
 				// dispatch(setUserHotelRates({ ratesData }));
-				if(ratesData?.hotels) setUserHotelRates(ratesData?.hotels);
+				if (ratesData?.hotels) setUserHotelRates(ratesData?.hotels);
 			} else {
 				console.error(`reqtest- user hotel rates not forund for ${docName}`);
 				// TODO show page error
@@ -62,20 +63,20 @@ const PackageDetailsFor1Day = ({key}) => {
 
 	const handleHotelChange = (hotelIndex, data) => {
 		// handleDataChange(hotelIndex, data);
-		dispatch(handleHotelSelect({hotelIndex, data}));
+		dispatch(handleHotelSelect({ hotelIndex, data }));
 	}
 
 	const addHoteltoCurrDay = () => {
 		console.log("addHoteltoCurrDay");
-  		dispatch(addNewHotelToCurrDay());
+		dispatch(addNewHotelToCurrDay());
 	}
 
 	const checkPricefor1Day = () => {
 		console.log("checkPricefor1Day", selectedHotels);
 		let totalHotelPriceForCurrDay = selectedHotels.reduce((acc, h) => {
 			let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
-				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {}  } = r;
-				if(!mp) {
+				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {} } = r;
+				if (!mp) {
 					// TODO: show validation error
 					return 0;
 				}
@@ -85,15 +86,15 @@ const PackageDetailsFor1Day = ({key}) => {
 				// 	rAcc += Number(rPrice) * Number(selectedOccupancy?.adults);
 				// 	return rAcc + Number(childPrice) * Number(selectedOccupancy?.child);
 				// } else if(roomPrice) {
-					return rAcc + Number(roomPrice);
+				return rAcc + Number(roomPrice);
 				// }
 			}, 0);
 			console.log("checkPricefor1Day 1Hotel", acc + totalRoomsPriceForCurrHotel);
 			return acc + totalRoomsPriceForCurrHotel;
 		}, 0);
 		dispatch(setHotelPriceForCurrDay({
-			totalHotelPriceForCurrDay, 
-			selectedHotelCurrDay: selectedHotels, 
+			totalHotelPriceForCurrDay,
+			selectedHotelCurrDay: selectedHotels,
 			copyDetailsToDays: selectedDaysToCopyDetails
 		}));
 	}
@@ -107,7 +108,7 @@ const PackageDetailsFor1Day = ({key}) => {
 			}
 		})
 	}
-
+	console.log("SELECTEDHOTEL:", selectedHotels);
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
@@ -115,10 +116,10 @@ const PackageDetailsFor1Day = ({key}) => {
 					<Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>Hotel {`${hIndex + 1}`}</Typography>
 					<Grid container spacing={1}>
 						<Grid item xs={12}>
-							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{fontSize: 12}}>Select Hotel*</InputLabel>
-							<HotelSearchFree 
-								selectedHotel={ selectedHotels[hIndex] || null } 
-								onChange={(val) => handleHotelChange(hIndex, val)}  
+							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
+							<HotelSearchFree
+								selectedHotel={selectedHotels[hIndex] || ''}
+								onChange={(val) => handleHotelChange(hIndex, val)}
 								userHotelRates={userHotelRates}
 							/>
 							{/* {<Autocomplete
@@ -153,7 +154,7 @@ const PackageDetailsFor1Day = ({key}) => {
 						      )}
 						    />} */}
 						</Grid>
-						{ !isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
+						{!isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
 					<Grid item xs={12}>
 						<hr />
@@ -161,25 +162,25 @@ const PackageDetailsFor1Day = ({key}) => {
 				</Grid>)
 			})
 		}
-		
+
 		<Grid item xs={12}>
 			<Box display="flex" justifyContent="space-between">
 				<Button size="small" variant="outlined" onClick={addHoteltoCurrDay}>Add Hotel +</Button>
 				<Box display="flex">
 					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography>
-					<FormGroup row={true} sx={{display: "flex"}}>
+					<FormGroup row={true} sx={{ display: "flex" }}>
 						{
 							(daysArr || []).map((aa, aIndex) => {
 								let dayNo = aIndex + 1;
-								console.log("copy day render ",daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
-								if(aIndex > currentDayIndex) {
-									return (<FormControlLabel 
-											control={<Checkbox  />} 
-											label={`Day ${dayNo}`}
-											checked={selectedDaysToCopyDetails[dayNo]}
-											onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
-											inputProps={{ 'aria-label': 'controlled' }}
-										/>)
+								console.log("copy day render ", daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
+								if (aIndex > currentDayIndex) {
+									return (<FormControlLabel
+										control={<Checkbox />}
+										label={`Day ${dayNo}`}
+										checked={selectedDaysToCopyDetails[dayNo]}
+										onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
+										inputProps={{ 'aria-label': 'controlled' }}
+									/>)
 								} else return null
 							})
 						}

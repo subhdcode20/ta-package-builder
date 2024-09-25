@@ -13,6 +13,8 @@ import DayWisePackageBuilder from "./PackageBuilder/index.js";
 import ViewReqsList from "./ViewRequests/index.js";
 import PackagePdf from "./PackagePdf/index.js";
 import UploadRatesheet from "./Ratesheet/index.js";
+import ReqCopy from "./AppHome/updateReq.js";
+import ReqCopyNew from "./AppHome/reqCopyNew.js";
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -67,6 +69,24 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/request/:reqId/edit",
+    element: (
+      <AppLayout>
+        <ReqCopy   />
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/request/:reqId/copy-new",
+    element: (
+      <AppLayout>
+        <ReqCopyNew />
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/my-reqs",
     element: (
       <AppLayout> 
@@ -85,7 +105,9 @@ const router = createBrowserRouter([
   {
     path: "/upload-ratesheet",
     element: (
-      <UploadRatesheet/>
+      <AppLayout>
+        <UploadRatesheet/>
+      </AppLayout>
     ),
     errorElement: <ErrorPage />,
   },

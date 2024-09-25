@@ -34,7 +34,7 @@ const pages = [
   },
   {
     name: "Upload Your Rates",
-    link: "/my-rates",
+    link: "/upload-ratesheet",
   },
   {
     name: "Logout",

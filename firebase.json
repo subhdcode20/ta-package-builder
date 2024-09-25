@@ -49,7 +49,7 @@
       "enabled": true
     },
     "singleProjectMode": true
-  }
+  },
   "storage": {
     "rules": "storage.rules"
   }
