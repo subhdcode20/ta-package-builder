@@ -18,6 +18,7 @@ import MainDestSelect from "./mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
 import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
+import LoadingButton from '../Commons/LoadingButton.jsx';
 
 const initialFormData = {
 	destination: "",
@@ -39,7 +40,7 @@ const requiredFields = [
 	"starCategory"
 ];
 
-const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) => {
+const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) => {
 	const [destination, setDestination] = useState("");
 	const [reqData, setReqData] = useState({ ...initialFormData, destination });
 	const [childAges, setChildAges] = useState([]);
@@ -83,6 +84,9 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 			setChildAges(requestData.childAges || []);
 			setDestination(requestData.destination || '');
 		}
+		if (requestData && copyNew) {
+			requestData.trackingId = "";
+		}
 	}, [requestData]);
 
 	const handleDestSelect = (e) => {
@@ -114,14 +118,20 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 	useEffect(() => {
 		if (!reqData.childPax || reqData.childPax <= 0) return;
 		let newChildAges = [];
+		let len = childAges.length;
 		for (let ii = 0; ii < reqData.childPax; ii++) {
-			newChildAges.push(null);
+			if (ii < len) {
+				newChildAges.push(childAges[ii]);
+			} else {
+				newChildAges.push(null);
+			}
 		}
 		console.log("child age effect ", reqData.childPax, newChildAges)
 		setChildAges(newChildAges);
 	}, [reqData.childPax])
 
 	const handlePost = async () => {
+		setButtonLoading(true);
 		console.log("new Req post: ", reqData, childAges);
 		// TODO: handle data validation, show validation errors
 
@@ -140,9 +150,16 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 		}, { merge: true });
 		console.log("new Req post 2: ", reqData, newReqId, reqRef, userPackRef);
 		// return;
+		// if (copyNew) {
+		// 	setTimeout(() => navigate(`/request/${newReqId}/copy-new`));
+		// }
+		// else {
 		setTimeout(() => navigate("/itinerary/" + newReqId));
+		// }
+		setButtonLoading(false);
 	}
 	const handleUpdatePost = async () => {
+		setButtonLoading(true);
 		console.log("Updating Request: ", reqData, childAges);
 
 		let updatedFields = {};
@@ -156,33 +173,43 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 		if (reqData.childPax !== requestData.childPax) {
 			updatedFields.childPax = reqData.childPax;
 		}
-		
+
 		if (reqData.starCategory !== requestData.starCategory) {
 			updatedFields.starCategory = reqData.starCategory;
 		}
-		if (reqData.destination !== requestData.destination) {	
+		if (reqData.destination !== requestData.destination) {
 			updatedFields.destination = reqData.destination;
 		}
+		updatedFields.childAges = childAges;
 
 		if (Object.keys(updatedFields).length > 0 || childAges.length > 0) {
-			updatedFields.updatedAt = Date.now(); 
+			updatedFields.updatedAt = Date.now();
 			dispatch(submitReqData({ reqData }));
-			await updateDoc(doc(db, "requests", reqData.reqId),{ ...updatedFields, childAges});
+			await updateDoc(doc(db, "requests", requestData.reqId), updatedFields);
 			console.log("Updated fields: ", updatedFields);
 		} else {
 			console.log("No changes detected, nothing to update.");
 		}
-		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
+		setTimeout(() => navigate("/request/" + requestData.reqId + "/edit"));
+		setButtonLoading(false);
 	}
 	const handleChildAgeChange = (age, childIndex) => {
 		console.log("child age change", age, childIndex, !isNaN(age), age > MAX_CHILD_AGE);
+		console.log("MAXAGE: ", MAX_CHILD_AGE, childIndex, age);
 		if (isNaN(age)) return;
 		if (age > MAX_CHILD_AGE) {
 			// TODO: show error
 			return;
 		}
-		let newChildAges = [...childAges];
+		console.log("PREVIOUSAGE", childAges);
+		let newChildAges = childAges;
+		if (newChildAges.length < childIndex) {
+			for (let i = newChildAges.length; i <= childIndex; i++) {
+				newChildAges[i] = null;
+			}
+		}
 		newChildAges[childIndex] = Number(age);
+		console.log("NEWCHILDRENAGES", newChildAges);
 		setChildAges(newChildAges);
 	}
 
@@ -327,16 +354,17 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 					error={formErrors["trackingId"]}
 					sx={{ width: "100%" }}
 					id="trackingId"
-					value={(isUpdateflow && reqData.trackingId) || ''}
+					value={reqData.trackingId || ''}
 					variant="outlined"
 					size="small"
-					onChange={(e) => handleFormChange(e, "trackingId")}
+					onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
 				/>
 			</Grid>
 
 			<Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
 				{(isUpdateflow) ?
-					(<Button
+
+					(<LoadingButton
 						sx={{ mt: 4, mb: 2, textAlign: "right" }}
 						loading={buttonLoading}
 						onClick={handleUpdatePost}
@@ -344,9 +372,9 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 						size="small"
 					>
 						Update Request&nbsp;
-					</Button>)
+					</LoadingButton>)
 					:
-					(<Button
+					(<LoadingButton
 						sx={{ mt: 4, mb: 2, textAlign: "right" }}
 						loading={buttonLoading}
 						onClick={handlePost}
@@ -354,7 +382,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew=false }) =>
 						size="small"
 					>
 						Save Request&nbsp;
-					</Button>)}
+					</LoadingButton>)}
 			</Grid>
 		</Grid>
 	</>)

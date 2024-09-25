@@ -67,6 +67,12 @@ const ReqsListTable = ({ reqsList = [] }) => {
     {
       field: 'trackingId',
       headerName: 'Tracking ID',
+      width: 110,
+      editable: true,
+    },
+    {
+      field: '',
+      headerName: '',
       width: 250,
       editable: true,
       renderCell: (params) => (
