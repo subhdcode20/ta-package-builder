@@ -82,7 +82,7 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
+        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} placeholder={destination || ''}/>
       )}
     />
   </>);

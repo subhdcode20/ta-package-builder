@@ -76,7 +76,8 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		}));
 	}
 
-	console.log("room builder render ", hotelData, hotelData.selectedRooms, roomsData);
+	console.log("room builder render HotelRoomView", hotelData, hotelData.selectedRooms, roomsData);
+	console.log("ROOMDATA", roomsData[0]?.occupancy?.child)
 	return (<Grid container spacing={2} sx={{padding: 2}}>
 		{
 			(hotelData?.selectedRooms || []).map((rItem, rindex) => {
@@ -85,11 +86,11 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 					<Grid container spacing={2}>
 						<Grid item xs={4}>
 							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
-								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`}
+								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
 							</InputLabel>
 							
 							<RoomSearchFree 
-								userRoomRates={ rItem.roomName ? rItem : null } 
+								selectedRoom={ rItem.roomName ? rItem.roomName : null } 
 								onChange={(val) => handleRoomChange(rindex, val)}  
 								userRoomRates={roomsData}
 							/>
@@ -131,7 +132,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "adults")} 
-								value={rItem?.selectedOccupancy?.adults}
+								value={roomsData[0]?.occupancy?.adults || rItem?.selectedOccupancy?.adults}
 							/>
 						</Grid>
 						<Grid item xs={2}>
@@ -140,7 +141,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "child")} 
-								value={rItem?.selectedOccupancy?.child}
+								value={ roomsData[0]?.occupancy?.child  || rItem?.selectedOccupancy?.child}
 							/>
 						</Grid>
 				    </Grid>

@@ -1,20 +1,25 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { set } from "date-fns";
 
 const filter = createFilterOptions();
 
-const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = []}) => {
+const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates = [] }) => {
   const [value, setValue] = React.useState(selectedHotel || null);
   const [hotelsDropdownList, setHotelsDropdownList] = React.useState(userHotelRates || []);
 
   useEffect(() => {
-    if(userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
+    if (userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
   }, [userHotelRates])
 
   useEffect(() => {
-    if(value !== null) onChange(value);
+    if (value !== null) onChange(value);
   }, [value])
+
+  useEffect(() => {
+    setValue(selectedHotel);
+  }, [selectedHotel])
 
   console.log("hotel drop down ", value, selectedHotel, hotelsDropdownList, userHotelRates);
   return (
@@ -34,7 +39,16 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
           setValue(newValue);
         }
 
-        setValue(newValue);
+        // If `newValue` is a custom input, set the value accordingly
+        //  if (typeof newValue === 'string') {
+        //   setValue({ hotelName: newValue });
+        // } else if (newValue && newValue.inputValue) {
+        //   setValue({ hotelName: newValue.inputValue });
+        // } else {
+        //   setValue(newValue);
+        // }
+
+        // setValue(newValue);
       }}
       filterOptions={(options, params) => {
         console.log("maindest filterOptions ", options, params, filter(options, params))
@@ -60,11 +74,13 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       getOptionLabel={(option) => {
         console.log("maindest getOptionLabel ", option, typeof option);
         // Add "xxx" option created dynamically
+        // if (typeof option === "string") {
+        //   return option;
+        // }
         if (option.label) {
           return option.label;
         }
-        // Regular option
-        return option.hotelName;
+        return option.hotelName 
       }}
       renderOption={(props, option) => {
         console.log("maindest renderOption ", props, option);
@@ -77,7 +93,7 @@ const FreeSoloCreateOption = ({selectedHotel = null, onChange, userHotelRates = 
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} placeholder="Seach any hotel.. " />
+        <TextField {...params} placeholder="Seach any hotel.." />
       )}
     />
   );
