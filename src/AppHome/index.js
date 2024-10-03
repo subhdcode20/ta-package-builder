@@ -190,7 +190,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		} else {
 			console.log("No changes detected, nothing to update.");
 		}
-		setTimeout(() => navigate("/request/" + requestData.reqId + "/edit"));
+		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 		setButtonLoading(false);
 	}
 	const handleChildAgeChange = (age, childIndex) => {
@@ -215,7 +215,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 
 	console.log("child home render ", childAges, storeReqData)
 	console.log("DESTINATION", destination)
-	return (<>
+	return (<Box maxWidth={'md'}>
 		<Box sx={{ "display": "flex", mb: 2 }}>
 			<Typography variant="h6" sx={{ margin: 'auto' }}><b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b></Typography>
 		</Box>
@@ -268,10 +268,10 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 				/>
 			</Grid>
 
-			<Grid item xs={4}>
+			<Grid item xs={4} display="flex">
 				{
 					childAges.map((c, cIndex) => {
-						return (<Grid item xs={3}>
+						return (<Grid item xs={12} md={4} lg={4} sx={{mr: 1}}>
 							<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
 							<TextField
 								error={formErrors["childPax"]}
@@ -385,7 +385,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					</LoadingButton>)}
 			</Grid>
 		</Grid>
-	</>)
+	</Box>)
 }
 
 export default AppHome;

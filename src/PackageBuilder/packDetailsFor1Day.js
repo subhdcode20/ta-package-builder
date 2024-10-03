@@ -11,24 +11,29 @@ import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import CircularProgress from '@mui/material/CircularProgress';
+import parse from "html-react-parser";
 
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import { store } from '../appStore/store.js';
 import HotelSearchFree from "./hotelSearchCommon.js";
-import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, todoSlice, savePackageData } from './packBuilderSlice.js'; //setUserHotelRates
+import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, setItineraryDesc } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
+import { aiHotelDetails } from "./geminiComponents.js";
 
 const PackageDetailsFor1Day = ({ key }) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
-	const daysArr = useSelector((state) => state.packBuilderData.daysArr) || [];
 	const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
+	const daysArr = useSelector((state) => state.packBuilderData.daysArr) || [];
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const userData = useSelector((state) => state.packBuilderData.userData) || {};
 	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
+	const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
 	// const userHotelRates = useSelector((state) => state.packBuilderData.hotelRates) || [];
 	const [userHotelRates, setUserHotelRates] = useState([]);
 	const [selectedDaysToCopyDetails, setSelectedDaysToCopyDetails] = useState({});
+	const [ geminiLoading, setGeminiLoading] = useState(false);
 	const dispatch = useDispatch();
 	const currDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || '';
 	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, totalDayPrices, currDayPrice);
@@ -108,53 +113,58 @@ const PackageDetailsFor1Day = ({ key }) => {
 			}
 		})
 	}
-	console.log("SELECTEDHOTEL:", selectedHotels);
+
+	const generateItineraryDay1 = async () => {
+		console.log(reqData, selectedHotels, 'gemRes -- ');
+		setGeminiLoading(true);
+		let gemRes = await aiHotelDetails({ reqData, selectedHotels});
+		setGeminiLoading(false);
+		dispatch(setItineraryDesc({text: gemRes}))
+	}
+
+	console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]?.location);
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
 				return (<Grid item xs={12}>
 					<Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>Hotel {`${hIndex + 1}`}</Typography>
 					<Grid container spacing={1}>
-						<Grid item xs={12}>
-							<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
-							<HotelSearchFree
-								selectedHotel={selectedHotels[hIndex] || ''}
-								onChange={(val) => handleHotelChange(hIndex, val)}
-								userHotelRates={userHotelRates}
-							/>
-							{/* {<Autocomplete
-						      fullWidth
-						      size="small"
-						      value={ selectedHotels[hIndex] || null }
-						      onChange={(event, newValue) => {
-						      	 console.log("hotel selected", newValue)
-						         handleHotelChange(hIndex, newValue);
-						      }}
-						      selectOnFocus
-						      clearOnBlur
-						      handleHomeEndKeys
-						      id="hotel-name"
-						      options={userHotelRates}
-						      getOptionLabel={(option) => {
-						        console.log("hotel getOptionLabel ", option, typeof option);
-						        // Regular option
-						        return option.hotelName;
-						      }}
-						      renderOption={(props, option) => {
-						        console.log("maindest renderOption ", props, option);
-						        const { key, ...optionProps } = props;
-						        return (
-						          <li key={key} {...optionProps}>
-						            {option.hotelName}
-						          </li>
-						        );
-						      }}
-						      renderInput={(params) => (
-						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
-						      )}
-						    />} */}
+						<Grid item xs={12} display={'flex'} justifyContent={'space-between'}>
+							<Grid item xs={8} md={10}>
+								<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
+								<HotelSearchFree
+									selectedHotel={selectedHotels[hIndex] || ''}
+									onChange={(val) => handleHotelChange(hIndex, val)}
+									userHotelRates={userHotelRates}
+								/>
+							</Grid>
+							&nbsp;
+							<Grid item xs={4}>
+								<InputLabel id={`room-day${hIndex + 1}`} sx={{fontSize: 12}}>
+									Location:
+								</InputLabel>
+								<TextField variant="outlined" size="small" 
+									value={selectedHotels[hIndex]?.location || ''}
+								/>
+							</Grid>
 						</Grid>
 						{!isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
+					</Grid>
+					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{mt: 0}}>
+						<Button size="small" variant="outlined" onClick={generateItineraryDay1} sx={{ width: 'fit-content' }}>
+							Generate Itinerary for Day {currentDayIndex + 1}
+							{
+								geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }}/>
+							}
+						</Button>
+						{
+							itineraryDesc[currentDayIndex]?.text && (<>
+								<InputLabel id={'iti-desc'} sx={{ fontSize: 12 }}>Itinerary Description:</InputLabel>
+								<Box sx={{ border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1  }}>
+									<small>{parse(itineraryDesc[currentDayIndex]?.text)}</small>
+								</Box>
+							</>)
+						}
 					</Grid>
 					<Grid item xs={12}>
 						<hr />

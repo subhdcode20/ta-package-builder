@@ -33,7 +33,7 @@ const ReqCardView = ({ reqData = {} }) => {
 
             <div style={{display: 'flex'}}>
                 <EventNoteIcon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{format(new Date(startDate), "dd-MMMM-yyyy")}</Typography>
+                <Typography variant="body1" sx={{margin: "auto"}}>{format(new Date(startDate), "dd-MMM-yyyy")}</Typography>
                 &nbsp;
             </div>
 

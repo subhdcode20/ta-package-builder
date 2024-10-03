@@ -6,8 +6,10 @@ import { set } from "date-fns";
 const filter = createFilterOptions();
 
 const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates = [] }) => {
-  const [value, setValue] = React.useState(selectedHotel || null);
+  const [defaultValue, setDefaultValue] = React.useState(selectedHotel || null);
+  const [value, setValue] = React.useState(null);
   const [hotelsDropdownList, setHotelsDropdownList] = React.useState(userHotelRates || []);
+  console.log("hotel search rnder ", selectedHotel)
 
   useEffect(() => {
     if (userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
@@ -18,7 +20,7 @@ const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates =
   }, [value])
 
   useEffect(() => {
-    setValue(selectedHotel);
+    setDefaultValue(selectedHotel);
   }, [selectedHotel])
 
   console.log("hotel drop down ", value, selectedHotel, hotelsDropdownList, userHotelRates);
@@ -26,12 +28,12 @@ const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates =
     <Autocomplete
       fullWidth
       size="small"
-      value={value || null}
+      value={defaultValue || value || null}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
         if (newValue && newValue.hotelName) {
           // Create a new value from the user input
-          setValue(newValue.hotelName);
+          setValue(newValue);
           // setValue({
           //   title: newValue.inputValue,
           // });
