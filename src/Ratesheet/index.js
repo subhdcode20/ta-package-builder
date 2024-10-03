@@ -83,15 +83,16 @@ const UploadRatesheet = () => {
                 justifyContent: "center",
                 minHeight: "90vh",
                 padding: 2,
-                borderRadius: 2,
-                boxShadow: 3,
-                bgcolor: "#f9f9f9"
+                borderRadius: 4, // Increased border radius
+                border: "2px solid #ccc", // Added border
+                bgcolor: "transparent" // Removed background color
             }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4, mt: 0 }}>
                     <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: "5px", marginTop: "0px" }}>
                         Upload Ratesheet
                     </Typography>
                 </Box>
+
                 <Box sx={{ mb: 2 }}>
                     <TextField
                         label="Destination"
@@ -170,21 +171,19 @@ const UploadRatesheet = () => {
                     </Button>
                 </Box>
 
-
                 <Box sx={{ mb: 3 }}>
                     <Box sx={{ display: 'flex', alignItems: "center", flexWrap: 'wrap', gap: 1 }}>
                         <Typography>
                             <InfoIcon color='primary' style={{ verticalAlign: 'middle', marginRight: "3px" }} />
                             To Download RateSheet Template
-                        </Typography>                     <Link href={url} target="_blank">
+                        </Typography>
+                        <Link href={url} target="_blank">
                             <Button variant="outlined" size="small" color="primary">
                                 Click here
                             </Button>
                         </Link>
                     </Box>
                 </Box>
-
-
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', mt: 5, mb: 2 }}>
                     <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
@@ -197,6 +196,7 @@ const UploadRatesheet = () => {
                     )}
                 </Box>
             </Box>
+
             <PopUp
                 open={submitMsg}
                 onClose={handleSubmitMsg}
@@ -206,6 +206,7 @@ const UploadRatesheet = () => {
                 onClick={handleSubmitMsg}
             />
         </Container>
+
 
     );
 };
