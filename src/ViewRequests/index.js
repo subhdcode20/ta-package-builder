@@ -19,7 +19,7 @@ import  Button from '@mui/material/Button';
 const ReqsTable = loadable(
     () => import('./reqsTable.js'), 
     { 
-      fallback: <p>OOps...</p>
+      fallback: <p>Loading...</p>
     }
   );
 
