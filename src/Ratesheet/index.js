@@ -76,7 +76,7 @@ const UploadRatesheet = () => {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                minHeight: "90vh",
+                // minHeight: "90vh",
                 padding: 2,
                 borderRadius: 4,
                 border: "1px solid #ccc",
@@ -84,7 +84,7 @@ const UploadRatesheet = () => {
                 paddingX:3,
             }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px', marginTop:1 }}>
                         Upload Ratesheet
                     </Typography>
                 </Box>

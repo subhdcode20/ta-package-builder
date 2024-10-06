@@ -96,9 +96,9 @@ const DayWisePackageBuilder = () => {
 		console.log("PACKAGEDATASTORE:", storePackageData);
 		console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
 		console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
-		return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'}>
+		return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
 			<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
-				<Typography variant="h6" ><b>Select Itinerary Details</b></Typography>
+				<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
 				<Box>
 					{reqData && <ReqDataView reqData={reqData} />}
 					{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
