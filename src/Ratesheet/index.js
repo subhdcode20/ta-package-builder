@@ -89,7 +89,6 @@ const UploadRatesheet = () => {
                     </Typography>
                 </Box>
 
-                {/* Destination Input */}
                 <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontSize: 12 }}>Destination*</InputLabel>
                     <TextField
@@ -101,7 +100,6 @@ const UploadRatesheet = () => {
                     />
                 </Box>
 
-                {/* Total Nights Input */}
                 <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
                     <TextField
@@ -113,7 +111,6 @@ const UploadRatesheet = () => {
                     />
                 </Box>
 
-                {/* Rate Sheet Validity */}
                 <Box sx={{ mb: 3 }}>
                     <Typography sx={{ fontSize: "14px", fontWeight: 'bold' }}>
                         Rate Sheet Validity*
@@ -147,7 +144,6 @@ const UploadRatesheet = () => {
                     </Box>
                 </Box>
 
-                {/* File Upload */}
                 <Box sx={{ mb: 3 }}>
                     <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
                     <Button variant="contained" component="label" sx={{ width: "50%" }}>
@@ -160,7 +156,6 @@ const UploadRatesheet = () => {
                     </Button>
                 </Box>
 
-                {/* Download Template */}
                 <Box sx={{ mb: 3, display: 'flex', alignItems: "center", gap: 1 }}>
                     <InfoIcon color='primary' fontSize="small" />
                     <Typography sx={{ fontSize: 13 }}>To Download RateSheet Template</Typography>
@@ -171,7 +166,6 @@ const UploadRatesheet = () => {
                     </Link>
                 </Box>
 
-                {/* Submit Button */}
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                     <LoadingButton
                         loading={loading}
@@ -184,7 +178,6 @@ const UploadRatesheet = () => {
                     </LoadingButton>
                 </Box>
 
-                {/* Error Message */}
                 {missingInput && (
                     <Alert severity="error" sx={{ mt: 2, fontSize: 12 }}>
                         Please fill all the required fields.
@@ -192,7 +185,6 @@ const UploadRatesheet = () => {
                 )}
             </Box>
 
-            {/* Success Popup */}
             <PopUp
                 open={submitMsg}
                 onClose={handleSubmitMsg}
