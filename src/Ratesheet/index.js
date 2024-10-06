@@ -3,13 +3,11 @@ import { useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import CssBaseline from "@mui/material/CssBaseline";
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { db, storage } from '../firebaseConfig';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
+import { storage } from '../firebaseConfig';
 import PopUp from '../Commons/messagePopUp';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
@@ -30,7 +28,7 @@ const UploadRatesheet = () => {
     const [loading, setLoading] = useState(false);
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
-    const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0 ";
+    const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -56,9 +54,7 @@ const UploadRatesheet = () => {
             setMissingInput(true);
             return;
         }
-
         setLoading(true);
-
         // ==> TO CHANGE <==
         // let docRef = doc(db, "userHotels", `+91${userId}`);
         // await updateDoc(docRef, {
@@ -74,9 +70,8 @@ const UploadRatesheet = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+        <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
             <CssBaseline />
-
             <Box sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -84,113 +79,120 @@ const UploadRatesheet = () => {
                 minHeight: "90vh",
                 padding: 2,
                 borderRadius: 4,
-                border: "2px solid #ccc",
-                bgcolor: "transparent"
+                border: "1px solid #ccc",
+                bgcolor: "transparent",
+                paddingX:3,
             }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4, mt: 0 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: "5px", marginTop: "0px" }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px' }}>
                         Upload Ratesheet
                     </Typography>
                 </Box>
 
+                {/* Destination Input */}
                 <Box sx={{ mb: 2 }}>
-                    <InputLabel id="destination" error={formErrors["destination"]} sx={{ fontSize: 12 }}>Destination*</InputLabel>
+                    <InputLabel sx={{ fontSize: 12 }}>Destination*</InputLabel>
                     <TextField
                         name="destination"
                         value={ratesheet.destination}
                         onChange={handleInputChange}
                         fullWidth
                         size="small"
-                        required
                     />
                 </Box>
 
-                <Box sx={{ mb: 3 }}>
-                    <InputLabel id="hotelName" error={formErrors["hotelName"]} sx={{ fontSize: 12 }}>Hotel Name*</InputLabel>
+                {/* Total Nights Input */}
+                <Box sx={{ mb: 2 }}>
+                    <InputLabel sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
                     <TextField
                         name="hotelName"
                         value={ratesheet.hotelName}
                         onChange={handleInputChange}
                         fullWidth
                         size="small"
-                        required
                     />
                 </Box>
 
+                {/* Rate Sheet Validity */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography sx={{ fontSize: "16px" }}>Rate Sheet Validity*</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body1" sx={{ mr: 2 }}>From</Typography>
+                    <Typography sx={{ fontSize: "14px", fontWeight: 'bold' }}>
+                        Rate Sheet Validity*
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap:'wrap' , alignItems: 'center', justifyContent: 'flex-start' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography sx={{ mr: 1, fontSize: 12 }}>
+                                From
+                            </Typography>
                             <TextField
                                 type="date"
                                 name="startDate"
                                 value={ratesheet.startDate}
                                 onChange={handleInputChange}
-                                fullWidth
                                 size="small"
-                                required
                             />
                         </Box>
-                        <Typography sx={{ mx: 1 }}>-</Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body1" sx={{ mr: 2 }}>To</Typography>
+                        <Typography sx={{ mx: 1, fontSize: 12 }}>-</Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography sx={{ mr: 1, fontSize: 12 }}>
+                                To
+                            </Typography>
                             <TextField
                                 type="date"
                                 name="endDate"
                                 value={ratesheet.endDate}
                                 onChange={handleInputChange}
-                                fullWidth
                                 size="small"
-                                required
                             />
                         </Box>
                     </Box>
                 </Box>
 
+                {/* File Upload */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography sx={{ fontSize: "16px", marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
-                    <Button
-                        variant="contained"
-                        component="label"
-                        sx={{ width: "50%" }}
-                    >
+                    <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
+                    <Button variant="contained" component="label" sx={{ width: "50%" }}>
                         <input
                             type="file"
                             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             onChange={handleFileChange}
                             style={{ width: '100%' }}
-                            required
                         />
                     </Button>
                 </Box>
 
-                <Box sx={{ mb: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: "center", flexWrap: 'wrap', gap: 1 }}>
-                        <Typography>
-                            <InfoIcon color='primary' style={{ verticalAlign: 'middle', marginRight: "3px" }} />
-                            To Download RateSheet Template
-                        </Typography>
-                        <Link href={url} target="_blank">
-                            <Button variant="outlined" size="small" color="primary">
-                                Click here
-                            </Button>
-                        </Link>
-                    </Box>
+                {/* Download Template */}
+                <Box sx={{ mb: 3, display: 'flex', alignItems: "center", gap: 1 }}>
+                    <InfoIcon color='primary' fontSize="small" />
+                    <Typography sx={{ fontSize: 13 }}>To Download RateSheet Template</Typography>
+                    <Link href={url} target="_blank">
+                        <Button variant="outlined" size="small">
+                            Click here
+                        </Button>
+                    </Link>
                 </Box>
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', mt: 5, mb: 2 }}>
-                    <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
+                {/* Submit Button */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <LoadingButton
+                        loading={loading}
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit}
+                        size="small"
+                    >
                         Submit
                     </LoadingButton>
-                    {missingInput && (
-                        <Alert severity="error" sx={{ mt: 2 }}>
-                            Fill all the required data.
-                        </Alert>
-                    )}
                 </Box>
+
+                {/* Error Message */}
+                {missingInput && (
+                    <Alert severity="error" sx={{ mt: 2, fontSize: 12 }}>
+                        Please fill all the required fields.
+                    </Alert>
+                )}
             </Box>
 
+            {/* Success Popup */}
             <PopUp
                 open={submitMsg}
                 onClose={handleSubmitMsg}
