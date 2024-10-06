@@ -15,6 +15,7 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import LoadingButton from "../Commons/LoadingButton";
 import InfoIcon from '@mui/icons-material/Info';
+import InputLabel from '@mui/material/InputLabel';
 
 const UploadRatesheet = () => {
     const { userId } = useParams();
@@ -25,11 +26,11 @@ const UploadRatesheet = () => {
         endDate: '',
         ratesheetRef: null,
     });
+    const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0 ";
-
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -50,9 +51,7 @@ const UploadRatesheet = () => {
         }
     };
 
-
     const handleSubmit = async () => {
-
         if (!ratesheet.destination || !ratesheet.hotelName || !ratesheet.startDate || !ratesheet.endDate) {
             setMissingInput(true);
             return;
@@ -61,8 +60,7 @@ const UploadRatesheet = () => {
         setLoading(true);
 
         // ==> TO CHANGE <==
-
-        // let docRef = doc(db, "userHotels", `+91${userId}`); 
+        // let docRef = doc(db, "userHotels", `+91${userId}`);
         // await updateDoc(docRef, {
         //     "companyInfo.rateSheet": ratesheet,
         // });
@@ -70,9 +68,11 @@ const UploadRatesheet = () => {
         setLoading(false);
         setSubmitMsg(true);
     };
+
     const handleSubmitMsg = () => {
         setSubmitMsg(false);
     };
+
     return (
         <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
             <CssBaseline />
@@ -83,9 +83,9 @@ const UploadRatesheet = () => {
                 justifyContent: "center",
                 minHeight: "90vh",
                 padding: 2,
-                borderRadius: 4, // Increased border radius
-                border: "2px solid #ccc", // Added border
-                bgcolor: "transparent" // Removed background color
+                borderRadius: 4,
+                border: "2px solid #ccc",
+                bgcolor: "transparent"
             }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4, mt: 0 }}>
                     <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: "5px", marginTop: "0px" }}>
@@ -94,8 +94,8 @@ const UploadRatesheet = () => {
                 </Box>
 
                 <Box sx={{ mb: 2 }}>
+                    <InputLabel id="destination" error={formErrors["destination"]} sx={{ fontSize: 12 }}>Destination*</InputLabel>
                     <TextField
-                        label="Destination"
                         name="destination"
                         value={ratesheet.destination}
                         onChange={handleInputChange}
@@ -106,8 +106,8 @@ const UploadRatesheet = () => {
                 </Box>
 
                 <Box sx={{ mb: 3 }}>
+                    <InputLabel id="hotelName" error={formErrors["hotelName"]} sx={{ fontSize: 12 }}>Hotel Name*</InputLabel>
                     <TextField
-                        label="Hotel Name"
                         name="hotelName"
                         value={ratesheet.hotelName}
                         onChange={handleInputChange}
@@ -118,14 +118,10 @@ const UploadRatesheet = () => {
                 </Box>
 
                 <Box sx={{ mb: 3 }}>
-                    <Typography sx={{ fontSize: "16px" }}>
-                        Rate Sheet Validity*
-                    </Typography>
+                    <Typography sx={{ fontSize: "16px" }}>Rate Sheet Validity*</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body1" sx={{ mr: 2 }}>
-                                From
-                            </Typography>
+                            <Typography variant="body1" sx={{ mr: 2 }}>From</Typography>
                             <TextField
                                 type="date"
                                 name="startDate"
@@ -138,9 +134,7 @@ const UploadRatesheet = () => {
                         </Box>
                         <Typography sx={{ mx: 1 }}>-</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            <Typography variant="body1" sx={{ mr: 2 }}>
-                                To
-                            </Typography>
+                            <Typography variant="body1" sx={{ mr: 2 }}>To</Typography>
                             <TextField
                                 type="date"
                                 name="endDate"
@@ -206,8 +200,6 @@ const UploadRatesheet = () => {
                 onClick={handleSubmitMsg}
             />
         </Container>
-
-
     );
 };
 

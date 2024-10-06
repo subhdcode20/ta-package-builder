@@ -96,7 +96,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// setDestination(selectedDest);
 		setReqData(prev => {
 			return { ...prev, destination: selectedDest }
-		})
+		})	
 	};
 
 	const handleFormChange = (e, field) => {
@@ -226,7 +226,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 
 				<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 				<br />
-
 				<Grid container spacing={2}>
 					<Grid item xs={6}>
 						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
