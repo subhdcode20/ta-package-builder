@@ -120,20 +120,22 @@ const SignUp = () => {
         <Box
           display="flex"
           flexDirection="column"
-          justifyContent="center"
+          justifyContent="space-around"
           alignItems="center"
-          minHeight="90vh"
+          minHeight="70vh"
           paddingX={3}
+          border={'1px solid'}
+          borderColor={'secondary'}
           borderRadius={2}
-          boxShadow={3}
-          bgcolor="#f9f9f9"
-          marginTop={3}
+          marginTop={2}
         >
-
-          <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: "20px", textAlign: "center" }} >Sign Up</Typography>
+          {/* <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
+            <img src="/logo.jpg" style={{margin: 'auto', width: '150px'}} />
+          </div> */}
+          <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }} >Sign Up</Typography>
           {currentStep === 1 && (
             <Box width="100%">
-              <Typography variant="h5" align="center" gutterBottom>
+              <Typography variant="body1" align="center" gutterBottom>
                 Personal Info
               </Typography>
               <TextField
@@ -143,6 +145,7 @@ const SignUp = () => {
                 value={personalInfo.name}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
                 required
+                size="small"
               />
 
               <TextField
@@ -152,6 +155,7 @@ const SignUp = () => {
                 value={personalInfo.companyName}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, companyName: e.target.value })}
                 required
+                size="small"
               />
               <TextField
                 label="Phone"
@@ -175,6 +179,7 @@ const SignUp = () => {
                 error={!!errors.phone}
                 helperText={errors.phone}
                 required
+                size="small"
               />
               <TextField
                 label="Email"
@@ -193,6 +198,7 @@ const SignUp = () => {
                 error={!!errors.email}
                 helperText={errors.email}
                 required
+                size="small"
               />
               <TextField
                 label="Address"
@@ -201,6 +207,7 @@ const SignUp = () => {
                 value={personalInfo.address}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, address: e.target.value })}
                 required
+                size="small"
               />
             </Box>
           )}
@@ -220,6 +227,7 @@ const SignUp = () => {
               <Typography sx={{ marginTop: "20px" }}>Add Logo*</Typography>
               <Button
                 variant="contained"
+                size="small"
                 component="label"
                 sx={{ width: "100%" }}
               >
@@ -234,6 +242,7 @@ const SignUp = () => {
               <Typography sx={{ marginTop: "20px" }}>Attach Business Registration Documents*</Typography>
               <Button
                 variant="contained"
+                size="small"
                 component="label"
                 sx={{ width: "100%" }}
               >
@@ -247,6 +256,7 @@ const SignUp = () => {
               <Typography sx={{ marginTop: "20px" }}>Add PAN Card*</Typography>
               <Button
                 variant="contained"
+                size="small"
                 component="label"
                 sx={{ width: "100%" }}
               >
@@ -260,6 +270,7 @@ const SignUp = () => {
               <Typography sx={{ marginTop: "20px" }}>GST (If Applicable)</Typography>
               <Button
                 variant="contained"
+                size="small"
                 component="label"
                 sx={{ width: "100%" }}
               >
@@ -310,21 +321,22 @@ const SignUp = () => {
           </Box>
         )} */}
           <Box mt={3} display="flex" justifyContent="space-between" width="100%">
-            <Button onClick={handleBack} disabled={currentStep === 1}>
+            <Button onClick={handleBack} disabled={currentStep === 1}
+                size="small">
               Back
             </Button>
             {currentStep < 2 ? (
-              <Button variant="contained" color="primary" onClick={handleNext}>
+              <Button variant="contained" color="primary" onClick={handleNext}
+                size="small">
                 Next
               </Button>
             ) : (
               <div>
-                <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}>
+                <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit} 
+                  size="small">
                   SignUp
                 </LoadingButton>
-                {missingInput &&
-                <Alert severity="error">Fill all the required data.</Alert>
-                }
+                {missingInput && <Alert severity="error">Fill all the required data.</Alert>}
               </div>
 
             )}

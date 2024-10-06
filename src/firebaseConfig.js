@@ -6,6 +6,7 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getMessaging } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -27,7 +28,9 @@ const db = getFirestore(firebase);
 // const messaging = getMessaging(firebase);
 const analytics = getAnalytics(firebase);
 const storage = getStorage(firebase);
-
+// Initialize the Vertex AI service
+const vertexAI = getVertexAI(firebase);
+const gemini = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
 // connectFirestoreEmulator(db, '127.0.0.1', 8080);
 // firebase.
 // let auth = firebase.auth();
@@ -37,5 +40,6 @@ export {
   db,
   // messaging,
   analytics,
-  storage
+  storage,
+  gemini
 };

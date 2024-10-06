@@ -5,8 +5,10 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 const filter = createFilterOptions();
 
 const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []}) => {
-  const [value, setValue] = React.useState(selectedRoom || null);
+  const [defaultValue, setDefaultValue] = React.useState(selectedRoom || null);
+  const [value, setValue] = React.useState(null);
   const [roomsDropdownList, setHotelsDropdownList] = React.useState(userRoomRates || []);
+  console.log("room search rnder ", selectedRoom)
 
   useEffect(() => {
     if(userRoomRates && userRoomRates.length > 0) setHotelsDropdownList(userRoomRates);
@@ -16,17 +18,21 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
     if(value !== null) onChange(value);
   }, [value])
 
-  console.log("hotel drop down Room", value, selectedRoom, roomsDropdownList, userRoomRates);
+  useEffect(() => {
+    setDefaultValue(selectedRoom);
+  }, [selectedRoom])
+
+  console.log("room drop down Room", value, selectedRoom, roomsDropdownList, userRoomRates);
   return (
     <Autocomplete
       fullWidth
       size="small"
-      value={value || null}
+      value={defaultValue || value || null}
       onChange={(event, newValue) => {
         console.log("maindest onChange ", newValue, typeof newValue);
         if (newValue && newValue.roomName) {
           // Create a new value from the user input
-          setValue(newValue.roomName);
+          setValue(newValue); //.roomName
           // setValue({
           //   title: newValue.inputValue,
           // });

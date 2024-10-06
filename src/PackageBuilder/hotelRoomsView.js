@@ -32,13 +32,15 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	// ]);
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
-	const hotelData = currDayHotels[hotelIndex];
-	const roomsData = Object.values(hotelData?.roomRates || {});
+	const currDayhotelData = currDayHotels[hotelIndex];
+	const selectedRooms = currDayhotelData.selectedRooms
+	const roomsData = Object.values(currDayhotelData?.roomRates || {});
 	const dispatch = useDispatch();
 
-	console.log("hotel rooms render ", currentDayIndex, hotelData, hotelIndex, roomsData);
+	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, roomsData);
 	const handleRoomChange = (roomIndex, data) => {
 		// handleDataChange(dayIndex, data);
+		console.log("handleRoomChange ", hotelIndex, roomIndex, data)
 		dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
 	}
 
@@ -76,11 +78,11 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		}));
 	}
 
-	console.log("room builder render HotelRoomView", hotelData, hotelData.selectedRooms, roomsData);
+	console.log("room builder render HotelRoomView", currDayhotelData, selectedRooms, roomsData);
 	console.log("ROOMDATA", roomsData[0]?.occupancy?.child)
 	return (<Grid container spacing={2} sx={{padding: 2}}>
 		{
-			(hotelData?.selectedRooms || []).map((rItem, rindex) => {
+			(selectedRooms || []).map((rItem, rindex) => {
 				console.log("rItem render ", rItem, rindex);
 				return (<Grid item xs={12}>
 					<Grid container spacing={2}>
@@ -90,7 +92,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							</InputLabel>
 							
 							<RoomSearchFree 
-								selectedRoom={ rItem.roomName ? rItem.roomName : null } 
+								selectedRoom={ selectedRooms[rItem] || null } 
 								onChange={(val) => handleRoomChange(rindex, val)}  
 								userRoomRates={roomsData}
 							/>
@@ -161,21 +163,23 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							/>
 						</FormGroup>
 					</Grid>
-					<Grid item xs={12}>
-						<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
-							Room Price:
-						</InputLabel>
-						<TextField variant="outlined" type="number" size="small" 
-							onChange={(e) => handleRoomPriceChange(e, rindex)} 
-							value={rItem?.roomPrice}
-						/>
+					<Grid item display={'flex'}>
+						<Grid item xs={6} md={6}>
+							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
+								Room Price:
+							</InputLabel>
+							<TextField variant="outlined" type="number" size="small" 
+								onChange={(e) => handleRoomPriceChange(e, rindex)} 
+								value={rItem?.roomPrice}
+							/>
+						</Grid>
+						<Grid item xs={6} md={6} display={'flex'} justifyContent={'flex-end'}>
+							<Button size="small" variant="outlined" onClick={handleAddRoom} sx={{ my: 'auto' }}>Add Room +</Button>
+						</Grid>
 					</Grid>
 				</Grid>)
 			})
 		}
-		<Grid item xs={12}>
-			<Button size="small" variant="outlined" onClick={handleAddRoom}>Add Room +</Button>
-		</Grid>
 	</Grid>)
 }
 

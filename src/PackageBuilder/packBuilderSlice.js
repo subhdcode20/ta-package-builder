@@ -36,6 +36,7 @@ export const todoSlice = createSlice({
     selectedHotels: [], // [ [day 1 hotels], [day 2 hotels].. ]
     selectedRooms: [],  // [ [ [day 1 hotel 1 room 1] , [day 1 hotel 2 room 1] ], .. ]
     hotelRates: [],
+    itineraryDesc: [],
     totalDayPrices: [],
     reqHistory: [],
   },
@@ -51,9 +52,9 @@ export const todoSlice = createSlice({
       console.log("PackageDataInsidePackageData:", state.packageData);
     },
     savePackageData: (state, action) => {
-      // const { packageData, noOfNights } = action.payload;
-
-      const newHotelArr = state.packageData.hotels[0].hotels;
+      const { packageData } = action.payload;
+      console.log("savePackageData reducer", packageData);
+      const newHotelArr = packageData.hotels[0].hotels;  //state.packageData.hotels[0].hotels;
       // state.savedHotels = newSelectedHotelsArr;
       let length = newHotelArr.length;
       let newSelectedHotels = [];
@@ -68,6 +69,7 @@ export const todoSlice = createSlice({
         });
         newSelectedRooms.push(newHotelArr[i].selectedRooms);
       }
+      state.packageData = packageData
       state.selectedHotels = newSelectedHotels;
       state.selectedRooms = newSelectedRooms;
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
@@ -101,6 +103,7 @@ export const todoSlice = createSlice({
       // const defaultHotelsArr = [ ...newDaysArr.map((i, iIndex) => [{ key: `D-${iIndex + 1}_H-${1}` }] ) ];
       state.selectedHotels = newHotelsArr;  //defaultHotelsArr;
       state.totalDayPrices = newDaysArr;
+      state.itineraryDesc = newDaysArr;
       // state.selectedRooms = [ ...defaultHotelsArr.map((i, iIndex) => i.map(ii => [{ key: `D-${iIndex + 1}_H-${iIndex + 1}_R-${1}` }] ) ) ];
       console.log("create initial data", action.payload, newDaysArr, newHotelsArr, state.selectedHotels, state.selectedRooms);
     },
@@ -153,7 +156,7 @@ export const todoSlice = createSlice({
     selectedRoomOccupancy: (state, action) => {
       let { hotelIndex = null, roomIndex = null, keyType = null, value = null } = action.payload;
       console.log("room occ select reducer initial ", hotelIndex, roomIndex, keyType, value);
-      if (hotelIndex === null || roomIndex === null || !keyType || !value) return;
+      if (hotelIndex === null || roomIndex === null || !keyType ) return; //|| !value
       const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
       const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       const selectedOccupancy = currentHotelRooms[roomIndex].selectedOccupancy
@@ -173,7 +176,7 @@ export const todoSlice = createSlice({
       let { totalHotelPriceForCurrDay = null, selectedHotelCurrDay = [], copyDetailsToDays = {} } = action.payload;
       let currDayPrice = state.totalDayPrices[state.currDayIndex] || {};
       currDayPrice["totalPrice"] = totalHotelPriceForCurrDay;
-      console.log("save day daya 11", copyDetailsToDays && !isEmptyObject(copyDetailsToDays), copyDetailsToDays);
+      console.log("save day daya 11", copyDetailsToDays && !isEmptyObject(copyDetailsToDays), copyDetailsToDays, selectedHotelCurrDay);
       if (copyDetailsToDays && !isEmptyObject(copyDetailsToDays)) {
         Object.keys(copyDetailsToDays).forEach(dayNo => {
           // if(dayNo <= 0) continue;
@@ -222,6 +225,13 @@ export const todoSlice = createSlice({
         ...currentHotelRooms[roomIndex],
         roomPrice: Number(roomPrice)
       }
+    },
+    setItineraryDesc: (state, action) => {
+      let { text: genItiText = '' } = action?.payload;
+      if(!genItiText) return;
+      state.itineraryDesc[state.currDayIndex] = {
+        text: genItiText
+      }
     }
   }
 });
@@ -242,7 +252,8 @@ export const {
   setHotelPriceForCurrDay,
   setMealPlanFor1Room,
   setReqsHistory,
-  setPriceFor1Room
+  setPriceFor1Room,
+  setItineraryDesc
 } = todoSlice.actions;
 
 // this is for configureStore

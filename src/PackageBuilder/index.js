@@ -4,27 +4,32 @@ import Typography from "@mui/material/Typography";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import DayWiseTabs from "./dayWiseTabs.js";
 import { db, auth } from "../firebaseConfig";
 import { isEmptyObject } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from './packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
+import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 
 const DayWisePackageBuilder = () => {
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData);
 	const storePackageData = useSelector((state) => state.packBuilderData.packageData);
 	const storeNewPackageData = useSelector((state) => state.packBuilderData.newPackageData);
+	const storeSelectedHotels = useSelector((state) => state.packBuilderData.selectedHotels);
 	const [reqData, setReqData] = useState(null);
 	const [packageData, setPackageData] = useState(null);
 	const { reqId = null } = useParams();
 	const dispatch = useDispatch();
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
 	useEffect(() => {
 		if (!storeReqData || isEmptyObject(storeReqData)) return;
 		console.log("reqtest- set from store", storeReqData, reqData && reqData?.destination);
 		setReqData(storeReqData);
-	}, storeReqData)
+	}, storeReqData);
+	
 	useEffect(() => {
 		if (!storePackageData || isEmptyObject(storePackageData)) return;
 		console.log("storePackageData", storePackageData);
@@ -32,15 +37,15 @@ const DayWisePackageBuilder = () => {
 	}, [storePackageData]);
 
 	const getPackageData = async (packageId) =>{
-		console.log("Yes packages is THERE!");
+		console.log("Yes packages is THERE!", packageId);
 		let docSnapPackages = await getDoc(doc(db, "packages", packageId));
 		if (docSnapPackages.exists()) {
 			console.log("DocSnapPackageData", docSnapPackages.data());
+			// setTimeout(() => {
+			// 	dispatch(submitPackageData({ packageData: docSnapPackages.data() }));
+			// });
 			setTimeout(() => {
-				dispatch(submitPackageData({ packageData: docSnapPackages.data() }));
-			});
-			setTimeout(() => {
-				dispatch(savePackageData());
+				dispatch(savePackageData({ packageData: docSnapPackages.data() }));
 			});
 		} else {
 			console.error(`Package details not forund for ${reqId}`);
@@ -87,17 +92,25 @@ const DayWisePackageBuilder = () => {
 			// }
 		}
 		
-		console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData)
+		console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData, storeSelectedHotels)
 		console.log("PACKAGEDATASTORE:", storePackageData);
 		console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
 		console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
-		return (<>
-		<Box sx={{ "display": "flex", mb: 2 }}>
-			<Typography variant="h6" sx={{ margin: 'auto' }}><b>Select Itinerary Details</b></Typography>
-		</Box>
-		{reqData && <ReqDataView reqData={reqData} />}
-		{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
-	</>)
+		return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
+			<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
+				<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
+				<Box>
+					{reqData && <ReqDataView reqData={reqData} />}
+					{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
+				</Box>
+			</Box>
+			{
+				storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
+					<Typography variant="h6" sx={{ margin: 'auto' }}><b>Pdf Preview</b></Typography>
+					<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} />
+				</Box>)
+			}
+		</Box>)
 
 }
 

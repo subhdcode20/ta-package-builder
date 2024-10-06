@@ -96,7 +96,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// setDestination(selectedDest);
 		setReqData(prev => {
 			return { ...prev, destination: selectedDest }
-		})
+		})	
 	};
 
 	const handleFormChange = (e, field) => {
@@ -190,7 +190,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		} else {
 			console.log("No changes detected, nothing to update.");
 		}
-		setTimeout(() => navigate("/request/" + requestData.reqId + "/edit"));
+		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 		setButtonLoading(false);
 	}
 	const handleChildAgeChange = (age, childIndex) => {
@@ -215,177 +215,183 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 
 	console.log("child home render ", childAges, storeReqData)
 	console.log("DESTINATION", destination)
-	return (<>
-		<Box sx={{ "display": "flex", mb: 2 }}>
-			<Typography variant="h6" sx={{ margin: 'auto' }}><b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b></Typography>
-		</Box>
-		<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
-		<br />
-		<Grid container spacing={2}>
-			<Grid item xs={6}>
-				<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
-				<TextField
-					error={formErrors["noOfNights"]}
-					sx={{ width: "100%" }}
-					id="noOfNights"
-					variant="outlined"
-					size="small"
-					value={reqData.noOfNights || ''}
-					onChange={(e) => handleFormChange(e, "noOfNights")}
-					inputProps={{
-						type: "number",
-					}}
-				/>
-			</Grid>
-			<Grid item xs={6}>
-				<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Total Adult Pax*</InputLabel>
-				<TextField
-					error={formErrors["adultPax"]}
-					sx={{ width: "100%" }}
-					id="adultPax"
-					variant="outlined"
-					size="small"
-					value={reqData.adultPax || ''}
-					onChange={(e) => handleFormChange(e, "adultPax")}
-					inputProps={{
-						type: "number",
-					}}
-				/>
-			</Grid>
-			<Grid item xs={4}>
-				<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>Total Child Pax*</InputLabel>
-				<TextField
-					error={formErrors["childPax"]}
-					sx={{ width: "100%" }}
-					id="childPax"
-					variant="outlined"
-					size="small"
-					value={reqData.childPax || ''}
-					onChange={(e) => handleFormChange(e, "childPax")}
-					inputProps={{
-						type: "number",
-					}}
-				/>
-			</Grid>
+	return (
+		<Box sx={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: 3, bgcolor: "transparent" }}>
+				<Box sx={{ "display": "flex", mb: 2 }}>
+					<Typography variant="h6" sx={{ margin: 'auto' }}>
+						<b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b>
+					</Typography>
+				</Box>
 
-			<Grid item xs={4}>
-				{
-					childAges.map((c, cIndex) => {
-						return (<Grid item xs={3}>
-							<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-							<TextField
-								error={formErrors["childPax"]}
-								sx={{ width: "100%" }}
-								id="childPax"
-								variant="outlined"
-								size="small"
-								// value = {reqData.childPax || ''}
-								onChange={(e) => handleChildAgeChange(e.target.value, cIndex)}
-								inputProps={{
-									type: "number",
-								}}
-								value={c}
-							/>
-						</Grid>)
-					})
-				}
-			</Grid>
+				<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
+				<br />
+				<Grid container spacing={2}>
+					<Grid item xs={6}>
+						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
+						<TextField
+							error={formErrors["noOfNights"]}
+							sx={{ width: "100%" }}
+							id="noOfNights"
+							variant="outlined"
+							size="small"
+							value={reqData.noOfNights || ''}
+							onChange={(e) => handleFormChange(e, "noOfNights")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
 
-			<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
-				<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
-				<LocalizationProvider dateAdapter={AdapterDateFns}>
-					<MobileDatePicker
-						fullWidth
-						size="small"
-						onChange={(newValue) => {
-							let timestamp = Date.parse(new Date(newValue));
-							console.log("startDate value: ", newValue, timestamp);
-							setReqData(prev => {
-								return { ...prev, startDate: timestamp }
-							})
-							// setStartDate(formattedVal);
-						}}
-						sx={{ width: "100%" }}
-						value={reqData.startDate || ''}
-						closeOnSelect
-						className={"date-picker-root"}
-						renderInput={(params) => (
-							<TextField
-								error={formErrors["startDate"]}
+					<Grid item xs={6}>
+						<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Total Adult Pax*</InputLabel>
+						<TextField
+							error={formErrors["adultPax"]}
+							sx={{ width: "100%" }}
+							id="adultPax"
+							variant="outlined"
+							size="small"
+							value={reqData.adultPax || ''}
+							onChange={(e) => handleFormChange(e, "adultPax")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
+
+					<Grid item xs={4}>
+						<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>Total Child Pax*</InputLabel>
+						<TextField
+							error={formErrors["childPax"]}
+							sx={{ width: "100%" }}
+							id="childPax"
+							variant="outlined"
+							size="small"
+							value={reqData.childPax || ''}
+							onChange={(e) => handleFormChange(e, "childPax")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
+
+					<Grid item xs={4} display="flex">
+						{childAges.map((c, cIndex) => {
+							return (
+								<Grid item xs={12} md={4} lg={4} sx={{ mr: 1 }}>
+									<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+									<TextField
+										error={formErrors["childPax"]}
+										sx={{ width: "100%" }}
+										id="childPax"
+										variant="outlined"
+										size="small"
+										onChange={(e) => handleChildAgeChange(e.target.value, cIndex)}
+										inputProps={{
+											type: "number",
+										}}
+										value={c}
+									/>
+								</Grid>
+							);
+						})}
+					</Grid>
+
+					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
+						<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
+						<LocalizationProvider dateAdapter={AdapterDateFns}>
+							<MobileDatePicker
 								fullWidth
 								size="small"
-								id="start-date"
-								label="Start Date"
-								variant="outlined"
-								{...params}
+								onChange={(newValue) => {
+									let timestamp = Date.parse(new Date(newValue));
+									setReqData(prev => {
+										return { ...prev, startDate: timestamp };
+									});
+								}}
+								sx={{ width: "100%" }}
+								value={reqData.startDate || ''}
+								closeOnSelect
+								className={"date-picker-root"}
+								renderInput={(params) => (
+									<TextField
+										error={formErrors["startDate"]}
+										fullWidth
+										size="small"
+										id="start-date"
+										label="Start Date"
+										variant="outlined"
+										{...params}
+									/>
+								)}
 							/>
-						)}
-					/>
-				</LocalizationProvider>
-			</Grid>
-			<Grid item xs={6}>
-				<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Hotel Category*"}</InputLabel>
-				<Autocomplete
-					disablePortal
-					id="hotelStar"
-					includeInputInList
-					onChange={(e, val) => {
-						console.log("star change ", e, val)
-						setReqData(prev => {
-							return { ...prev, "starCategory": val };
-						})
-					}
-					}
-					renderInput={(params) => (
-						<TextField
-							error={formErrors["starCategory"]}
-							{...params}
-							variant="outlined"
+						</LocalizationProvider>
+					</Grid>
+
+					<Grid item xs={6}>
+						<InputLabel id="hotelStar" error={formErrors["hotelStar"]} sx={{ fontSize: 12 }}>Hotel Category*</InputLabel>
+						<Autocomplete
+							disablePortal
+							id="hotelStar"
+							includeInputInList
+							onChange={(e, val) => {
+								setReqData(prev => {
+									return { ...prev, "starCategory": val };
+								});
+							}}
+							renderInput={(params) => (
+								<TextField
+									error={formErrors["starCategory"]}
+									{...params}
+									variant="outlined"
+								/>
+							)}
+							options={HOTEL_STAR_CAT_OPTS}
+							value={reqData.starCategory}
+							defaultValue={""}
 						/>
-					)}
-					options={HOTEL_STAR_CAT_OPTS}
-					value={reqData.starCategory}
-					defaultValue={""}
-				/>
-			</Grid>
-			<Grid item xs={6}>
-				<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Tracking Id*</InputLabel>
-				<TextField
-					error={formErrors["trackingId"]}
-					sx={{ width: "100%" }}
-					id="trackingId"
-					value={reqData.trackingId || ''}
-					variant="outlined"
-					size="small"
-					onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
-				/>
-			</Grid>
+					</Grid>
 
-			<Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
-				{(isUpdateflow) ?
+					<Grid item xs={6}>
+						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Tracking Id*</InputLabel>
+						<TextField
+							error={formErrors["trackingId"]}
+							sx={{ width: "100%" }}
+							id="trackingId"
+							value={reqData.trackingId || ''}
+							variant="outlined"
+							size="small"
+							onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
+						/>
+					</Grid>
 
-					(<LoadingButton
-						sx={{ mt: 4, mb: 2, textAlign: "right" }}
-						loading={buttonLoading}
-						onClick={handleUpdatePost}
-						variant="contained"
-						size="small"
-					>
-						Update Request&nbsp;
-					</LoadingButton>)
-					:
-					(<LoadingButton
-						sx={{ mt: 4, mb: 2, textAlign: "right" }}
-						loading={buttonLoading}
-						onClick={handlePost}
-						variant="contained"
-						size="small"
-					>
-						Save Request&nbsp;
-					</LoadingButton>)}
-			</Grid>
-		</Grid>
-	</>)
+					<Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
+						{isUpdateflow ? (
+							<LoadingButton
+								sx={{ mt: 4, mb: 2, textAlign: "right" }}
+								loading={buttonLoading}
+								onClick={handleUpdatePost}
+								variant="contained"
+								size="small"
+							>
+								Update Request&nbsp;
+							</LoadingButton>
+						) : (
+							<LoadingButton
+								sx={{ mt: 4, mb: 2, textAlign: "right" }}
+								loading={buttonLoading}
+								onClick={handlePost}
+								variant="contained"
+								size="small"
+							>
+								Save Request&nbsp;
+							</LoadingButton>
+						)}
+					</Grid>
+				</Grid>
+			</Box>
+		</Box>
+	)
 }
 
 export default AppHome;

@@ -72,7 +72,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
     },
     {
       field: '',
-      headerName: '',
+      headerName: 'Actions',
       width: 250,
       editable: true,
       renderCell: (params) => (
@@ -81,6 +81,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
             <Button size="small" variant="contained" color="primary" onClick={() => handleCopy(params.row.reqId)}>
               Edit
             </Button>
+            &nbsp;
             <Button size="small" variant="contained" color="secondary" onClick={() => handleCopyNew(params.row.reqId)}>
               Copy to New Package
             </Button>
