@@ -15,6 +15,7 @@ import PackagePdf from "./PackagePdf/index.js";
 import UploadRatesheet from "./Ratesheet/index.js";
 import ReqCopy from "./AppHome/updateReq.js";
 import ReqCopyNew from "./AppHome/reqCopyNew.js";
+import PublicNavbar from './Navbar/publicNavbar.js';
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -43,7 +44,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: (<>
+      <PublicNavbar />
+      <SignUp />
+    </>),
     errorElement: <ErrorPage />,
   },
 
