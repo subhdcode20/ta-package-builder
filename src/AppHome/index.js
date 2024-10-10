@@ -64,9 +64,10 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						//   console.log(data)
 						// });
 						let signedInIdToken = await auth.currentUser.getIdToken(
-				  /* forceRefresh */ true,
+							/* forceRefresh */ true,
 						);
 						console.log("signedInIdToken ", signedInIdToken);
+						localStorage.setItem('user', { ...userData, firebaseIdToken: signedInIdToken });
 					}
 				});
 			} catch (e) {
@@ -216,7 +217,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	console.log("child home render ", childAges, storeReqData)
 	console.log("DESTINATION", destination)
 	return (
-		<Box sx={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+		<Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", mt: 2 }}>
 			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: 3, bgcolor: "transparent" }}>
 				<Box sx={{ "display": "flex", mb: 2 }}>
 					<Typography variant="h6" sx={{ margin: 'auto' }}>

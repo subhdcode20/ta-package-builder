@@ -7,22 +7,27 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
-import { storage } from '../firebaseConfig';
-import PopUp from '../Commons/messagePopUp';
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
-import LoadingButton from "../Commons/LoadingButton";
 import InfoIcon from '@mui/icons-material/Info';
 import InputLabel from '@mui/material/InputLabel';
+import axios from 'axios';
+
+import { storage } from '../firebaseConfig';
+import PopUp from '../Commons/messagePopUp';
+import LoadingButton from "../Commons/LoadingButton";
+
+const userData = JSON.parse(localStorage.getItem("user"));
 
 const UploadRatesheet = () => {
-    const { userId } = useParams();
+    // const { userId } = useParams();
+    const { phone: userId = '' } = JSON.parse(localStorage.getItem("user"));
     const [ratesheet, setRatesheet] = useState({
         destination: '',
-        hotelName: '',
+        // hotelName: '',
         startDate: '',
         endDate: '',
-        ratesheetRef: null,
+        ratesheetUrl: null,
     });
     const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -39,7 +44,7 @@ const UploadRatesheet = () => {
         const fileRef = ref(storage, `userRateSheets/${userId}-${ratesheet.destination}`);
         await uploadBytes(fileRef, file);
         const downloadURL = await getDownloadURL(fileRef);
-        setRatesheet((prevRatesheet) => ({ ...prevRatesheet, ratesheetRef: downloadURL }));
+        setRatesheet((prevRatesheet) => ({ ...prevRatesheet, ratesheetUrl: downloadURL }));
     };
 
     const handleFileChange = (event) => {
@@ -50,17 +55,29 @@ const UploadRatesheet = () => {
     };
 
     const handleSubmit = async () => {
-        if (!ratesheet.destination || !ratesheet.hotelName || !ratesheet.startDate || !ratesheet.endDate) {
+        if (!ratesheet.destination || !ratesheet.startDate || !ratesheet.endDate) {
             setMissingInput(true);
             return;
         }
         setLoading(true);
-        // ==> TO CHANGE <==
-        // let docRef = doc(db, "userHotels", `+91${userId}`);
-        // await updateDoc(docRef, {
-        //     "companyInfo.rateSheet": ratesheet,
-        // });
         console.log("Ratesheet ->", ratesheet);
+        
+        const axiosOptions = {
+            method: 'POST',
+            headers: { 
+                'content-type': 'application/x-www-form-urlencoded',
+                'Authorization': userData?.firebaseIdToken 
+            },
+            data: {
+                validFrom: ratesheet.startDate,
+                validUntil: ratesheet.endDate,
+                fileUrl: ratesheet.ratesheetUrl
+            },
+            url: `/destinations/${ratesheet.destination}/upload-rate-sheet/`,
+        };
+
+        let response = await axios.post(axiosOptions);
+        console.log('response axios ', response);
         setLoading(false);
         setSubmitMsg(true);
     };
@@ -100,7 +117,7 @@ const UploadRatesheet = () => {
                     />
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                {/* <Box sx={{ mb: 2 }}>
                     <InputLabel sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
                     <TextField
                         name="hotelName"
@@ -109,7 +126,7 @@ const UploadRatesheet = () => {
                         fullWidth
                         size="small"
                     />
-                </Box>
+                </Box> */}
 
                 <Box sx={{ mb: 3 }}>
                     <Typography sx={{ fontSize: "14px", fontWeight: 'bold' }}>
