@@ -8,11 +8,14 @@ import InputLabel from '@mui/material/InputLabel';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { isEmptyObject } from '../Utility.js';
 import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy, 
-	setMealPlanFor1Room, setPriceFor1Room } from './packBuilderSlice.js';
+	setMealPlanFor1Room, setPriceFor1Room, setRoomOccChildAge } from './packBuilderSlice.js';
 import RoomSearchFree from "./roomSearchCommon.js";
 
 const roomsList = [
@@ -33,8 +36,9 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
 	const currDayhotelData = currDayHotels[hotelIndex];
-	const selectedRooms = currDayhotelData.selectedRooms
+	const selectedRooms = currDayhotelData.selectedRooms;
 	const roomsData = Object.values(currDayhotelData?.roomRates || {});
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const dispatch = useDispatch();
 
 	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, roomsData);
@@ -55,6 +59,17 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 			roomIndex: rindex, 
 			keyType, 
 			value: e.target.value
+		}));
+	}
+
+	const handleOccChildAgeChange = (rindex, childIndex, age, extraBed = false) => {
+		console.log("handleOccChildAgeChange form ", rindex, childIndex, age, extraBed);
+		dispatch(setRoomOccChildAge({
+			hotelIndex, 
+			roomIndex: rindex,
+			childIndex,
+			age,
+			extraBed
 		}));
 	}
 	
@@ -84,15 +99,16 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		{
 			(selectedRooms || []).map((rItem, rindex) => {
 				console.log("rItem render ", rItem, rindex);
+				let childAges = rItem?.selectedOccupancy?.childAges || [];
 				return (<Grid item xs={12}>
 					<Grid container spacing={2}>
-						<Grid item xs={4}>
+						<Grid item xs={12} md={4} lg={4}>
 							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
 							</InputLabel>
 							
 							<RoomSearchFree 
-								selectedRoom={ selectedRooms[rItem] || null } 
+								selectedRoom={ selectedRooms[rindex] || null } 
 								onChange={(val) => handleRoomChange(rindex, val)}  
 								userRoomRates={roomsData}
 							/>
@@ -128,26 +144,68 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 						      )}
 						    /> */}
 						</Grid>
-						<Grid item xs={2}>
+						<Grid item xs={6} md={2} lg={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Adults:
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "adults")} 
-								value={roomsData[0]?.occupancy?.adults || rItem?.selectedOccupancy?.adults}
+								value={rItem?.selectedOccupancy?.adults}
 							/>
 						</Grid>
-						<Grid item xs={2}>
+						<Grid item xs={6} md={2} lg={2}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Children:
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleOccChange(e, rindex, "child")} 
-								value={ roomsData[0]?.occupancy?.child  || rItem?.selectedOccupancy?.child}
+								value={ rItem?.selectedOccupancy?.child}
 							/>
 						</Grid>
 				    </Grid>
+					<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
+						{childAges.map((c, cIndex) => {
+							console.log("childAges room details", c, cIndex)
+							return (
+								<Grid item xs={12} md={6} lg={6} >
+									<Grid container spacing={1}>
+										<Grid item xs={6} md={6} lg={6}>
+											<InputLabel id="childPax" sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+											<TextField
+												sx={{ width: "100%" }}
+												id={`childPax-${cIndex}${Number(c.age)}`}
+												variant="outlined"
+												size="small"
+												onChange={(e) => handleOccChildAgeChange(rindex, cIndex, e.target.value, c.extraBed)}
+												inputProps={{
+													type: "number",
+												}}
+												value={c.age}
+												type="text"
+											/>
+										</Grid>
+										<Grid item xs={6} md={6} lg={6}>
+											{
+												Number(c.age) >= 5 && (<RadioGroup
+												aria-labelledby="demo-radio-buttons-group-label"
+												defaultValue="false"
+												name="radio-buttons-group"
+												onChange={(e) => handleOccChildAgeChange(rindex, cIndex, c.age, e.target.value)}
+											>
+												<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
+												<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
+											</RadioGroup>)}
+										</Grid>
+									</Grid>
+								</Grid>
+							);
+						})}
+					</Grid>
+
 					<Grid item xs={12}>
+						<InputLabel id={`room-mp-day${hotelIndex + 1}`} sx={{fontSize: 12, mt: 2}}>
+							Room Meal Plan:
+						</InputLabel>
 						<FormGroup sx={{ display: "flex", flexDirection: "row" }}>
 							<FormControlLabel
 								control={
@@ -161,6 +219,12 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 								}
 								label="CPAI"
 							/>
+							<FormControlLabel
+								control={
+									<Checkbox checked={rItem?.mp == "apai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="apai" />
+								}
+								label="APAI"
+							/>
 						</FormGroup>
 					</Grid>
 					<Grid item display={'flex'}>
@@ -170,7 +234,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 							</InputLabel>
 							<TextField variant="outlined" type="number" size="small" 
 								onChange={(e) => handleRoomPriceChange(e, rindex)} 
-								value={rItem?.roomPrice}
+								value={rItem?.roomPrice} sx={{margin: "auto"}}
 							/>
 						</Grid>
 						<Grid item xs={6} md={6} display={'flex'} justifyContent={'flex-end'}>

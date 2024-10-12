@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import CircularProgress from '@mui/material/CircularProgress';
 import parse from "html-react-parser";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
@@ -34,6 +35,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 	const [userHotelRates, setUserHotelRates] = useState([]);
 	const [selectedDaysToCopyDetails, setSelectedDaysToCopyDetails] = useState({});
 	const [ geminiLoading, setGeminiLoading] = useState(false);
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const dispatch = useDispatch();
 	const currDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || '';
 	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, totalDayPrices, currDayPrice);
@@ -47,7 +49,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 			console.log("reqtest- getUserHotelRates reducer", destination, userData?.phone);
 			if (!destination || !userData?.phone) return; // TODO show page error
 			let docName = `${userData?.phone}-${destination.toLowerCase()}`;
-			let docSnap = await getDoc(doc(db, "userHotels", docName));
+			let docSnap = await getDoc(doc(db, "userRates", docName));
 			if (docSnap.exists()) {
 				let ratesData = docSnap.data();
 				console.log("reqtest- user hotel rates data ", ratesData);
@@ -67,6 +69,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 	}, [reqData, userData])
 
 	const handleHotelChange = (hotelIndex, data) => {
+		console.log('save day daya handleHotelChange', hotelIndex, data);
 		// handleDataChange(hotelIndex, data);
 		dispatch(handleHotelSelect({ hotelIndex, data }));
 	}
@@ -81,6 +84,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 		let totalHotelPriceForCurrDay = selectedHotels.reduce((acc, h) => {
 			let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
 				let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {} } = r;
+				console.log("checkPricefor1Day 1Hotel 1Room", rAcc + Number(roomPrice, mp, roomPrice, selectedOccupancy, selectedHotels, selectedDaysToCopyDetails));
 				if (!mp) {
 					// TODO: show validation error
 					return 0;
@@ -122,10 +126,11 @@ const PackageDetailsFor1Day = ({ key }) => {
 		dispatch(setItineraryDesc({text: gemRes}))
 	}
 
-	console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]?.location);
+	console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]);
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
+				console.log('day hotels inside render ', hData, selectedHotels[hIndex])
 				return (<Grid item xs={12}>
 					<Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>Hotel {`${hIndex + 1}`}</Typography>
 					<Grid container spacing={1}>
@@ -150,7 +155,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 						</Grid>
 						{!isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
-					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{mt: 0}}>
+					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{mt: 2}}>
 						<Button size="small" variant="outlined" onClick={generateItineraryDay1} sx={{ width: 'fit-content' }}>
 							Generate Itinerary for Day {currentDayIndex + 1}
 							{
@@ -174,9 +179,11 @@ const PackageDetailsFor1Day = ({ key }) => {
 		}
 
 		<Grid item xs={12}>
-			<Box display="flex" justifyContent="space-between">
-				<Button size="small" variant="outlined" onClick={addHoteltoCurrDay}>Add Hotel +</Button>
-				<Box display="flex">
+			<Box display="flex" flexDirection={isMobile ? "column" : "row"} justifyContent="space-between">
+				<Box display={'flex'}>
+					<Button size="small" variant="outlined" onClick={addHoteltoCurrDay} sx={{ minWidth: "fit-content", my: 'auto' }}>Add Hotel +</Button>
+				</Box>
+				<Box display="flex" sx={{ pl: 2 }}>
 					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography>
 					<FormGroup row={true} sx={{ display: "flex" }}>
 						{
@@ -196,7 +203,9 @@ const PackageDetailsFor1Day = ({ key }) => {
 						}
 					</FormGroup>
 				</Box>
-				<Button size="small" variant="outlined" onClick={checkPricefor1Day}>Save</Button>
+				<Box display={'flex'}>
+					<Button size="small" variant="contained" onClick={checkPricefor1Day} sx={{ minWidth: "fit-content", my: 'auto' }}>Save</Button>
+				</Box>
 			</Box>
 		</Grid>
 	</Grid>)

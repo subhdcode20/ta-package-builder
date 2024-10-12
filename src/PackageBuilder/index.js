@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -8,10 +8,11 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import DayWiseTabs from "./dayWiseTabs.js";
 import { db, auth } from "../firebaseConfig";
-import { isEmptyObject } from '../Utility.js';
+import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from './packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
 import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
+// import axios from 'axios';
 
 const DayWisePackageBuilder = () => {
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData);
@@ -19,10 +20,40 @@ const DayWisePackageBuilder = () => {
 	const storeNewPackageData = useSelector((state) => state.packBuilderData.newPackageData);
 	const storeSelectedHotels = useSelector((state) => state.packBuilderData.selectedHotels);
 	const [reqData, setReqData] = useState(null);
+	const [userPdfData, setUserPdfData] = useState({});
 	const [packageData, setPackageData] = useState(null);
+	const { userData } = useContext(MainContext)
 	const { reqId = null } = useParams();
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+
+	useEffect(() => {
+		const getUserPdfData = async () => {
+			let docSnapPdfData = await getDoc(doc(db, "userPdfData", userData.phone));
+			if (docSnapPdfData.exists()) {
+				console.log("DocSnapPdfData", docSnapPdfData.data());
+				let { logoB64Str = null } = docSnapPdfData.data();	
+				setUserPdfData({ 
+					userPhone: userData.phone, 
+					logo: logoB64Str
+				})
+			}
+			
+			// if(userData && userData?.companyInfo?.companyLogo) {
+			// 	// let userLogo = await fetch('userData?.companyInfo?.companyLogo');
+			// 	// let logob64 = await readStreamData(userLogo.body);
+			// 	// streamToBase64(userLogo.body);
+			// 	console.log("userLogo ", userLogo);
+			// 	console.log("userLogo 2", dummyLogo)
+			// 	setUserPdfData({ 
+			// 		userPhone: userData.phone, 
+			// 		logo: dummyLogo
+			// 	})
+			// }
+		}
+
+		getUserPdfData();
+	}, [userData])
 
 	useEffect(() => {
 		if (!storeReqData || isEmptyObject(storeReqData)) return;
@@ -90,27 +121,27 @@ const DayWisePackageBuilder = () => {
 		// if (!docSnap.exists()) {
 			// 	console.log("hotelList not found for user.")
 			// }
-		}
+	}
 		
-		console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData, storeSelectedHotels)
-		console.log("PACKAGEDATASTORE:", storePackageData);
-		console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
-		console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
-		return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
-			<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
-				<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
-				<Box>
-					{reqData && <ReqDataView reqData={reqData} />}
-					{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
-				</Box>
+	console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData, storeSelectedHotels, userData)
+	console.log("PACKAGEDATASTORE:", storePackageData);
+	console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
+	console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
+	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
+		<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
+			<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
+			<Box>
+				{reqData && <ReqDataView reqData={reqData} />}
+				{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
 			</Box>
-			{
-				storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-					<Typography variant="h6" sx={{ margin: 'auto' }}><b>Pdf Preview</b></Typography>
-					<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} />
-				</Box>)
-			}
-		</Box>)
+		</Box>
+		{
+			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
+				<Typography variant="h6" sx={{ margin: 'auto' }}><b>Pdf Preview</b></Typography>
+				<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
+			</Box>)
+		}
+	</Box>)
 
 }
 

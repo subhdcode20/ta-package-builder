@@ -13,14 +13,17 @@ const express = require("express");
 const bodyParser = require("body-parser")
 const {getAuth} = require("firebase-admin/auth")
 const csv = require('csv-parser')
-const axios = require('axios')
+const axios = require('axios');
+const cors = require('cors');
+// const { arrayUnion } = require("firebase-admin/firestore");
 
-admin.initializeApp()
+admin.initializeApp();
 const db = admin.firestore();
-const app = express()
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}))
-const auth = getAuth()
+const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cors())
+const auth = getAuth();
 
 // const configMap = {
 //     baseViewPackageUrl: 'https://stayeasy-7ac2c.web.app/package/{packageCode}/pdf',
@@ -34,7 +37,7 @@ const auth = getAuth()
 app.use(async (req, res, next) => {
     let idToken = req.headers.authorization;
     if (!idToken) {
-        res.status(400).send("authorization header missing.")
+        res.status(400).send(`Authorization header missing. ${JSON.stringify(req.headers)}`)
         return;
     }
     try {
@@ -44,7 +47,7 @@ app.use(async (req, res, next) => {
         res.locals.authenticated = true
         next()
     } catch (e) {
-        res.status(400).send("Auth token invalid");
+        res.status(400).send({message: "Auth token invalid", error: e});
         return false;
     }
 })
@@ -151,53 +154,153 @@ exports.webApi = functions.https.onRequest(app)
 
 app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) => {
     try {
-        const [validFromDate, validUntilDate, fileUrl, hotelId] =
-            [Math.floor(new Date(req.body.validFrom).getTime() / 1000),
+        const [validFromDate, validUntilDate, fileUrl] =
+            [
+                Math.floor(new Date(req.body.validFrom).getTime() / 1000),
                 Math.floor(new Date(req.body.validUntil).getTime() / 1000),
-                req.body.fileUrl, req.body.hotelId]
-
-        const response = await axios.get(fileUrl, {responseType: 'stream'})
-        const results = []
+                req.body.fileUrl
+            ]
+        
+        logger.log('- UPLOAD RATE SHEET - ', res.locals.user, req.params.destinationName, validFromDate, validUntilDate, fileUrl)  //, hotelId
+        const response = await axios.get(fileUrl, {responseType: 'stream'});
+        const results = [];
         response.data
             .pipe(csv())
             .on('data', (row) => {
+                logger.log("new row data", row);
                 results.push(row)
             })
             .on('end', async () => {
-                let docRef
-                const batch = db.batch()
-                const dbCollection = await db.collection('userRates')
-
-                results.forEach((rate) => {
-                    docRef = dbCollection.doc()
-                    batch.set(docRef, {
-                        destination: req.params.destinationName,
-                        hotelId: hotelId,
+                // let docRef
+                // const batch = db.batch()
+                // const dbCollection = await db.collection('userRates')
+                logger.log("all row data", results);
+                let userHotelRateDocRef = db.collection("userRates").doc(`${res.locals.user}-${req.params.destinationName.toLowerCase()}`);
+                let finalDocData = results.map((rate) => {
+                    return {
+                        // hotelId: hotelId,
                         hotelName: rate['Hotel Name'],
+                        location: rate['location'],
+                        starCategory: rate['Star Category'],
                         roomRates: {
                             [rate['Room Name']]: {
+                                roomName: rate['Room Name'],
                                 cpaiPrice: rate['CPAI'],
+                                mapaiPrice: rate['MAPAI'],
+                                apaiPrice: rate['APAI'],
                                 extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
                                 extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
-                                mapaiPrice: rate['MAPAI'],
+                                extraBedApaiPrice: rate['Extra Bed Adult APAI'],
+                                extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
+                                extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
+                                extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
                                 occupancy: {
                                     adult: rate['Adult Occupancy'],
                                     child: rate['Child Occupancy']
                                 },
-                                roomName: rate['Room Name']
+                                minChildAgeForExtra: rate['Min Child Age For extra charge'],
+                                childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
+                                childNoBedMapaiPrice: rate['Child Without Bed MAPAI'],
+                                childNoBedApaiPrice: rate['Child Without Bed APAI']
                             }
                         },
                         userId: res.locals.user,
                         validFrom: validFromDate,
                         validUntil: validUntilDate
-                    })
+                    }
                 })
-                await batch.commit()
-            })
-        return res.status(201).send({message: 'Rate sheet uploaded successfully'})
+                logger.log("set final data row data", finalDocData);
+                let updateDocRes = await userHotelRateDocRef.set({
+                    hotels: finalDocData
+                }, { merge: true });
+
+                return res.status(200).send({message: 'Rate sheet uploaded successfully', docRes: updateDocRes});
+
+                // let existingDoc = await userHotelRateDocRef.get();
+                // if(!existingDoc.exists) {
+                // } else {
+
+                    // results.forEach((rate) => {
+                        
+                    //     ({
+                    //         hotels: arrayUnion({
+                    //             hotelId: hotelId,
+                    //             hotelName: rate['Hotel Name'],
+                    //             location: rate['location'],
+                    //             starCategory: rate['Star Category'],
+                    //             roomRates: {
+                    //                 [rate['Room Name']]: {
+                    //                     cpaiPrice: rate['CPAI'],
+                    //                     mapaiPrice: rate['MAPAI'],
+                    //                     apaiPrice: rate['APAI'],
+                    //                     extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
+                    //                     extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
+                    //                     extraBedApaiPrice: rate['Extra Bed Adult APAI'],
+                    //                     extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
+                    //                     extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
+                    //                     extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
+                    //                     occupancy: {
+                    //                         adult: rate['Adult Occupancy'],
+                    //                         child: rate['Child Occupancy']
+                    //                     },
+                    //                     minChildAgeForExtra: rate['Min Child Age For extra charge'],
+                    //                     childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
+                    //                     childNoBedMapaiPrice: rate['Child Withour Bed MAPAI'],
+                    //                     childNoBedApaiPrice: rate['Child WithouT Bed APAI'],
+                    //                     roomName: rate['Room Name']
+                    //                 }
+                    //             },
+                    //             userId: res.locals.user,
+                    //             validFrom: validFromDate,
+                    //             validUntil: validUntilDate
+                    //         })
+                    //     })
+                    // }
+
+                // }
+
+                // results.forEach((rate) => {
+                //     docRef = dbCollection.doc(`${res.locals.user}-${req.params.destinationName}`)
+                //     batch.set(docRef, {
+                //         hotels: arrayUnion({
+                //             hotelId: hotelId,
+                //             hotelName: rate['Hotel Name'],
+                //             location: rate['location'],
+                //             starCategory: rate['Star Category'],
+                //             roomRates: {
+                //                 [rate['Room Name']]: {
+                //                     cpaiPrice: rate['CPAI'],
+                //                     mapaiPrice: rate['MAPAI'],
+                //                     apaiPrice: rate['APAI'],
+                //                     extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
+                //                     extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
+                //                     extraBedApaiPrice: rate['Extra Bed Adult APAI'],
+                //                     extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
+                //                     extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
+                //                     extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
+                //                     occupancy: {
+                //                         adult: rate['Adult Occupancy'],
+                //                         child: rate['Child Occupancy']
+                //                     },
+                //                     minChildAgeForExtra: rate['Min Child Age For extra charge'],
+                //                     childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
+                //                     childNoBedMapaiPrice: rate['Child Withour Bed MAPAI'],
+                //                     childNoBedApaiPrice: rate['Child WithouT Bed APAI'],
+                //                     roomName: rate['Room Name']
+                //                 }
+                //             },
+                //             userId: res.locals.user,
+                //             validFrom: validFromDate,
+                //             validUntil: validUntilDate
+                //         })
+                //     })
+                // })
+                // await batch.commit()
+            });
+            // return res.status(201).send({message: 'Rate sheet uploaded successfully. Doc updating in background'});
 
     } catch (err) {
         logger.log(`Uploaded rate sheet processing failed => ${err}`)
-        return res.status(500).send({message: 'Something went wrong processing your request'})
+        return res.status(500).send({message: 'Something went wrong processing your request', error: err})
     }
 })

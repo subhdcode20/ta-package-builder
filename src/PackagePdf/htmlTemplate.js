@@ -1,13 +1,18 @@
 import React from 'react';
 import ReactPDF, { Page, Text, View, Document, StyleSheet, Image, Font,  PDFViewer } from '@react-pdf/renderer';
 
-const HtmlPdfView = ({packageData: {
-  packageId,
-  hotels = [],
-  req = {},
-  userId,
-  createdAt
-}}) => (
+const HtmlPdfView = ({
+  packageData: {
+    packageId,
+    hotels = [],
+    req = {},
+    createdAt
+  },
+  userData: {
+    userPhone,
+    logo
+  }
+}) => (
     <Document>
       <Page>
         <Image
@@ -17,7 +22,7 @@ const HtmlPdfView = ({packageData: {
         <View style={styles.body}>
           <Image
             style={[styles.image, { position: 'absolute', top: -50 }]}
-            src="/ce-official-logo.png"
+            src={logo}
           />
           <Text style={styles.title}>Travel Itinerary</Text>
           <Text style={styles.author}>{req?.noOfNights} Nights | {req?.adultPax} Adults {req?.childPax && ` | ${req?.childPax} Children`}</Text>
@@ -290,11 +295,11 @@ const HtmlPdfView = ({packageData: {
     }
   });
   
-  const RenderPreview = ({packageData = {}}) => {
-    console.log("pdf RenderPreview ", packageData);
+  const RenderPreview = (props) => {
+    console.log("pdf RenderPreview ", props);
     return (<div style={{width: '100%', height: 'auto'}}>
       <PDFViewer width={'100%'} height={'800'}>
-        <HtmlPdfView packageData={packageData} />
+        <HtmlPdfView {...props} />
       </PDFViewer>
     </div>)
   }

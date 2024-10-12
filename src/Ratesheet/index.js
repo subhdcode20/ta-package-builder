@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -16,8 +16,8 @@ import axios from 'axios';
 import { storage } from '../firebaseConfig';
 import PopUp from '../Commons/messagePopUp';
 import LoadingButton from "../Commons/LoadingButton";
-
-const userData = JSON.parse(localStorage.getItem("user"));
+import { MainContext } from "../Utility";
+// const userData = JSON.parse(localStorage.getItem("user"));
 
 const UploadRatesheet = () => {
     // const { userId } = useParams();
@@ -33,6 +33,7 @@ const UploadRatesheet = () => {
     const [loading, setLoading] = useState(false);
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
+    const { userData={} } = useContext(MainContext);
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
     const handleInputChange = (event) => {
@@ -60,12 +61,11 @@ const UploadRatesheet = () => {
             return;
         }
         setLoading(true);
-        console.log("Ratesheet ->", ratesheet);
         
         const axiosOptions = {
             method: 'POST',
             headers: { 
-                'content-type': 'application/x-www-form-urlencoded',
+                // 'content-type': 'application/x-www-form-urlencoded',
                 'Authorization': userData?.firebaseIdToken 
             },
             data: {
@@ -73,10 +73,11 @@ const UploadRatesheet = () => {
                 validUntil: ratesheet.endDate,
                 fileUrl: ratesheet.ratesheetUrl
             },
-            url: `/destinations/${ratesheet.destination}/upload-rate-sheet/`,
+            url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
         };
+        console.log("Ratesheet ->", userData, userData?.firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
 
-        let response = await axios.post(axiosOptions);
+        let response = await axios(axiosOptions);
         console.log('response axios ', response);
         setLoading(false);
         setSubmitMsg(true);
