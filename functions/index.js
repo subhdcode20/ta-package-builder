@@ -15,6 +15,7 @@ const {getAuth} = require("firebase-admin/auth")
 const csv = require('csv-parser')
 const axios = require('axios');
 const cors = require('cors');
+const concat = require('concat-stream');
 // const { arrayUnion } = require("firebase-admin/firestore");
 
 admin.initializeApp();
@@ -151,6 +152,32 @@ exports.webApi = functions.https.onRequest(app)
 //
 //     }
 // )
+
+// app.post("/update-pdf-data/", async (req, res) => {
+//     let {
+//         userPhone = null,
+//         logoUrl = null
+//     } = req.body;
+//     try {
+//         const response = await axios.get(logoUrl, {responseType: 'stream'});
+//         const results = [];
+//         const cbConcat = (base64) => {
+//             resolve(base64)
+//         }
+
+//         response.data
+//             .pipe()
+//             .pipe(concat(cbConcat))
+//             .on('data', (data) => {
+//                 logger.log("pdfData logo data", data);
+//                 (data)
+//             })
+//             .on('end', async () => {
+//     } catch (error) {
+        
+//     }
+
+// })
 
 app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) => {
     try {
