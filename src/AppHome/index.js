@@ -19,6 +19,7 @@ import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
 import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 import LoadingButton from '../Commons/LoadingButton.jsx';
+import { CabTypes } from "../Constants.js"
 
 const initialFormData = {
 	destination: "",
@@ -28,7 +29,9 @@ const initialFormData = {
 	pickUp: "",
 	startDate: "",
 	trackingId: "",
-	starCategory: ""
+	starCategory: "",
+	cabType: "",
+	totalRooms:"",
 };
 
 const requiredFields = [
@@ -37,7 +40,9 @@ const requiredFields = [
 	"noOfNights",
 	"startDate",
 	"trackingId",
-	"starCategory"
+	"starCategory",
+	"cabType",
+	"totalRooms"
 ];
 
 const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) => {
@@ -96,7 +101,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// setDestination(selectedDest);
 		setReqData(prev => {
 			return { ...prev, destination: selectedDest }
-		})	
+		})
 	};
 
 	const handleFormChange = (e, field) => {
@@ -180,6 +185,8 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		if (reqData.destination !== requestData.destination) {
 			updatedFields.destination = reqData.destination;
 		}
+		if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
+		if (reqData.totalRooms !== requestData.totalRooms) updatedFields.totalRooms = reqData.totalRooms;
 		updatedFields.childAges = childAges;
 
 		if (Object.keys(updatedFields).length > 0 || childAges.length > 0) {
@@ -227,6 +234,19 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 				<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 				<br />
 				<Grid container spacing={2}>
+					
+					<Grid item xs={12}>
+						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
+						<TextField
+							error={formErrors["trackingId"]}
+							sx={{ width: "100%" }}
+							id="trackingId"
+							value={reqData.trackingId || ''}
+							variant="outlined"
+							size="small"
+							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
+						/>
+					</Grid>
 					<Grid item xs={6}>
 						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
 						<TextField
@@ -242,7 +262,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-
 					<Grid item xs={6}>
 						<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Total Adult Pax*</InputLabel>
 						<TextField
@@ -258,7 +277,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-
 					<Grid item xs={4}>
 						<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>Total Child Pax*</InputLabel>
 						<TextField
@@ -296,7 +314,42 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							);
 						})}
 					</Grid>
-
+					<Grid item xs={6}>
+						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
+						<Autocomplete
+							disablePortal
+							id="cabType-filter"
+							includeInputInList
+							onChange={(e, val) => handleFormChange({ target: { value: val } }, "cabType")}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									error={formErrors["cabType"]}
+									variant="outlined"
+									size="small"
+								/>
+							)}
+							options={CabTypes}
+							value={reqData.cabType}
+							defaultValue={reqData.cabType}
+							sx={{ width: "100%" }}
+						/>
+					</Grid>
+					<Grid item xs={6}>
+						<InputLabel id="totalRooms" error={formErrors["totalRooms"]} sx={{ fontSize: 12 }}>Total No. of Rooms*</InputLabel>
+						<TextField
+							error={formErrors["totalRooms"]}
+							sx={{ width: "100%" }}
+							id="totalRooms"
+							variant="outlined"
+							size="small"
+							value={reqData.totalRooms || ''}
+							onChange={(e) => handleFormChange(e, "totalRooms")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
 					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
 						<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
 						<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -351,20 +404,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							defaultValue={""}
 						/>
 					</Grid>
-
-					<Grid item xs={6}>
-						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Tracking Id*</InputLabel>
-						<TextField
-							error={formErrors["trackingId"]}
-							sx={{ width: "100%" }}
-							id="trackingId"
-							value={reqData.trackingId || ''}
-							variant="outlined"
-							size="small"
-							onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
-						/>
-					</Grid>
-
 					<Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
 						{isUpdateflow ? (
 							<LoadingButton

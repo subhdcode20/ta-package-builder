@@ -70,3 +70,4 @@ export const HOTEL_STAR_CAT_OPTS = [
     value: 2
   }
 ]
+export const CabTypes = ["Sedan", "Suv", "Hatchback", "Traveller", "Bus"];
