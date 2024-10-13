@@ -7,7 +7,7 @@ const filter = createFilterOptions();
 
 const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates = [] }) => {
   const [defaultValue, setDefaultValue] = React.useState(selectedHotel || null);
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState('');
   const [hotelsDropdownList, setHotelsDropdownList] = React.useState(userHotelRates || []);
   console.log("hotel search rnder ", selectedHotel)
 
@@ -15,30 +15,33 @@ const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates =
     if (userHotelRates && userHotelRates.length > 0) setHotelsDropdownList(userHotelRates);
   }, [userHotelRates])
 
-  useEffect(() => {
-    if (value !== null) onChange(value);
-  }, [value])
+  // useEffect(() => {
+  //   console.log('save day daya hotel search value change effect', value)
+  //   if (value !== null) onChange(value);
+  // }, [value])
 
   useEffect(() => {
     setDefaultValue(selectedHotel);
   }, [selectedHotel])
 
-  console.log("hotel drop down ", value, selectedHotel, hotelsDropdownList, userHotelRates);
+  console.log("hotel drop down ", defaultValue, value, selectedHotel, hotelsDropdownList, userHotelRates);
   return (
     <Autocomplete
       fullWidth
       size="small"
       value={defaultValue || value || null}
       onChange={(event, newValue) => {
-        console.log("maindest onChange ", newValue, typeof newValue);
+        console.log("save day daya hotel search maindest onChange ", newValue, typeof newValue);
         if (newValue && newValue.hotelName) {
           // Create a new value from the user input
           setValue(newValue);
+          if (newValue !== null) onChange(newValue);
           // setValue({
           //   title: newValue.inputValue,
           // });
         } else {
           setValue(newValue);
+          if (newValue !== null) onChange(newValue);
         }
 
         // If `newValue` is a custom input, set the value accordingly

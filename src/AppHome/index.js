@@ -13,12 +13,18 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 
 import MainDestSelect from "./mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
 import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 import LoadingButton from '../Commons/LoadingButton.jsx';
+import { isEmptyObject } from '../Utility.js';
 import { CabTypes } from "../Constants.js"
 
 const initialFormData = {
@@ -30,8 +36,8 @@ const initialFormData = {
 	startDate: "",
 	trackingId: "",
 	starCategory: "",
+	noOfRooms: '',
 	cabType: "",
-	totalRooms:"",
 };
 
 const requiredFields = [
@@ -41,8 +47,8 @@ const requiredFields = [
 	"startDate",
 	"trackingId",
 	"starCategory",
+	"noOfRooms",
 	"cabType",
-	"totalRooms"
 ];
 
 const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) => {
@@ -59,28 +65,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	const [buttonLoading, setButtonLoading] = useState(false);
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
-
-	useEffect(() => {
-		const fetchUserIdToken = async () => {
-			try {
-				auth.onAuthStateChanged(async (user) => {
-					if (user) {
-						// user.getIdToken().then(function(data) {
-						//   console.log(data)
-						// });
-						let signedInIdToken = await auth.currentUser.getIdToken(
-				  /* forceRefresh */ true,
-						);
-						console.log("signedInIdToken ", signedInIdToken);
-					}
-				});
-			} catch (e) {
-				console.log("signedInIdToken error ", e);
-			}
-		};
-
-		fetchUserIdToken();
-	}, []);
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
 	useEffect(() => {
 		if (requestData) {
@@ -105,8 +90,8 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	};
 
 	const handleFormChange = (e, field) => {
-		console.log("form change 1 ", e, field);
 		let val = e.target.value;
+		console.log("form change 1 ", val, field);
 		// setAlertOpen({ show: false });
 
 		let req = { ...reqData };
@@ -125,13 +110,13 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		let newChildAges = [];
 		let len = childAges.length;
 		for (let ii = 0; ii < reqData.childPax; ii++) {
-			if (ii < len) {
-				newChildAges.push(childAges[ii]);
+			if (!isEmptyObject(childAges[ii])) {
+				newChildAges.push({ ...childAges[ii] });
 			} else {
-				newChildAges.push(null);
+				newChildAges.push({ age: null, extraBed: false });
 			}
 		}
-		console.log("child age effect ", reqData.childPax, newChildAges)
+		console.log("child age effect ", reqData.childPax, childAges.map(i => `${i.age}-${i.extraBed}`), newChildAges)
 		setChildAges(newChildAges);
 	}, [reqData.childPax])
 
@@ -149,11 +134,13 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			userId: userData?.phone,
 			createdAt: Date.now()
 		}, { merge: true });
-		let userPackRef = await setDoc(doc(db, "userPackages", userData?.phone), {
-			packagesList: arrayUnion(newReqId),
+
+		let userPackRef = await setDoc(doc(db, "userRequests", userData?.phone), {
+			reqsList: arrayUnion(newReqId),
 			updatedAt: Date.now()
 		}, { merge: true });
-		console.log("new Req post 2: ", reqData, newReqId, reqRef, userPackRef);
+
+		console.log("new Req post 2: ", reqData, newReqId, reqRef); //, userPackRef
 		// return;
 		// if (copyNew) {
 		// 	setTimeout(() => navigate(`/request/${newReqId}/copy-new`));
@@ -186,7 +173,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			updatedFields.destination = reqData.destination;
 		}
 		if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
-		if (reqData.totalRooms !== requestData.totalRooms) updatedFields.totalRooms = reqData.totalRooms;
+		if (reqData.noOfRooms !== requestData.noOfRooms) updatedFields.noOfRooms = reqData.noOfRooms;
 		updatedFields.childAges = childAges;
 
 		if (Object.keys(updatedFields).length > 0 || childAges.length > 0) {
@@ -200,40 +187,50 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 		setButtonLoading(false);
 	}
-	const handleChildAgeChange = (age, childIndex) => {
-		console.log("child age change", age, childIndex, !isNaN(age), age > MAX_CHILD_AGE);
+	const handleChildAgeChange = (age, childIndex, extraBedValue = false) => {
+		console.log("child age change", age, typeof age, Number(age), "---", childIndex, !isNaN(age), age > MAX_CHILD_AGE);
 		console.log("MAXAGE: ", MAX_CHILD_AGE, childIndex, age);
 		if (isNaN(age)) return;
 		if (age > MAX_CHILD_AGE) {
 			// TODO: show error
 			return;
 		}
+		if(age == 0) age = ''
 		console.log("PREVIOUSAGE", childAges);
-		let newChildAges = childAges;
-		if (newChildAges.length < childIndex) {
-			for (let i = newChildAges.length; i <= childIndex; i++) {
-				newChildAges[i] = null;
-			}
-		}
-		newChildAges[childIndex] = Number(age);
+		let newChildAges = [ ...childAges ];
+		// if (newChildAges.length < childIndex) {
+		// 	for (let i = newChildAges.length; i <= childIndex; i++) {
+		// 		newChildAges[i] = null;
+		// 	}
+		// }
+		newChildAges[childIndex] = {
+			age: age,
+			extraBed: extraBedValue
+		};
 		console.log("NEWCHILDRENAGES", newChildAges);
 		setChildAges(newChildAges);
 	}
 
-	console.log("child home render ", childAges, storeReqData)
+	const handleChildExtraBedChange = (e, childIndex) => {
+		console.log("child extra bed type ", e.target.value);
+	}
+
+	console.log("child home render ", reqData.childPax, childAges, storeReqData)
 	console.log("DESTINATION", destination)
 	return (
-		<Box sx={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: 3, bgcolor: "transparent" }}>
+		<Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", mt: 2 }}>
+			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: isMobile ? 1 : 3, bgcolor: "transparent" }}>
 				<Box sx={{ "display": "flex", mb: 2 }}>
 					<Typography variant="h6" sx={{ margin: 'auto' }}>
 						<b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b>
 					</Typography>
 				</Box>
 
-				<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
-				<br />
-				<Grid container spacing={2}>
+				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 5 }}>
+					<Grid item xs={6} md={3} lg={3}>
+						<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
+						{/* <br /> */}
+					</Grid>
 					
 					<Grid item xs={12}>
 						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
@@ -247,7 +244,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
 						/>
 					</Grid>
-					<Grid item xs={6}>
+					<Grid item xs={6} md={3} lg={3}>
 						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
 						<TextField
 							error={formErrors["noOfNights"]}
@@ -262,7 +259,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-					<Grid item xs={6}>
+					<Grid item xs={6} md={3} lg={3}>
 						<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Total Adult Pax*</InputLabel>
 						<TextField
 							error={formErrors["adultPax"]}
@@ -277,7 +274,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-					<Grid item xs={4}>
+					<Grid item xs={6} md={3} lg={3}>
 						<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>Total Child Pax*</InputLabel>
 						<TextField
 							error={formErrors["childPax"]}
@@ -293,23 +290,41 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						/>
 					</Grid>
 
-					<Grid item xs={4} display="flex">
+					
+					<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
 						{childAges.map((c, cIndex) => {
 							return (
-								<Grid item xs={12} md={4} lg={4} sx={{ mr: 1 }}>
-									<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-									<TextField
-										error={formErrors["childPax"]}
-										sx={{ width: "100%" }}
-										id="childPax"
-										variant="outlined"
-										size="small"
-										onChange={(e) => handleChildAgeChange(e.target.value, cIndex)}
-										inputProps={{
-											type: "number",
-										}}
-										value={c}
-									/>
+								<Grid item xs={12} md={6} lg={6} >
+									<Grid container spacing={1}>
+										<Grid item xs={6} md={6} lg={6}>
+											<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+											<TextField
+												error={formErrors["childPax"]}
+												sx={{ width: "100%" }}
+												id={`childPax-${cIndex}${Number(c.age)}`}
+												variant="outlined"
+												size="small"
+												onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
+												inputProps={{
+													type: "number",
+												}}
+												value={c.age}
+												type="text"
+											/>
+										</Grid>
+										<Grid item xs={6} md={6} lg={6}>
+											{
+												Number(c.age) >= 5 && (<RadioGroup
+												aria-labelledby="demo-radio-buttons-group-label"
+												defaultValue="false"
+												name="radio-buttons-group"
+												onChange={(e) => handleChildAgeChange(c?.age, cIndex, Boolean(e.target.value))}
+											>
+												<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
+												<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
+											</RadioGroup>)}
+										</Grid>
+									</Grid>
 								</Grid>
 							);
 						})}
@@ -333,21 +348,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							value={reqData.cabType}
 							defaultValue={reqData.cabType}
 							sx={{ width: "100%" }}
-						/>
-					</Grid>
-					<Grid item xs={6}>
-						<InputLabel id="totalRooms" error={formErrors["totalRooms"]} sx={{ fontSize: 12 }}>Total No. of Rooms*</InputLabel>
-						<TextField
-							error={formErrors["totalRooms"]}
-							sx={{ width: "100%" }}
-							id="totalRooms"
-							variant="outlined"
-							size="small"
-							value={reqData.totalRooms || ''}
-							onChange={(e) => handleFormChange(e, "totalRooms")}
-							inputProps={{
-								type: "number",
-							}}
 						/>
 					</Grid>
 					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
@@ -404,6 +404,23 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							defaultValue={""}
 						/>
 					</Grid>
+
+					<Grid item xs={6}>
+						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
+						<TextField
+							error={formErrors["noOfRooms"]}
+							sx={{ width: "100%" }}
+							id="noOfRooms"
+							value={reqData.noOfRooms || ''}
+							variant="outlined"
+							size="small"
+							onChange={(e) => handleFormChange(e, "noOfRooms")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
+
 					<Grid item xs={12} sx={{ display: "flex", flexDirection: "row-reverse" }}>
 						{isUpdateflow ? (
 							<LoadingButton

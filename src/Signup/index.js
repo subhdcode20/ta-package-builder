@@ -8,14 +8,15 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db, storage } from "../firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { nanoid } from "@reduxjs/toolkit";
-import LoadingButton from "../Commons/LoadingButton";
 import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+import { db, storage } from "../firebaseConfig";
+import LoadingButton from "../Commons/LoadingButton";
+import { fileToBase64 } from "../Utility.js";
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
@@ -60,6 +61,9 @@ const SignUp = () => {
     const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);
     // ->  userDocs/phone/fileName
     await uploadBytes(fileRef, file);
+    if(fileName == "companyLogo") {
+      await handleSavePdfData(file);
+    }
     return await getDownloadURL(fileRef);
   };
 
@@ -113,6 +117,17 @@ const SignUp = () => {
     }, 1000);
     // alert("Form submitted successfully!");
   };
+
+  const handleSavePdfData = async (companyLogo) => {
+    console.log("fileB64 initial", personalInfo.phone, companyLogo, typeof companyLogo);
+    // setCompanyInfo({ ...companyInfo, companyLogo });
+    let fileB64 = await fileToBase64(companyLogo);
+    console.log("fileB64 ", fileB64, companyLogo);
+    let docRef = doc(db, "userPdfData", `+91${personalInfo.phone}`)
+    await setDoc(docRef, {
+      logoB64Str: fileB64
+    }, { merge: true });
+  }
 
   return (
     <Container maxWidth="sm">
@@ -236,7 +251,7 @@ const SignUp = () => {
 
                 <input
                   type="file"
-                  onChange={(e) => setCompanyInfo({ ...companyInfo, companyLogo: e.target.files[0] })}
+                  onChange={(e) => setCompanyInfo({ companyInfo, companyLogo: e.target.files[0] })}
                   required
                 />
               </Button>

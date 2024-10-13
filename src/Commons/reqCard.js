@@ -14,33 +14,37 @@ const ReqCardView = ({ reqData = {} }) => {
         <Paper sx={{display: "flex", justifyContent: "space-evenly", py: 1}}>
             <Typography variant="body1"><b>{destination}</b></Typography>&nbsp;
             <div style={{display: 'flex'}}>
-                <NightsStayIcon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{noOfNights} N</Typography>
-                &nbsp;
-            </div>
+                
+                <div style={{display: 'flex', minWidth: 'fit-content'}}>
+                    <NightsStayIcon />
+                    <Typography variant="body1" sx={{margin: "auto"}}>{noOfNights} N</Typography>
+                    &nbsp;
+                </div>
 
-            <div style={{display: 'flex'}}>
-                <Person4Icon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{adultPax} A</Typography>
-                &nbsp;
-            </div>
+                <div style={{display: 'flex'}}>
+                    <Person4Icon />
+                    <Typography variant="body1" sx={{margin: "auto"}}>{adultPax} A</Typography>
+                    &nbsp;
+                </div>
 
-            <div style={{display: 'flex'}}>
-                <ChildFriendlyIcon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{childPax} C</Typography>
-                &nbsp;
+                <div style={{display: 'flex'}}>
+                    <ChildFriendlyIcon />
+                    <Typography variant="body1" sx={{margin: "auto"}}>{childPax} C</Typography>
+                    &nbsp;
+                </div>
             </div>
-
             <div style={{display: 'flex'}}>
-                <EventNoteIcon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{format(new Date(startDate), "dd-MMM-yyyy")}</Typography>
-                &nbsp;
-            </div>
+                <div style={{display: 'flex'}}>
+                    <EventNoteIcon />
+                    <Typography variant="body1" sx={{margin: "auto"}}>{format(new Date(startDate), "dd-MMM-yyyy")}</Typography>
+                    &nbsp;
+                </div>
 
-            <div style={{display: 'flex'}}>
-                <StarRateIcon />
-                <Typography variant="body1" sx={{margin: "auto"}}>{starCategory.value}</Typography>
-                &nbsp;
+                <div style={{display: 'flex'}}>
+                    <StarRateIcon />
+                    <Typography variant="body1" sx={{margin: "auto"}}>{starCategory.value}</Typography>
+                    &nbsp;
+                </div>
             </div>
         </Paper>
     )

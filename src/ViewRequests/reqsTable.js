@@ -3,11 +3,20 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 
 
 const ReqsListTable = ({ reqsList = [] }) => {
-
+  const [tableData, setTableData] = React.useState([]);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if(!reqsList) return
+    setTableData(reqsList.map((dd) => {
+      dd['createdAt'] = format(new Date(dd.createdAt), "dd-MMM-yyyy");
+      return dd;
+    }))
+  }, [reqsList])
 
   const handleCopy = (reqId) => {
     console.log("REQID: ", reqId);
@@ -19,6 +28,12 @@ const ReqsListTable = ({ reqsList = [] }) => {
   };
 
   const columns = [
+    {
+      field: 'createdAt',
+      headerName: 'Created On',
+      width: 150,
+      editable: false,
+    },
     {
       field: 'destination',
       headerName: 'Dest',
@@ -104,11 +119,11 @@ const ReqsListTable = ({ reqsList = [] }) => {
   //   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
   // ];
 
-  console.log("req list table", reqsList)
+  console.log("req list table", reqsList, tableData)
   return (
     <Box sx={{ margin: "auto", height: 400, width: "100%" }}>
       <DataGrid
-        rows={reqsList}
+        rows={tableData}
         columns={columns}
         initialState={{
           pagination: {

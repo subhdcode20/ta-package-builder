@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useHref, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import { db, auth } from "../firebaseConfig";
 import Navbar from '../Navbar/index.js';
 import PublicNavbar from '../Navbar/publicNavbar.js';
 import { MainContext } from "../Utility";
@@ -25,9 +26,33 @@ function PrivateRoute({ children, authed = false, props }) {
 }
 
 const AppLayout = ({ children, showNavBar = true }) => {
-  const userData = JSON.parse(localStorage.getItem("user") || null);
+  let userData = JSON.parse(localStorage.getItem("user") || null);
   const isLoggedIn = Boolean(userData);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+
+	useEffect(() => {
+		const fetchUserIdToken = async () => {
+			try {
+				auth.onAuthStateChanged(async (user) => {
+					if (user) {
+						// user.getIdToken().then(function(data) {
+						//   console.log(data)
+						// });
+						let signedInIdToken = await auth.currentUser.getIdToken(
+							/* forceRefresh */ true,
+						);
+						console.log("signedInIdToken ", signedInIdToken, typeof signedInIdToken);
+						localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
+            userData['firebaseIdToken'] = signedInIdToken;
+					}
+				});
+			} catch (e) {
+				console.log("signedInIdToken error ", e);
+			}
+		};
+
+		fetchUserIdToken();
+	}, []);
 
   const contextValue = useMemo(
     () => ({

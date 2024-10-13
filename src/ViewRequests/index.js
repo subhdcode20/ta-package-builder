@@ -43,23 +43,26 @@ const ViewRequest = () => {
             // const q = query(doc(db, "userPackages", userData.phone));
         
               const unsubscribe = await onSnapshot(
-                doc(db, "userPackages", userData.phone),
+                doc(db, "userRequests", userData.phone),
                 async (snapshot) => {
                   // ...
                   if (!snapshot.exists()) return;
                   let data = snapshot.data();
-                  console.log("snapshot", data, data.packagesList, snapshot);
-                  let userReqIdList = data.packagesList.map((i) => {
+                  console.log("snapshot", data, data.reqsList, snapshot);
+                  let userReqIdList = data.reqsList.map((i) => {
                     return getDoc(doc(db, "requests", i));
                   });
                   let response = await Promise.all(userReqIdList);
-                  console.log("snapshot response", response, response.map(i => i.data()), userReqIdList);
-                  setUserReqList(response.map(i => {
+                  let userReqsData = response.map(i => {
+                    let itemData = i.data();
                     return {
-                        id: nanoid(5), 
-                        ...i.data()
+                      ...itemData,
+                      id: itemData.reqId
                     }
-                }));
+                  })
+                  console.log("snapshot response", userReqsData, response.map(i => i.data()), userReqIdList);
+                  let sortedRes = userReqsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+                  setUserReqList(sortedRes);
                 //   setReqs(
                 //     data.sort(
                 //       (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0),
