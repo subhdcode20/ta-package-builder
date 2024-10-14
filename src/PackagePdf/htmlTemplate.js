@@ -2,15 +2,16 @@ import React from 'react';
 import ReactPDF, { Page, Text, View, Document, StyleSheet, Image, Font,  PDFViewer } from '@react-pdf/renderer';
 
 const HtmlPdfView = ({
-  packageData: {
-    packageId,
+  pkgData: {
+    req = {}
+  },
+  dayWiseData: {
     hotels = [],
-    req = {},
-    createdAt
+    itiDesc = []
   },
   userData: {
-    userPhone,
-    logo
+    phone,
+    logoB64Str
   }
 }) => (
     <Document>
@@ -22,7 +23,7 @@ const HtmlPdfView = ({
         <View style={styles.body}>
           <Image
             style={[styles.image, { position: 'absolute', top: -50 }]}
-            src={logo}
+            src={logoB64Str}
           />
           <Text style={styles.title}>Travel Itinerary</Text>
           <Text style={styles.author}>{req?.noOfNights} Nights | {req?.adultPax} Adults {req?.childPax && ` | ${req?.childPax} Children`}</Text>

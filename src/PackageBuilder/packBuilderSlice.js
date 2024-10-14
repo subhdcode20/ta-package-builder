@@ -72,6 +72,7 @@ export const todoSlice = createSlice({
       state.packageData = packageData
       state.selectedHotels = newSelectedHotels;
       state.selectedRooms = newSelectedRooms;
+      
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
       console.log("savedHotelsCHECK3", state.selectedRooms);
@@ -171,10 +172,11 @@ export const todoSlice = createSlice({
         }
       const currChildAges = selectedOccupancy?.childAges || [];
       let newChildAges = null;
-      if(keyType == "child" && value > 0) {
+      if(keyType == "child" && !isNaN(value)) {
+        let totalChild = value || 0;
         newChildAges = [];
         // if(currChildAges) {
-        for(let cc = 0; cc < value; cc++) {
+        for(let cc = 0; cc < totalChild; cc++) {
           if (!currChildAges[cc] || !isEmptyObject(currChildAges[cc])) {
             newChildAges.push({ ...currChildAges[cc] });
           } else {
@@ -277,11 +279,24 @@ export const todoSlice = createSlice({
       }
     },
     setItineraryDesc: (state, action) => {
-      let { text: genItiText = '' } = action?.payload;
+      let { text: genItiText = [] } = action?.payload;
       if(!genItiText) return;
+      console.log("set gen iti text ", genItiText, genItiText)
       state.itineraryDesc[state.currDayIndex] = {
         text: genItiText
       }
+    },
+    setHotelLocation: (state, action) => {
+      let { hotelIndex = null, data = null } = action.payload;
+      console.log("setHotelLocation 1", state, state.currDayIndex, state.selectedHotels, hotelIndex, data);
+      let currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currHotelData = currDayHotels[hotelIndex];
+      // let selectedRoomsData =
+      currDayHotels[hotelIndex] = {
+        ...currHotelData,
+        location: data,
+      };
+      console.log("setHotelLocation 2", currDayHotels[hotelIndex], state, state.currDayIndex, state.selectedHotels, hotelIndex, data)
     }
   }
 });
@@ -304,7 +319,8 @@ export const {
   setMealPlanFor1Room,
   setReqsHistory,
   setPriceFor1Room,
-  setItineraryDesc
+  setItineraryDesc,
+  setHotelLocation
 } = todoSlice.actions;
 
 // this is for configureStore

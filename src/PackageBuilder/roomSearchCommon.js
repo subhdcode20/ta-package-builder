@@ -27,7 +27,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
     <Autocomplete
       fullWidth
       size="small"
-      value={defaultValue.roomName || value.roomName || null}
+      value={defaultValue || value || null}
       onChange={(event, newValue) => {
         console.log("mainroom onChange ", newValue, typeof newValue);
         if (newValue && newValue.roomName) {
