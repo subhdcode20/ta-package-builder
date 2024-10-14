@@ -26,7 +26,7 @@ const DayWisePackageBuilder = () => {
 	const { reqId = null } = useParams();
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-
+	console.log("USERCURR:", JSON.parse(localStorage.getItem("user") || null));
 	useEffect(() => {
 		const getUserPdfData = async () => {
 			let docSnapPdfData = await getDoc(doc(db, "userPdfData", userData.phone));
@@ -124,10 +124,11 @@ const DayWisePackageBuilder = () => {
 	}
 		
 	console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData, storeSelectedHotels, userData)
-	console.log("PACKAGEDATASTORE:", storePackageData);
+	console.log("PACKAGEDATASTORE:", storeReqData);
 	console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
 	console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
 	console.log("STORESELECTEDHOTEL:", storeSelectedHotels);
+	console.log("USERDETAILS:", userData);
 	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
 		<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
 			<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
@@ -139,7 +140,7 @@ const DayWisePackageBuilder = () => {
 		{
 			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" sx={{ margin: 'auto' }}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
+				<HtmlTemplate packageData={{"req":storeReqData ,"hotels": storeSelectedHotels}} userData={userPdfData} userDetails={userData}/>
 			</Box>)
 		}
 	</Box>)

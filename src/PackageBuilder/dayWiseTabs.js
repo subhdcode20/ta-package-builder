@@ -15,7 +15,7 @@ import SavePackagePdf from './savePackagePdf.js';
 import useTotalPackPrice from "./totalPriceBreakup.js";
 
 const DayWiseTabs = ({reqDatass = {}}) => {
-	// const [currentDayIndex, setCurrentDayIndex] = useState(0);
+	// const [currentDayIndex, setCurrentDayIndex] = useSt	ate(0);
 	// const [daysArray, setDaysArray] = useState([]);
 	// const [selectedHotels, setSelectedHotels] = useState([]);
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
