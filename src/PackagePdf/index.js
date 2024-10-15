@@ -47,7 +47,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} }) => {
         {
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} pkgData={{ req: reqData }} userData={userPdfData} />
+				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} reqData={{ req: reqData }} userData={userPdfData} />
 			</Box>)
 		}
     </>);

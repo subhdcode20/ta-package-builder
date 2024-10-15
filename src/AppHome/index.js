@@ -19,7 +19,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 
-import MainDestSelect from "./mainDestSearch.js";
+import MainDestSelect from "../Commons/mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
 import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
@@ -150,7 +150,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// }
 		setButtonLoading(false);
 	}
-	
+
 	const handleUpdatePost = async () => {
 		setButtonLoading(true);
 		console.log("Updating Request: ", reqData, childAges);

@@ -29,53 +29,41 @@ const ViewRequest = () => {
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
 
     useEffect(() => {
-		const getReqs = async () => {
-			// let docSnap = await getDoc(doc(db, "userPackages", userData.phone));
-            // if (docSnap.exists()) {
-			// 	console.log("user hotels data ", docSnap.data());
-			// 	setUserReqList(docSnap.data());
-			// } else {
-			// 	console.error(`User Req list not forund for ${userData.phone}`);
-			// 	// TODO show page error
-			// 	return null;
-			// }
-
-            // const q = query(doc(db, "userPackages", userData.phone));
-        
-              const unsubscribe = await onSnapshot(
-                doc(db, "userRequests", userData.phone),
-                async (snapshot) => {
-                  // ...
-                  if (!snapshot.exists()) return;
-                  let data = snapshot.data();
-                  console.log("snapshot", data, data.reqsList, snapshot);
-                  let userReqIdList = data.reqsList.map((i) => {
-                    return getDoc(doc(db, "requests", i));
-                  });
-                  let response = await Promise.all(userReqIdList);
-                  let userReqsData = response.map(i => {
-                    let itemData = i.data();
-                    return {
-                      ...itemData,
-                      id: itemData.reqId
-                    }
-                  })
-                  console.log("snapshot response", userReqsData, response.map(i => i.data()), userReqIdList);
-                  let sortedRes = userReqsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-                  setUserReqList(sortedRes);
-                //   setReqs(
-                //     data.sort(
-                //       (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0),
-                //     ),
-                //   );
-                //   checkExpiredReqs(data);
-                },
-                (error) => {
-                  console.log("user req list error", error);
-                },
-              );
-        
-              return unsubscribe;
+      const getReqs = async () => {
+        const unsubscribe = await onSnapshot(
+          doc(db, "userRequests", userData.phone),
+          async (snapshot) => {
+            // ...
+            if (!snapshot.exists()) return;
+            let data = snapshot.data();
+            console.log("snapshot", data, data.reqsList, snapshot);
+            let userReqIdList = data.reqsList.map((i) => {
+              return getDoc(doc(db, "requests", i));
+            });
+            let response = await Promise.all(userReqIdList);
+            let userReqsData = response.map(i => {
+              let itemData = i.data();
+              return {
+                ...itemData,
+                id: itemData.reqId
+              }
+            })
+            console.log("snapshot response", userReqsData, response.map(i => i.data()), userReqIdList);
+            let sortedRes = userReqsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+            setUserReqList(sortedRes);
+          //   setReqs(
+          //     data.sort(
+          //       (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0),
+          //     ),
+          //   );
+          //   checkExpiredReqs(data);
+          },
+          (error) => {
+            console.log("user req list error", error);
+          },
+        );
+  
+        return unsubscribe;
 
 
 			// if (docSnap.exists()) {

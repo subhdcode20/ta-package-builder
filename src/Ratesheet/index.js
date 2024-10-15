@@ -17,6 +17,7 @@ import { storage } from '../firebaseConfig';
 import PopUp from '../Commons/messagePopUp';
 import LoadingButton from "../Commons/LoadingButton";
 import { MainContext } from "../Utility";
+import ViewRatesSheets from "./viewActiveRatesheets.js";
 // const userData = JSON.parse(localStorage.getItem("user"));
 
 const UploadRatesheet = () => {
@@ -201,6 +202,10 @@ const UploadRatesheet = () => {
                         Please fill all the required fields.
                     </Alert>
                 )}
+            </Box>
+
+            <Box>
+                <ViewRatesSheets />
             </Box>
 
             <PopUp

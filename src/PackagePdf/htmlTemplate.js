@@ -2,7 +2,7 @@ import React from 'react';
 import ReactPDF, { Page, Text, View, Document, StyleSheet, Image, Font,  PDFViewer } from '@react-pdf/renderer';
 
 const HtmlPdfView = ({
-  pkgData: {
+  reqData: {
     req = {}
   },
   dayWiseData: {

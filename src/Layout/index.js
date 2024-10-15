@@ -63,7 +63,7 @@ const AppLayout = ({ children, showNavBar = true }) => {
   );
 
   const navigate = useNavigate();
-
+  console.log("layout render", userData);
   return (<>
     <PrivateRoute authed={isLoggedIn}>
       <MainContext.Provider value={contextValue}>
