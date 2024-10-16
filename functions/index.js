@@ -16,6 +16,7 @@ const csv = require('csv-parser')
 const axios = require('axios');
 const cors = require('cors');
 const concat = require('concat-stream');
+const { nanoid } = require("nanoid");
 // const { arrayUnion } = require("firebase-admin/firestore");
 
 admin.initializeApp();
@@ -205,7 +206,7 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                 let userHotelRateDocRef = db.collection("userRates").doc(`${res.locals.user}-${req.params.destinationName.toLowerCase()}`);
                 let finalDocData = results.map((rate) => {
                     return {
-                        // hotelId: hotelId,
+                        hotelRateId: nanoid(5),
                         hotelName: rate['Hotel Name'],
                         location: rate['location'],
                         starCategory: rate['Star Category'],
@@ -231,14 +232,15 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                                 childNoBedApaiPrice: rate['Child Without Bed APAI']
                             }
                         },
-                        userId: res.locals.user,
                         validFrom: validFromDate,
                         validUntil: validUntilDate
                     }
                 })
                 logger.log("set final data row data", finalDocData);
                 let updateDocRes = await userHotelRateDocRef.set({
-                    hotels: finalDocData
+                    hotels: finalDocData,
+                    createdAt: Date.now(),
+                    userId: res.locals.user
                 }, { merge: true });
 
                 return res.status(200).send({message: 'Rate sheet uploaded successfully', docRes: updateDocRes});

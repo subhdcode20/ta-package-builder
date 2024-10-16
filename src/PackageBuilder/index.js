@@ -13,6 +13,7 @@ import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePa
 import ReqDataView from '../Commons/reqCard.js';
 // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import PackagePdfView from '../PackagePdf/index.js';
+import useTotalPackPrice from './totalPriceBreakup.js';
 // import axios from 'axios';
 
 const DayWisePackageBuilder = () => {
@@ -27,6 +28,8 @@ const DayWisePackageBuilder = () => {
 	const { reqId = null } = useParams();
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+	const totalPackPrice = useTotalPackPrice();
+
 	console.log("USERCURR:", JSON.parse(localStorage.getItem("user") || null));
 	useEffect(() => {
 		const getUserPdfData = async () => {
@@ -125,11 +128,9 @@ const DayWisePackageBuilder = () => {
 	// }
 		
 	console.log("package builder index render ", reqId, reqData, storeReqData, storeSelectedHotels, userData)
-	// console.log("PACKAGEDATASTORE:", storeReqData);
+	// console.log("PACKAGEDATASTORE:", storePackageData);
 	console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
 	// console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
-	console.log("STORESELECTEDHOTEL:", storeSelectedHotels);
-	console.log("USERDETAILS:", userData);
 	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} >
 		<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
 			<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
@@ -138,11 +139,11 @@ const DayWisePackageBuilder = () => {
 				{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
 			</Box>
 		</Box>
-		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
+		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} totalPrice={totalPackPrice} />
 		{/* {
 			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate packageData={{"req":storeReqData ,"hotels": storeSelectedHotels}} userData={userPdfData} userDetails={userData}/>
+				<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
 			</Box>)
 		} */}
 	</Box>)

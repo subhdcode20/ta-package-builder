@@ -12,7 +12,7 @@ import { MainContext } from '../Utility.js';
 import HtmlTemplate from './htmlTemplate.js';
 
 
-const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} }) => {
+const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} , totalPrice=null}) => {
     // const { packageId } = useParams();
     // const [packageData, setPackageData] = useState([]);
 	const { userData } = useContext(MainContext)
@@ -42,14 +42,15 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} }) => {
     }
 
     console.log("packagePdf render => ", pkgSelectedHotels, userPdfData);
+    console.log("Itinerary render => ", itineraryDesc);
 
     return (<>
         {
-			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
+			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} pkgData={{ req: reqData }} userData={userPdfData} />
+				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} reqData={{ req: reqData }} userData={userPdfData}  totalPrice={totalPrice}/>
 			</Box>)
-		}
+		}	
     </>);
 };
 
