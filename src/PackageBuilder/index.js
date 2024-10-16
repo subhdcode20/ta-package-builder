@@ -11,7 +11,7 @@ import { db, auth } from "../firebaseConfig";
 import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from './packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
-// import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
+// // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import PackagePdfView from '../PackagePdf/index.js';
 import useTotalPackPrice from './totalPriceBreakup.js';
 // import axios from 'axios';
@@ -139,7 +139,7 @@ const DayWisePackageBuilder = () => {
 				{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
 			</Box>
 		</Box>
-		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} totalPrice={totalPackPrice} />
+		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
 		{/* {
 			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>

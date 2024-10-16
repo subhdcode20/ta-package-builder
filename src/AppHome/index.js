@@ -50,6 +50,7 @@ const requiredFields = [
 	"noOfRooms",
 	"pickUp",
 	"pickUp",
+	"pickUp",
 	"cabType",
 ];
 
@@ -155,7 +156,8 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setButtonLoading(false);
 	}
 
-	
+
+
 	const handleUpdatePost = async () => {
 		setButtonLoading(true);
 		console.log("Updating Request: ", reqData, childAges);
@@ -201,9 +203,9 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			// TODO: show error
 			return;
 		}
-		if(age == 0) age = ''
+		if (age == 0) age = ''
 		console.log("PREVIOUSAGE", childAges);
-		let newChildAges = [ ...childAges ];
+		let newChildAges = [...childAges];
 		// if (newChildAges.length < childIndex) {
 		// 	for (let i = newChildAges.length; i <= childIndex; i++) {
 		// 		newChildAges[i] = null;
@@ -237,7 +239,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 						{/* <br /> */}
 					</Grid>
-					
+
 					<Grid item xs={12}>
 						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
 						<TextField
@@ -296,47 +298,47 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						/>
 					</Grid>
 
-					
+
 					{
-						
+
 						childAges.length > 0 && (<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
-								{childAges.map((c, cIndex) => {
-									return (
-										<Grid item xs={12} md={6} lg={6} >
-											<Grid container spacing={1}>
-												<Grid item xs={6} md={6} lg={6}>
-													<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-													<TextField
-														error={formErrors["childPax"]}
-														sx={{ width: "100%" }}
-														id={`childPax-${cIndex}${Number(c.age)}`}
-														variant="outlined"
-														size="small"
-														onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
-														inputProps={{
-															type: "number",
-														}}
-														value={c.age}
-														type="text"
-													/>
-												</Grid>
-												<Grid item xs={6} md={6} lg={6}>
-													{
-														Number(c.age) >= 5 && (<RadioGroup
+							{childAges.map((c, cIndex) => {
+								return (
+									<Grid item xs={12} md={6} lg={6} >
+										<Grid container spacing={1}>
+											<Grid item xs={6} md={6} lg={6}>
+												<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+												<TextField
+													error={formErrors["childPax"]}
+													sx={{ width: "100%" }}
+													id={`childPax-${cIndex}${Number(c.age)}`}
+													variant="outlined"
+													size="small"
+													onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
+													inputProps={{
+														type: "number",
+													}}
+													value={c.age}
+													type="text"
+												/>
+											</Grid>
+											<Grid item xs={6} md={6} lg={6}>
+												{
+													Number(c.age) >= 5 && (<RadioGroup
 														aria-labelledby="demo-radio-buttons-group-label"
 														defaultValue="false"
 														name="radio-buttons-group"
 														onChange={(e) => handleChildAgeChange(c?.age, cIndex, Boolean(e.target.value))}
 													>
 														<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
-														<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
+														<FormControlLabel value="true" control={<Radio size="small" />} label="With Bed" />
 													</RadioGroup>)}
-												</Grid>
 											</Grid>
 										</Grid>
-									);
-								})}
-							</Grid>)
+									</Grid>
+								);
+							})}
+						</Grid>)
 					}
 					<Grid item xs={6}>
 						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
@@ -359,7 +361,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							sx={{ width: "100%" }}
 						/>
 					</Grid>
-					
 					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
 						<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
 						<LocalizationProvider dateAdapter={AdapterDateFns}>
