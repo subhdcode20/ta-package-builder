@@ -47,7 +47,7 @@ const HtmlPdfView = ({
       <View style={styles.body}>
         <Image
           style={[styles.logo, { position: 'absolute', top: -50 }]}
-          src={logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiBLEzUySlzcOoa4UBA-vWxlCccV5S9rrYQA&s"}
+          src={logo}
           resizeMode="contain"
         />
 
@@ -193,7 +193,7 @@ const HtmlPdfView = ({
         </View>
 
         <View style={styles.footerContainer}>
-          <Image style={styles.footerLogo} src={logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiBLEzUySlzcOoa4UBA-vWxlCccV5S9rrYQA&s"} resizeMode="contain" />
+          <Image style={styles.footerLogo} src={logo} resizeMode="contain" />
           <View style={styles.footerDetails}>
             <Text style={styles.footerText}>{req?.address}</Text>
             <Text style={styles.footerText}>Email: {email}</Text>
