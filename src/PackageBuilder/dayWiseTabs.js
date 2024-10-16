@@ -50,7 +50,8 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	}
 
   	console.log("reqtest- tabs render ", reqData, noOfNights, currentDayIndex, daysArray, totalPackPrice);
-	return (<DayWiseItineraryContext.Provider value={contextValue}>
+	return (<div style={{border: '1px solid', borderRadius: '5px'}}>
+		<DayWiseItineraryContext.Provider value={contextValue}>
 		<AppBar position="static">
 	        <Tabs
 	          value={currentDayIndex}
@@ -59,11 +60,12 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	          textColor="inherit"
 	          variant="fullWidth"
 	          aria-label="day wise tabs"
+			  variant="scrollable"
+			  scrollButtons="auto"
 	        >
 	          { daysArray.map((i, index) => <Tab label={`Day ${index + 1}`}  />)}
 	        </Tabs>
 	    </AppBar>
-	    <br />
 	    {
 			(daysArray && daysArray.length > 0) && (<Card container>
 				<CardContent>
@@ -73,9 +75,10 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 				</CardContent>
 			</Card>)
 		}
-		<Typography variant="body1" sx={{m: 1}}>Total Package Price - Rs {totalPackPrice}</Typography>
-		<SavePackagePdf />
-	</DayWiseItineraryContext.Provider>)
+		<Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography>
+		{/* <div style={{marginLeft: '8px', marginBottom: '8px'}}><SavePackagePdf /></div> */}
+	</DayWiseItineraryContext.Provider>
+	</div>)
 }
 
 export default DayWiseTabs;

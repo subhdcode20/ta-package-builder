@@ -11,12 +11,13 @@ import { db, auth } from "../firebaseConfig";
 import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from './packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
-import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
+// import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
+import PackagePdfView from '../PackagePdf/index.js';
 // import axios from 'axios';
 
 const DayWisePackageBuilder = () => {
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData);
-	const storePackageData = useSelector((state) => state.packBuilderData.packageData);
+	// const storePackageData = useSelector((state) => state.packBuilderData.packageData);
 	const storeNewPackageData = useSelector((state) => state.packBuilderData.newPackageData);
 	const storeSelectedHotels = useSelector((state) => state.packBuilderData.selectedHotels);
 	const [reqData, setReqData] = useState(null);
@@ -61,11 +62,11 @@ const DayWisePackageBuilder = () => {
 		setReqData(storeReqData);
 	}, storeReqData);
 	
-	useEffect(() => {
-		if (!storePackageData || isEmptyObject(storePackageData)) return;
-		console.log("storePackageData", storePackageData);
-		setPackageData(storePackageData);
-	}, [storePackageData]);
+	// useEffect(() => {
+	// 	if (!storePackageData || isEmptyObject(storePackageData)) return;
+	// 	console.log("storePackageData", storePackageData);
+	// 	setPackageData(storePackageData);
+	// }, [storePackageData]);
 
 	const getPackageData = async (packageId) =>{
 		console.log("Yes packages is THERE!", packageId);
@@ -115,21 +116,21 @@ const DayWisePackageBuilder = () => {
 		
 	}, [reqId])
 	
-	const getHotelList = async () => {
+	// const getHotelList = async () => {
 		// const docRef = doc(db, "userHotelRates", userId);
 		// const docSnap = await getDoc(docRef);
 		// if (!docSnap.exists()) {
 			// 	console.log("hotelList not found for user.")
 			// }
-	}
+	// }
 		
-	console.log("package builder index render ", reqId, reqData, storeReqData, storePackageData, storeSelectedHotels, userData)
-	console.log("PACKAGEDATASTORE:", storeReqData);
+	console.log("package builder index render ", reqId, reqData, storeReqData, storeSelectedHotels, userData)
+	// console.log("PACKAGEDATASTORE:", storeReqData);
 	console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
-	console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
+	// console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
 	console.log("STORESELECTEDHOTEL:", storeSelectedHotels);
 	console.log("USERDETAILS:", userData);
-	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} sx={{margin:2}}>
+	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} >
 		<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
 			<Typography variant="h6" sx={{textAlign:"center"}} ><b>Select Itinerary Details</b></Typography>
 			<Box>
@@ -137,12 +138,13 @@ const DayWisePackageBuilder = () => {
 				{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
 			</Box>
 		</Box>
-		{
+		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
+		{/* {
 			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-				<Typography variant="h6" sx={{ margin: 'auto' }}><b>Pdf Preview</b></Typography>
+				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
 				<HtmlTemplate packageData={{"req":storeReqData ,"hotels": storeSelectedHotels}} userData={userPdfData} userDetails={userData}/>
 			</Box>)
-		}
+		} */}
 	</Box>)
 
 }

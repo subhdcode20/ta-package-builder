@@ -48,6 +48,7 @@ const requiredFields = [
 	"trackingId",
 	"starCategory",
 	"noOfRooms",
+	"pickUp",
 	"cabType",
 ];
 
@@ -106,10 +107,12 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	};
 
 	useEffect(() => {
-		if (!reqData.childPax || reqData.childPax <= 0) return;
+		console.log("set childages ", reqData.childPax, typeof reqData.childPax, isNaN(reqData.childPax));
+		let newChildPax = reqData.childPax || 0;
+		if (isNaN(reqData.childPax)) return;
 		let newChildAges = [];
 		let len = childAges.length;
-		for (let ii = 0; ii < reqData.childPax; ii++) {
+		for (let ii = 0; ii < newChildPax; ii++) {
 			if (!isEmptyObject(childAges[ii])) {
 				newChildAges.push({ ...childAges[ii] });
 			} else {
@@ -150,6 +153,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// }
 		setButtonLoading(false);
 	}
+	
 	const handleUpdatePost = async () => {
 		setButtonLoading(true);
 		console.log("Updating Request: ", reqData, childAges);
@@ -291,44 +295,46 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					</Grid>
 
 					
-					<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
-						{childAges.map((c, cIndex) => {
-							return (
-								<Grid item xs={12} md={6} lg={6} >
-									<Grid container spacing={1}>
-										<Grid item xs={6} md={6} lg={6}>
-											<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-											<TextField
-												error={formErrors["childPax"]}
-												sx={{ width: "100%" }}
-												id={`childPax-${cIndex}${Number(c.age)}`}
-												variant="outlined"
-												size="small"
-												onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
-												inputProps={{
-													type: "number",
-												}}
-												value={c.age}
-												type="text"
-											/>
-										</Grid>
-										<Grid item xs={6} md={6} lg={6}>
-											{
-												Number(c.age) >= 5 && (<RadioGroup
-												aria-labelledby="demo-radio-buttons-group-label"
-												defaultValue="false"
-												name="radio-buttons-group"
-												onChange={(e) => handleChildAgeChange(c?.age, cIndex, Boolean(e.target.value))}
-											>
-												<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
-												<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
-											</RadioGroup>)}
+					{
+						childAges.length > 0 && (<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
+							{childAges.map((c, cIndex) => {
+								return (
+									<Grid item xs={12} md={6} lg={6} >
+										<Grid container spacing={1}>
+											<Grid item xs={6} md={6} lg={6}>
+												<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+												<TextField
+													error={formErrors["childPax"]}
+													sx={{ width: "100%" }}
+													id={`childPax-${cIndex}${Number(c.age)}`}
+													variant="outlined"
+													size="small"
+													onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
+													inputProps={{
+														type: "number",
+													}}
+													value={c.age}
+													type="text"
+												/>
+											</Grid>
+											<Grid item xs={6} md={6} lg={6}>
+												{
+													Number(c.age) >= 5 && (<RadioGroup
+													aria-labelledby="demo-radio-buttons-group-label"
+													defaultValue="false"
+													name="radio-buttons-group"
+													onChange={(e) => handleChildAgeChange(c?.age, cIndex, Boolean(e.target.value))}
+												>
+													<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
+													<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
+												</RadioGroup>)}
+											</Grid>
 										</Grid>
 									</Grid>
-								</Grid>
-							);
-						})}
-					</Grid>
+								);
+							})}
+						</Grid>)
+					}
 					<Grid item xs={6}>
 						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
 						<Autocomplete
@@ -405,7 +411,20 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						/>
 					</Grid>
 
-					<Grid item xs={6}>
+					<Grid item xs={6} md={4}>
+						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
+						<TextField
+							error={formErrors["trackingId"]}
+							sx={{ width: "100%" }}
+							id="trackingId"
+							value={reqData.trackingId || ''}
+							variant="outlined"
+							size="small"
+							onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
+						/>
+					</Grid>
+
+					<Grid item xs={6} md={4}>
 						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
 						<TextField
 							error={formErrors["noOfRooms"]}
@@ -415,6 +434,21 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							variant="outlined"
 							size="small"
 							onChange={(e) => handleFormChange(e, "noOfRooms")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
+					<Grid item xs={6} md={4}>
+						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>PickUp*</InputLabel>
+						<TextField
+							error={formErrors["pickUp"]}
+							sx={{ width: "100%" }}
+							id="pickUp"
+							value={reqData.pickUp || ''}
+							variant="outlined"
+							size="small"
+							onChange={(e) => handleFormChange(e, "pickUp")}
 							inputProps={{
 								type: "number",
 							}}

@@ -19,9 +19,16 @@ import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import { store } from '../appStore/store.js';
 import HotelSearchFree from "./hotelSearchCommon.js";
-import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, setItineraryDesc } from './packBuilderSlice.js'; //setUserHotelRates
+import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, setItineraryDesc, setHotelLocation } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 import { aiHotelDetails } from "./geminiComponents.js";
+
+const bull = (
+	<Box
+	  component="span"
+	  sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+	>•</Box>
+  );
 
 const PackageDetailsFor1Day = ({ key }) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
@@ -148,27 +155,32 @@ const PackageDetailsFor1Day = ({ key }) => {
 								<InputLabel id={`room-day${hIndex + 1}`} sx={{fontSize: 12}}>
 									Location:
 								</InputLabel>
-								<TextField variant="outlined" size="small" 
+								<TextField variant="outlined" size="small" onChange={(e) => dispatch(setHotelLocation({ hotelIndex: hIndex, data: e.target.value }))}
 									value={selectedHotels[hIndex]?.location || ''}
 								/>
 							</Grid>
 						</Grid>
 						{!isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
-					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{mt: 2}}>
+					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{my: 2}}>
 						<Button size="small" variant="outlined" onClick={generateItineraryDay1} sx={{ width: 'fit-content' }}>
 							Generate Itinerary for Day {currentDayIndex + 1}
 							{
 								geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }}/>
 							}
 						</Button>
+						&nbsp;
 						{
-							itineraryDesc[currentDayIndex]?.text && (<>
+							itineraryDesc[currentDayIndex]?.text && (<Box sx={{border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1}}>
 								<InputLabel id={'iti-desc'} sx={{ fontSize: 12 }}>Itinerary Description:</InputLabel>
-								<Box sx={{ border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1  }}>
-									<small>{parse(itineraryDesc[currentDayIndex]?.text)}</small>
-								</Box>
-							</>)
+								{
+									itineraryDesc[currentDayIndex]?.text.map((itiText) => {
+										return (<Box sx={{ p: 1  }}>
+											{bull} <small>{parse(itiText)}</small>
+										</Box>)
+									}) 
+								}
+							</Box>)
 						}
 					</Grid>
 					<Grid item xs={12}>
@@ -184,7 +196,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 					<Button size="small" variant="outlined" onClick={addHoteltoCurrDay} sx={{ minWidth: "fit-content", my: 'auto' }}>Add Hotel +</Button>
 				</Box>
 				<Box display="flex" sx={{ pl: 2 }}>
-					<Typography variant="subtitle1" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography>
+					<div style={{display: 'flex'}}><Typography variant="caption" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography></div>
 					<FormGroup row={true} sx={{ display: "flex" }}>
 						{
 							(daysArr || []).map((aa, aIndex) => {
@@ -207,6 +219,9 @@ const PackageDetailsFor1Day = ({ key }) => {
 					<Button size="small" variant="contained" onClick={checkPricefor1Day} sx={{ minWidth: "fit-content", my: 'auto' }}>Save</Button>
 				</Box>
 			</Box>
+		</Grid>
+		<Grid item xs={12}>
+			<Typography variant="body1" sx={{m: 1}}>Total Day {currentDayIndex + 1} Price - <b>Rs {currDayPrice}</b></Typography>
 		</Grid>
 	</Grid>)
 }

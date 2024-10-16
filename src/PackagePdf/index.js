@@ -1,63 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { db } from '../firebaseConfig';
 import Typography from '@mui/material/Typography';
 import { doc, getDoc } from 'firebase/firestore';
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Box from "@mui/material/Box";
+import { useSelector } from 'react-redux';
 
+import { db } from '../firebaseConfig';
+import { MainContext } from '../Utility.js';
 // import PdfView from './pdfView';
 import HtmlTemplate from './htmlTemplate.js';
 
 
-const PackagePdf = () => {
-    const { packageId } = useParams();
-    const [packageData, setPackageData] = useState([]);
+const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} }) => {
+    // const { packageId } = useParams();
+    // const [packageData, setPackageData] = useState([]);
+	const { userData } = useContext(MainContext)
+	const [userPdfData, setUserPdfData] = useState({});
     const [loading, setLoading] = useState(false);
+    const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
-    const fetchPackageData = async () => {
-        let docRef = doc(db, "packages", packageId);
-        let docSnap = await getDoc(docRef);
-        
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            console.log("pdf package data", data)
-            setPackageData(data);
-            // setPackageData([{
-            //     createdAt: data.createdAt,
-            //     userId: data.userId,
-            //     packageId: data.packageId,
-            //     req: data.req?.req,
-            //     category : data.req?.starCategory.value,
-            //     // contactDetails : data.contactDetails,
-            //     hotels: data.hotels.map((hotel) => {
-            //         return {
-            //             hotelId: hotel.hotels[0].hotelId,
-            //             destination: hotel.hotels[0].destination,
-            //             hotelName: hotel.hotels[0].hotelName,
-            //             selectedRooms: hotel.hotels[0].selectedRooms,
-            //             // stdRoomPrice : hotel.hotels[0].roomRates.family_suite.stdRoomPrice
-            //             // extraRates : hotel.hotels[0].selectedRooms.extraRates
-            //         };
-            //     }),
-            // }]);
-            setLoading(false);
-        } else {
-            console.log("No DAta available");
-        }
-    };
-    
     useEffect(() => {
-        fetchPackageData();
-    }, [packageId]);
+		const getUserPdfData = async () => {
+			let docSnapPdfData = await getDoc(doc(db, "userPdfData", userData.phone));
+			if (docSnapPdfData.exists()) {
+				console.log("DocSnapPdfData", docSnapPdfData.data());
+				let { logoB64Str = null } = docSnapPdfData.data();	
+				setUserPdfData({ 
+					...userData, 
+					logoB64Str
+				})
+			}
+		}
+
+		getUserPdfData();
+	}, [userData])
 
     if (loading) {
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("packageData => ", packageData);
+    console.log("packagePdf render => ", pkgSelectedHotels, userPdfData);
 
-    return (
-        <HtmlTemplate packageData={packageData} />
-    );
+    return (<>
+        {
+			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
+				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
+				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} pkgData={{ req: reqData }} userData={userPdfData} />
+			</Box>)
+		}
+    </>);
 };
 
 export default PackagePdf;

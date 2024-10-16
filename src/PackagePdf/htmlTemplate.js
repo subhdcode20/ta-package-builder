@@ -2,6 +2,7 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import moment from 'moment';
 
+// Registering the Roboto font
 Font.register({
   family: 'Roboto',
   fonts: [
@@ -15,25 +16,28 @@ Font.register({
   ],
 });
 
+// Date formatting function
 const formatDate = (timestamp) => {
   if (!timestamp) return 'N/A';
   return moment.unix(timestamp).format('DD-MM-YYYY');
 };
 
+// PDF Document component
 const HtmlPdfView = ({
-  packageData: {
-    packageId,
+  pkgData: {
+    req = {}
+  },
+  dayWiseData: {
     hotels = [],
-    req = {},
-    createdAt
+    itiDesc = []
   },
   userData: {
-    userPhone,
-    logo,
+    phone: userPhone, // Renaming to avoid conflict
+    logoB64Str,
   },
   userDetails: {
     email,
-    phone,
+    phone: detailsPhone, // Renaming to avoid conflict
   }
 }) => (
   <Document>
@@ -46,109 +50,68 @@ const HtmlPdfView = ({
 
       <View style={styles.body}>
         <Image
-          style={[styles.logo, { position: 'absolute', top: -50 }]}
-          src={logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTglPjDIgJW4YQub0z-s9tDr2dn7kOrIVTuzw&s"}
-          resizeMode="contain"
+          style={{ width: '100%', height: 100, objectFit: 'cover' }}
+          src="/kerala2.png"
         />
-
-        <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
-
-        <View style={styles.infoBox}>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Lead Pax: </Text>
-            <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Destination: </Text>
-            <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Travel Date: </Text>
-            <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Guest: </Text>
-            <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
-          </View>
-        </View>
-
-        <View style={styles.hr} />
-
-        <View style={styles.sectionHeaderContainer}>
-          <Image style={styles.sectionIcon} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROpNdGfaqSeeq9hgJdiSPuHCYMjX0RFSkRNQ&s" />
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Transfer</Text>
-          </View>
-        </View>
-        <View style={styles.transferContainer}>
-          <Text style={styles.transferText}>
-            {`All tours and transfers are private by ${req?.cabType || 'N/A'} from ${formatDate(req?.startDate)}.`}
+        <View style={styles.body}>
+          <Image
+            style={[styles.image, { position: 'absolute', top: -50 }]}
+            src={logoB64Str}
+          />
+          <Text style={styles.title}>Travel Itinerary</Text>
+          <Text style={styles.author}>
+            {req?.noOfNights} Nights | {req?.adultPax} Adults {req?.childPax && ` | ${req?.childPax} Children`}
           </Text>
-        </View>
 
-        <View style={styles.hr} />
+          {hotels.map((hotelsCurrDay, currDayIndex) => {
+            const {
+              location, hotelName, selectedRooms = []
+            } = hotelsCurrDay.hotels[0] || {}; // Adding fallback to avoid undefined issues
 
-        <View style={styles.sectionHeaderContainer}>
-          <Image style={styles.sectionIcon} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTochMAC1-AZcxH2IICWlZb4IBzHMYSSksPzw&s" />
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Hotels</Text>
-          </View>
-        </View>
+            return (
+              <View key={currDayIndex} style={styles.hotelContainer}>
+                <Image
+                  style={styles.hotelImage}
+                  src="/hotelIcon.png"
+                  resizeMode="cover"
+                />
+                <View style={styles.hotelDetails}>
+                  <Text style={styles.hotelName}>{hotelName}</Text>
 
-        {hotels.map((hotelsCurrDay, currDayIndex) => (
-          <View key={currDayIndex} style={styles.daySection}>
-            <View style={styles.dayHeader}>
-              <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-            </View>
-            {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
-              const { location, hotelName, selectedRooms = [] } = hotel;
+                  {selectedRooms.map((currRoom, roomIndex) => {
+                    const {
+                      roomName,
+                      selectedOccupancy: { adults = 0, child = 0, childWithBed = 0, childWithoutBed = 0 } = {},
+                      mp, // Meal Plan
+                    } = currRoom;
 
-              return (
-                <View key={hotelIndex} style={styles.hotelContainer}>
-                  <Image
-                    style={styles.hotelImage}
-                    src="/hotelIcon.png"
-                    resizeMode="cover"
-                  />
-                  <View style={styles.hotelDetails}>
-                    <Text style={styles.hotelName}>{hotelName}</Text>
+                    // Mapping meal plan values
+                    let mealPlan = '';
+                    if (mp === 'mapai') {
+                      mealPlan = 'Breakfast and (Lunch or Dinner)';
+                    } else if (mp === 'cpai') {
+                      mealPlan = 'Breakfast ONLY';
+                    } else if (mp === 'apai') {
+                      mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
+                    } else {
+                      mealPlan = 'No meal plan specified';
+                    }
 
-                    {selectedRooms.map((currRoom, roomIndex) => {
-                      const {
-                        roomName,
-                        selectedOccupancy: { adults = 0, child = 0, childWithBed = 0, childWithoutBed = 0 } = {},
-                        mp, // Meal Plan
-                      } = currRoom;
-
-                      // Mapping meal plan values
-                      let mealPlan = '';
-                      if (mp === 'mapai') {
-                        mealPlan = 'Breakfast and (Lunch or Dinner)';
-                      } else if (mp === 'cpai') {
-                        mealPlan = 'Breakfast ONLY';
-                      } else if (mp === 'apai') {
-                        mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
-                      } else {
-                        mealPlan = 'No meal plan specified';
-                      }
-
-                      return (
-                        <View key={roomIndex} style={styles.roomDetails}>
-                          <Text style={styles.roomType}>{roomName}</Text>
-                          <Text style={styles.roomOccupancy}>
-                            {adults} Adults, {child} Child{childWithBed ? `, ${childWithBed} Child with Bed` : ''}{childWithoutBed ? `, ${childWithoutBed} Child without Bed` : ''}
-                          </Text>
-                          <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                        </View>
-                      );
-                    })}
-
-                  </View>
+                    return (
+                      <View key={roomIndex} style={styles.roomDetails}>
+                        <Text style={styles.roomType}>{roomName}</Text>
+                        <Text style={styles.roomOccupancy}>
+                          {adults} Adults, {child} Child{childWithBed ? `, ${childWithBed} Child with Bed` : ''}{childWithoutBed ? `, ${childWithoutBed} Child without Bed` : ''}
+                        </Text>
+                        <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                      </View>
+                    );
+                  })}
                 </View>
-              );
-            })}
-          </View>
-        ))}
+              </View>
+            );
+          })}
+        </View>
 
         <View style={styles.sectionHeaderContainer}>
           <Image style={styles.sectionIcon} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgt2bgQth_sbKTchTUJdk-ESjsDtSkK9zIcQ&s" />
@@ -156,6 +119,7 @@ const HtmlPdfView = ({
             <Text style={styles.sectionTitle}>Exclusions</Text>
           </View>
         </View>
+
         <View style={styles.exclusionContainer}>
           <Text style={styles.bullet}>• All personal expenses like tips, laundry, telephone calls/fax, alcoholic beverages, camera/video camera fees at monuments, medical expenses, airport departure tax, etc.</Text>
           <Text style={styles.bullet}>• Anything not mentioned under Package Inclusions</Text>
@@ -171,11 +135,11 @@ const HtmlPdfView = ({
         </View>
 
         <View style={styles.footerContainer}>
-          <Image style={styles.footerLogo} src={logo || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTglPjDIgJW4YQub0z-s9tDr2dn7kOrIVTuzw&s"} resizeMode="contain" />
+          <Image style={styles.footerLogo} src={logoB64Str || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTglPjDIgJW4YQub0z-s9tDr2dn7kOrIVTuzw&s"} resizeMode="contain" />
           <View style={styles.footerDetails}>
             <Text style={styles.footerText}>{req?.address}</Text>
             <Text style={styles.footerText}>Email: {email}</Text>
-            <Text style={styles.footerText}>Phone: {phone}</Text>
+            <Text style={styles.footerText}>Phone: {detailsPhone}</Text>
           </View>
         </View>
 
@@ -186,6 +150,7 @@ const HtmlPdfView = ({
 );
 
 const styles = StyleSheet.create({
+  // (Style definitions remain the same)
   page: {
     fontFamily: 'Roboto',
     fontSize: 12,
@@ -197,11 +162,6 @@ const styles = StyleSheet.create({
     height: 100,
     objectFit: 'cover',
     marginBottom: 20,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    alignSelf: "center",
   },
   image: {
     marginVertical: 15,
@@ -223,35 +183,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 20,
   },
-  infoBox: {
-    marginVertical: 10,
-    padding: 15,
-    width: '100%',
-    backgroundColor: '#0D3B66',
-    color: '#ffffff',
-    borderRadius: 5,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    marginVertical: 3,
-  },
-  label: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginRight: 5,
-    color: '#ffffff',
-  },
-  value: {
-    fontSize: 12,
-    color: '#ffffff',
-    flex: 1,
-  },
-  hr: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#dddddd',
-    marginVertical: 15,
-    width: '100%',
-  },
   sectionHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -269,25 +200,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff',
   },
-  sectionIcon: {
-    width: 25,
-    height: 25,
-  },
-  daySection: {
-    marginBottom: 20,
-  },
-  dayHeader: {
-    backgroundColor: '#B8E0D2',
-    padding: 8,
-    borderRadius: 3,
-    marginBottom: 8,
-    alignSelf: 'flex-start',
-  },
-  dayTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
   hotelContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -295,7 +207,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
-    // Removed boxShadow and shadow properties
   },
   hotelImage: {
     width: 80,
@@ -319,7 +230,6 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: '#ffffff',
     borderRadius: 3,
-    // Removed boxShadow
   },
   roomType: {
     fontSize: 14,
@@ -329,97 +239,60 @@ const styles = StyleSheet.create({
   },
   roomOccupancy: {
     fontSize: 12,
-    color: '#555555',
+    color: '#777777',
+    marginBottom: 2,
   },
   mealPlan: {
     fontSize: 12,
-    color: '#555555',
+    fontStyle: 'italic',
+    color: '#888888',
   },
   exclusionContainer: {
-    marginLeft: 10,
+    marginVertical: 10,
+    paddingHorizontal: 15,
   },
   bullet: {
+    marginBottom: 10,
     fontSize: 12,
-    marginVertical: 1, // Reduced vertical spacing between points
-    lineHeight: 1.5, // More compact but readable spacing
-    color: '#555555',
   },
   priceSection: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 5,
+    marginVertical: 20,
+    alignItems: 'center',
   },
   priceTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  totalPrice: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0D3B66',
-    textAlign: 'center',
   },
-  transferContainer: {
-    marginLeft: 10,
-    padding: 10,
-    backgroundColor: '#e8f4f8',
-    borderRadius: 5,
-  },
-  transferText: {
-    fontSize: 12,
-    color: '#333333',
-    lineHeight: 1.5,
-  },
-  exclusionSection: {
-    marginTop: 10,
+  totalPrice: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#FF6347',
   },
   footerContainer: {
     flexDirection: 'row',
+    marginTop: 20,
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 15,
-    marginTop: 30,
-    borderTopWidth: 1,
-    borderTopColor: '#dddddd',
-    backgroundColor: '#f0f0f0',
   },
   footerLogo: {
-    width: 80,
-    height: 80,
-    objectFit: 'contain',
-    resizeMode: 'contain',
+    width: 60,
+    height: 60,
   },
   footerDetails: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1,
-    marginLeft: 20,
+    marginLeft: 10,
   },
   footerText: {
-    fontSize: 10,
-    color: '#333333',
-    marginBottom: 4,
+    fontSize: 12,
+    color: '#777777',
   },
   pageNumber: {
     position: 'absolute',
-    fontSize: 10,
-    bottom: 15,
+    fontSize: 12,
+    bottom: 30,
     left: 0,
     right: 0,
     textAlign: 'center',
-    color: 'grey',
+    color: '#777777',
   },
 });
 
-const RenderPreview = (props) => (
-  <div style={{ width: '100%', height: 'auto' }}>
-    <PDFViewer width={'100%'} height={'800'}>
-      <HtmlPdfView {...props} />
-    </PDFViewer>
-  </div>
-);
-
-export default RenderPreview;
+export default HtmlPdfView;

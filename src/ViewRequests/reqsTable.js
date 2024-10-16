@@ -13,7 +13,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
   React.useEffect(() => {
     if(!reqsList) return
     setTableData(reqsList.map((dd) => {
-      dd['createdAt'] = format(new Date(dd.createdAt), "dd-MMM-yyyy");
+      // dd['createdAt'] = format(new Date(dd.createdAt), "dd-MMM-yyyy");
       return dd;
     }))
   }, [reqsList])
@@ -33,6 +33,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
       headerName: 'Created On',
       width: 150,
       editable: false,
+      valueGetter: (value, row) => `${format(new Date(value), "dd-MMM-yyyy")}`
     },
     {
       field: 'destination',
@@ -45,7 +46,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
       headerName: 'Travel Date',
       width: 150,
       editable: true,
-      valueGetter: (value, row) => `${new Date(value)}`,
+      valueGetter: (value, row) => `${format(new Date(value), "dd-MMM-yyyy")}`,
     },
     {
       field: 'noOfNights',
