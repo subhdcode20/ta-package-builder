@@ -1,6 +1,8 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
-import moment from 'moment';
+import { fromUnixTime, format } from 'date-fns';
+
+
 Font.register({
   family: 'Roboto',
   fonts: [
@@ -16,7 +18,7 @@ Font.register({
 
 const formatDate = (timestamp) => {
   if (!timestamp) return 'N/A';
-  return moment.unix(timestamp).format('DD-MM-YYYY');
+  return format(fromUnixTime(timestamp), 'dd-MM-yyyy');
 };
 
 const HtmlPdfView = ({
