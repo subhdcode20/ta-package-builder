@@ -49,8 +49,6 @@ const requiredFields = [
 	"starCategory",
 	"noOfRooms",
 	"pickUp",
-	"pickUp",
-	"pickUp",
 	"cabType",
 ];
 
@@ -415,20 +413,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							defaultValue={""}
 						/>
 					</Grid>
-
-					<Grid item xs={6} md={4}>
-						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
-						<TextField
-							error={formErrors["trackingId"]}
-							sx={{ width: "100%" }}
-							id="trackingId"
-							value={reqData.trackingId || ''}
-							variant="outlined"
-							size="small"
-							onChange={(!isUpdateflow) && ((e) => handleFormChange(e, "trackingId"))}
-						/>
-					</Grid>
-
 					<Grid item xs={6} md={4}>
 						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
 						<TextField
