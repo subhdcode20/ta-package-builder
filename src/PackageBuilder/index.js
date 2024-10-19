@@ -11,8 +11,9 @@ import { db, auth } from "../firebaseConfig";
 import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from './packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
-// import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
+// // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import PackagePdfView from '../PackagePdf/index.js';
+import useTotalPackPrice from './totalPriceBreakup.js';
 // import axios from 'axios';
 
 const DayWisePackageBuilder = () => {
@@ -27,7 +28,9 @@ const DayWisePackageBuilder = () => {
 	const { reqId = null } = useParams();
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+	const totalPackPrice = useTotalPackPrice();
 
+	console.log("USERCURR:", JSON.parse(localStorage.getItem("user") || null));
 	useEffect(() => {
 		const getUserPdfData = async () => {
 			let docSnapPdfData = await getDoc(doc(db, "userPdfData", userData.phone));

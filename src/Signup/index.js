@@ -77,10 +77,12 @@ const SignUp = () => {
 
   const handleSubmit = async () => {
 
-    if(!personalInfo.name || !personalInfo.phone || !personalInfo.companyName || !personalInfo.address || !personalInfo.email || !personalInfo.companyLogo || !personalInfo.businessDocs || !personalInfo.panCard){
+    if (!personalInfo.name || !personalInfo.phone || !personalInfo.companyName || !personalInfo.address || !personalInfo.email ||
+      !companyInfo.companyLogo || !companyInfo.businessDocs || !companyInfo.panCard) {
       setMissingInput(true);
       return;
     }
+
 
     setLoading(true);
 
@@ -179,7 +181,7 @@ const SignUp = () => {
                 value={personalInfo.phone}
                 onChange={(e) => {
                   const phone = e.target.value;
-                  setPersonalInfo({ ...personalInfo, "phone": `+91${phone}` });
+                  setPersonalInfo({ ...personalInfo, "phone": phone });
                   if (!validatePhone(phone)) {
                     setErrors({ ...errors, phone: "Invalid phone number (10 digits required)" });
                   } else {
@@ -337,7 +339,7 @@ const SignUp = () => {
         )} */}
           <Box mt={3} display="flex" justifyContent="space-between" width="100%">
             <Button onClick={handleBack} disabled={currentStep === 1}
-                size="small">
+              size="small">
               Back
             </Button>
             {currentStep < 2 ? (
@@ -347,7 +349,7 @@ const SignUp = () => {
               </Button>
             ) : (
               <div>
-                <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit} 
+                <LoadingButton loading={loading} variant="contained" color="primary" onClick={handleSubmit}
                   size="small">
                   SignUp
                 </LoadingButton>

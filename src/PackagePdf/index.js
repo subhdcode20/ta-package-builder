@@ -12,9 +12,9 @@ import { MainContext } from '../Utility.js';
 import HtmlTemplate from './htmlTemplate.js';
 
 
-const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} }) => {
-    // const { packageId } = useParams();
-    // const [packageData, setPackageData] = useState([]);
+const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
+    // // const { packageId } = useParams();
+    // // const [packageData, setPackageData] = useState([]);
 	const { userData } = useContext(MainContext)
 	const [userPdfData, setUserPdfData] = useState({});
     const [loading, setLoading] = useState(false);
