@@ -26,7 +26,6 @@
     "firebase-functions": "^6.0.1",
     "firebase-tools": "^13.22.0",
     "html-react-parser": "^5.1.17",
-    "moment": "^2.30.1",
     "nanoid": "^5.0.7",
     "puppeteer": "^23.1.0",
     "react": "^18.3.1",
