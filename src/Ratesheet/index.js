@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert';
 import InfoIcon from '@mui/icons-material/Info';
 import InputLabel from '@mui/material/InputLabel';
 import axios from 'axios';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { storage } from '../firebaseConfig';
 import PopUp from '../Commons/messagePopUp';
@@ -35,6 +36,7 @@ const UploadRatesheet = () => {
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
     const { userData={} } = useContext(MainContext);
+	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
     const handleInputChange = (event) => {
@@ -100,7 +102,8 @@ const UploadRatesheet = () => {
                 borderRadius: 4,
                 border: "1px solid #ccc",
                 bgcolor: "transparent",
-                paddingX:3,
+                paddingX: 3,
+                alignItems: 'center'
             }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px', marginTop:1 }}>
@@ -108,7 +111,7 @@ const UploadRatesheet = () => {
                     </Typography>
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
+                <Box sx={{ mb: 2, width: isMobile ? '100%' : '55%' }}>
                     <InputLabel sx={{ fontSize: 12 }}>Destination*</InputLabel>
                     <TextField
                         name="destination"
@@ -147,7 +150,7 @@ const UploadRatesheet = () => {
                                 size="small"
                             />
                         </Box>
-                        <Typography sx={{ mx: 1, fontSize: 12 }}>-</Typography>
+                        <Typography sx={{ mx: 1, fontSize: 12, width: isMobile ? '100%' : 'auto' }}>-</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography sx={{ mr: 1, fontSize: 12 }}>
                                 To
@@ -163,9 +166,9 @@ const UploadRatesheet = () => {
                     </Box>
                 </Box>
 
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{ mb: 3, width: isMobile ? '100%' : '55%' }}>
                     <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
-                    <Button variant="contained" component="label" sx={{ width: "50%" }}>
+                    <Button variant="contained" component="label" sx={{ width: "100%" }}>
                         <input
                             type="file"
                             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

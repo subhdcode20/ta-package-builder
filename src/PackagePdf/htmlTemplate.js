@@ -1,6 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
 
 Font.register({
@@ -17,8 +18,14 @@ Font.register({
 });
 
 const formatDate = (timestamp) => {
-  if (!timestamp) return 'N/A';
-  return format(fromUnixTime(timestamp), 'dd-MM-yyyy');
+  try {
+    console.log("time format  ", timestamp);
+    if (!timestamp) return 'N/A';
+    return format(new Date(timestamp || ''), 'dd-MMM-yyyy');  
+  } catch (error) {
+    console.log("time format error ", error);
+  }
+  
 };
 
 const HtmlPdfView = ({
@@ -38,67 +45,71 @@ const HtmlPdfView = ({
   totalPrice
 }) => (
   <Document>
-    <Page style={styles.page}>
-      <Image
-        style={styles.headerImage}
-        src="/kerala2.png"
-        resizeMode="cover"
-      />
-
-      <View style={styles.body}>
+    <Page style={styles.page} wrap={false}>
+      <View>
         <Image
-          style={[styles.logo, { position: 'absolute', top: -50 }]}
-          src={logoB64Str}
-          resizeMode="contain"
+          style={styles.headerImage}
+          src="/kerala2.png"
+          resizeMode="cover"
         />
 
-        <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+        <View style={styles.body}>
+          <Image
+            style={[styles.logo, { position: 'absolute', top: -50 }]}
+            src={logoB64Str}
+            resizeMode="contain"
+          />
 
-        <View style={styles.infoBox}>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Lead Pax: </Text>
-            <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+          <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+
+          <View style={styles.infoBox}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Lead Pax: </Text>
+              <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Destination: </Text>
+              <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Travel Date: </Text>
+              <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Guest: </Text>
+              <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Destination: </Text>
-            <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+
+          <View style={styles.hr} />
+
+          <View style={styles.sectionHeaderContainer}>
+            <Image style={styles.sectionIcon} src="/contactTitle.png" />
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>  Emergency Contact</Text>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Travel Date: </Text>
-            <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+          <View style={styles.emergencyContainer}>
+            <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
+            <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Guest: </Text>
-            <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
-          </View>
+
+          <View style={styles.hr} />
         </View>
-
-        <View style={styles.hr} />
-
-        <View style={styles.sectionHeaderContainer}>
-          <Image style={styles.sectionIcon} src="/contactTitle.png" />
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>  Emergency Contact</Text>
-          </View>
-        </View>
-        <View style={styles.emergencyContainer}>
-          <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
-          <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
-        </View>
-
-        <View style={styles.hr} />
-
-        <View style={styles.sectionHeaderContainer}>
-          <Image style={styles.sectionIcon} src="/hotelTitle.png" />
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Hotels</Text>
-          </View>
-        </View>
-
+      </View>
+    </Page>
+    <Page style={[styles.page, styles.page2]}>
+      <View>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection}>
             <View style={styles.dayHeader}>
               <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
+            </View>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/hotelTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Hotels</Text>
+              </View>
             </View>
 
             {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
@@ -169,7 +180,7 @@ const HtmlPdfView = ({
         </View>
         <View style={styles.transferContainer}>
           <Text style={styles.transferText}>
-            {`All tours and transfers are private by ${req?.cabType || 'N/A'} from ${formatDate(req?.startDate)}.`}
+            {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
           </Text>
         </View>
         <View style={styles.hr} />
@@ -212,7 +223,10 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: 'Roboto',
     fontSize: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#ffffff',  //'#f5f5f5',
+  },
+  page2: {
+    padding: '8px'
   },
   headerImage: {
     width: '100%',
@@ -310,7 +324,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#B8E0D2',
     padding: 8,
     borderRadius: 3,
-    marginBottom: 8,
+    marginVertical: 8,
     alignSelf: 'flex-start',
   },
   dayTitle: {
@@ -384,6 +398,9 @@ const styles = StyleSheet.create({
     color: '#555555',
   },
   priceSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 20,
     padding: 15,
     backgroundColor: '#e0e0e0',
@@ -393,7 +410,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 5,
+    // marginBottom: 5,
+    // margin: 'auto'
   },
   totalPrice: {
     fontSize: 18,

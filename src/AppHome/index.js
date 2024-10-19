@@ -233,7 +233,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 				</Box>
 
 				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 5 }}>
-					<Grid item xs={6} md={3} lg={3}>
+					<Grid item xs={12}>
 						<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 						{/* <br /> */}
 					</Grid>
@@ -413,6 +413,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							defaultValue={""}
 						/>
 					</Grid>
+
 					<Grid item xs={6} md={4}>
 						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
 						<TextField
@@ -438,9 +439,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							variant="outlined"
 							size="small"
 							onChange={(e) => handleFormChange(e, "pickUp")}
-							inputProps={{
-								type: "number",
-							}}
 						/>
 					</Grid>
 
