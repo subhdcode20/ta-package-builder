@@ -7,10 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
+import { db } from '../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import Radio from '@mui/material/Radio';
+import PackageData from './packageData';
 
 const ReqsListTable = ({ reqsList = [] }) => {
   const [tableData, setTableData] = React.useState([]);
   const [expandedRow, setExpandedRow] = React.useState(null);
+  const [selectedRow, setSelectedRow] = React.useState(null);
+  const [packageDetails, setPackageDetails] = React.useState(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -31,19 +37,37 @@ const ReqsListTable = ({ reqsList = [] }) => {
   const toggleExpandRow = (id) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
+  const selectRow = async (id, packages) => {
+    setSelectedRow(id); // Set the selected row
+    if (packages?.length) {
+      // Fetch the details of the packages
+      const packageData = await Promise.all(
+        packages.map(async (packageId) => {
+          const docRef = doc(db, 'packages', packageId);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            return docSnap.data();
+          } else {
+            return { error: 'No such document' };
+          }
+        })
+      );
+      setPackageDetails(packageData);
+    } else {
+      setPackageDetails(null);
+    }
+  };
 
   const columns = [
     {
-      field: 'expand',
+      field: 'select',
       headerName: '',
       width: 50,
       renderCell: (params) => (
-        <IconButton
-          size="small"
-          onClick={() => toggleExpandRow(params.row.id)}
-        >
-          <ExpandMoreIcon />
-        </IconButton>
+        <Radio
+          checked={selectedRow === params.row.id}
+          onChange={() => selectRow(params.row.id, params.row.packages)}
+        />
       ),
     },
     {
@@ -150,18 +174,11 @@ const ReqsListTable = ({ reqsList = [] }) => {
         pageSizeOptions={[7]}
         disableRowSelectionOnClick
       />
-      {tableData.map((row) => (
-        <Collapse in={expandedRow === row.id} key={row.id}>
-          <Box sx={{ padding: 2, border: '1px solid #ddd', marginBottom: 2 }}>
-            <strong>Packages:</strong>
-            <ul>
-              {row.packages?.map((packageId) => (
-                <li key={packageId}>{packageId}</li>
-              )) || 'No Packages'}
-            </ul>
-          </Box>
+            {selectedRow && (
+        <Collapse in={!!selectedRow}>
+          <PackageData packageDetails={packageDetails} />
         </Collapse>
-      ))}
+      )}
     </Box>
   );
 };
