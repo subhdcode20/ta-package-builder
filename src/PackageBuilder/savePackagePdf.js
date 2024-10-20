@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useParams } from "react-router-dom";
-
 import { submitPackageData } from './packBuilderSlice.js';
 import { db, auth } from "../firebaseConfig";
 
@@ -61,7 +60,7 @@ const SavePackagePdf = () => {
 		// setTimeout(() => navigate("/itinerary/"+newReqId));
     }
 
-    return (<Button size="small" variant="outlined" onClick={savePackageWithPdf}>Generate Pdf</Button>)
+    return (<Button size="small" variant="outlined" onClick={savePackageWithPdf}>Save Package Details</Button>)
 }
 
 export default SavePackagePdf;
