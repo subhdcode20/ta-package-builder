@@ -21,16 +21,14 @@ const PackageData = ({ packageDetails }) => {
               padding: 3,
               backgroundColor: '#fff',
               borderRadius: 4,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', // Slightly larger shadow for elegance
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
               transition: 'box-shadow 0.3s ease',
-              '&:hover': { boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)' }, // Hover effect for interactivity
             }}
           >
             <Typography variant="h6" sx={{ marginBottom: 3, fontWeight: 'bold', color: '#444' }}>
               Package {pkgIndex + 1}
             </Typography>
 
-            {/* Display Star Category */}
             <Box sx={{ display: 'flex', gap: 4, marginBottom: 3 }}>
               <Typography sx={{ fontWeight: 'bold', color: '#555' }}>Star Category:</Typography>
               <Typography>{pkg?.req?.starCategory?.label || 'N/A'}</Typography>
@@ -47,7 +45,6 @@ const PackageData = ({ packageDetails }) => {
                 whiteSpace: 'nowrap',
               }}
             >
-              {/* Header Row with Days as Columns */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#fafafa', borderRadius: 2 }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold' }}></Box>
                 {pkg?.hotels?.map((hotelGroup, dayIndex) => (
@@ -66,7 +63,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Hotel Name */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Hotel Name</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (
@@ -80,7 +76,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Location */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Location</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (
@@ -94,7 +89,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Room Name */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Room Name</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (
@@ -112,7 +106,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Meal Plan */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Meal Plan (MP)</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (
@@ -130,7 +123,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Adults */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Adults</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (
@@ -148,7 +140,6 @@ const PackageData = ({ packageDetails }) => {
                 ))}
               </Box>
 
-              {/* Row for Child */}
               <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
                 <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Child</Box>
                 {pkg?.hotels?.map((hotelGroup, index) => (

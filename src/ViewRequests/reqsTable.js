@@ -38,9 +38,8 @@ const ReqsListTable = ({ reqsList = [] }) => {
     setExpandedRow(expandedRow === id ? null : id);
   };
   const selectRow = async (id, packages) => {
-    setSelectedRow(id); // Set the selected row
+    setSelectedRow(id);
     if (packages?.length) {
-      // Fetch the details of the packages
       const packageData = await Promise.all(
         packages.map(async (packageId) => {
           const docRef = doc(db, 'packages', packageId);
