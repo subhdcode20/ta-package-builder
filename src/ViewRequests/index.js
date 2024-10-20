@@ -27,13 +27,11 @@ const ViewRequest = () => {
     const [userReqList, setUserReqList] = useState([]);
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
-    const tempPhone = '+918700641339'
-    console.log("USER_PHONENUM", tempPhone);
-    console.log("USER_WHOLEDATA", userData);
+    // console.log("USER_WHOLEDATA", userData);
     useEffect(() => {
       const getReqs = async () => {
         const unsubscribe = await onSnapshot(
-          doc(db, "userRequests", tempPhone),
+          doc(db, "userRequests", userData.phone),
           async (snapshot) => {
             // ...
             if (!snapshot.exists()) return;
