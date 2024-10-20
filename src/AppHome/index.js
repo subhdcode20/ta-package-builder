@@ -238,18 +238,6 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						{/* <br /> */}
 					</Grid>
 
-					<Grid item xs={12}>
-						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
-						<TextField
-							error={formErrors["trackingId"]}
-							sx={{ width: "100%" }}
-							id="trackingId"
-							value={reqData.trackingId || ''}
-							variant="outlined"
-							size="small"
-							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
-						/>
-					</Grid>
 					<Grid item xs={6} md={3} lg={3}>
 						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
 						<TextField
@@ -295,7 +283,21 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-
+					<Grid item xs={6} md={3} lg={3}>
+						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
+						<TextField
+							error={formErrors["noOfRooms"]}
+							sx={{ width: "100%" }}
+							id="noOfRooms"
+							value={reqData.noOfRooms || ''}
+							variant="outlined"
+							size="small"
+							onChange={(e) => handleFormChange(e, "noOfRooms")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid>
 
 					{
 
@@ -338,27 +340,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							})}
 						</Grid>)
 					}
-					<Grid item xs={6}>
-						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
-						<Autocomplete
-							disablePortal
-							id="cabType-filter"
-							includeInputInList
-							onChange={(e, val) => handleFormChange({ target: { value: val } }, "cabType")}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									error={formErrors["cabType"]}
-									variant="outlined"
-									size="small"
-								/>
-							)}
-							options={CabTypes}
-							value={reqData.cabType}
-							defaultValue={reqData.cabType}
-							sx={{ width: "100%" }}
-						/>
-					</Grid>
+					
 					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
 						<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
 						<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -415,18 +397,15 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					</Grid>
 
 					<Grid item xs={6} md={4}>
-						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
+						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
 						<TextField
-							error={formErrors["noOfRooms"]}
+							error={formErrors["trackingId"]}
 							sx={{ width: "100%" }}
-							id="noOfRooms"
-							value={reqData.noOfRooms || ''}
+							id="trackingId"
+							value={reqData.trackingId || ''}
 							variant="outlined"
 							size="small"
-							onChange={(e) => handleFormChange(e, "noOfRooms")}
-							inputProps={{
-								type: "number",
-							}}
+							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
 						/>
 					</Grid>
 					<Grid item xs={6} md={4}>
@@ -439,6 +418,27 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							variant="outlined"
 							size="small"
 							onChange={(e) => handleFormChange(e, "pickUp")}
+						/>
+					</Grid>
+					<Grid item xs={6} md={4}>
+						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
+						<Autocomplete
+							disablePortal
+							id="cabType-filter"
+							includeInputInList
+							onChange={(e, val) => handleFormChange({ target: { value: val } }, "cabType")}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									error={formErrors["cabType"]}
+									variant="outlined"
+									size="small"
+								/>
+							)}
+							options={CabTypes}
+							value={reqData.cabType}
+							defaultValue={reqData.cabType}
+							sx={{ width: "100%" }}
 						/>
 					</Grid>
 
