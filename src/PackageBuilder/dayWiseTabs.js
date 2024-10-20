@@ -60,7 +60,6 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	          textColor="inherit"
 	          variant="fullWidth"
 	          aria-label="day wise tabs"
-			  variant="scrollable"
 			  scrollButtons="auto"
 	        >
 	          { daysArray.map((i, index) => <Tab label={`Day ${index + 1}`}  />)}

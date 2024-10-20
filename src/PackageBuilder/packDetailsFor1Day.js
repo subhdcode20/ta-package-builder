@@ -23,6 +23,7 @@ import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, setIt
 import { db, auth } from "../firebaseConfig";
 import { aiHotelDetails } from "./geminiComponents.js";
 import { useParams } from "react-router-dom";
+import SavePackagePdf from "./savePackagePdf.js";
 
 const bull = (
 	<Box
@@ -115,41 +116,6 @@ const PackageDetailsFor1Day = ({ key }) => {
 			selectedHotelCurrDay: selectedHotels,
 			copyDetailsToDays: selectedDaysToCopyDetails
 		}));
-		let newPackId = nanoid();
-		console.log("Creating new package", newPackId);
-
-		// Prepare the final package details
-		let finalPackDetails = {
-			hotels: selectedHotels,
-			packageId: newPackId,
-			userId: userData?.phone,
-			createdAt: Date.now(),
-			req: {
-				...reqData
-			}
-		};
-
-		// Save the package details to Firestore
-		await setDoc(doc(db, "packages", newPackId), finalPackDetails);
-
-		// Get the request ID from the URL params
-
-		// Update the request document with the new package ID
-		let reqPackRef = doc(db, "requests", reqId);
-		const reqDoc = await getDoc(reqPackRef);
-
-		if (reqDoc.exists()) {
-			const packageData = reqDoc.data()?.packages || [];
-			await updateDoc(reqPackRef, {
-				packages: [...packageData, newPackId]
-			});
-		} else {
-			await setDoc(reqPackRef, {
-				packages: [newPackId],
-			});
-		}
-
-		console.log("Package saved successfully!");
 	}
 
 	const handleCopyDetailsFromCurrDay = (dayIndex, selectedState) => {
@@ -170,7 +136,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 		dispatch(setItineraryDesc({ text: gemRes }))
 	}
 
-	console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]);
+	// console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]);
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
@@ -259,6 +225,9 @@ const PackageDetailsFor1Day = ({ key }) => {
 		</Grid>
 		<Grid item xs={12}>
 			<Typography variant="body1" sx={{ m: 1 }}>Total Day {currentDayIndex + 1} Price - <b>Rs {currDayPrice}</b></Typography>
+		</Grid>
+		<Grid item xs={12}>
+			<SavePackagePdf/>
 		</Grid>
 	</Grid>)
 }
