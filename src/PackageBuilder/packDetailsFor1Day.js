@@ -10,11 +10,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
 import Typography from '@mui/material/Typography';
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import CircularProgress from '@mui/material/CircularProgress';
 import parse from "html-react-parser";
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { nanoid } from 'nanoid';
 import HotelRoomsView from "./hotelRoomsView.js";
 import { isEmptyObject } from '../Utility.js';
 import { store } from '../appStore/store.js';
@@ -22,13 +22,15 @@ import HotelSearchFree from "./hotelSearchCommon.js";
 import { handleHotelSelect, addNewHotelToCurrDay, setHotelPriceForCurrDay, setItineraryDesc, setHotelLocation } from './packBuilderSlice.js'; //setUserHotelRates
 import { db, auth } from "../firebaseConfig";
 import { aiHotelDetails } from "./geminiComponents.js";
+import { useParams } from "react-router-dom";
+import SavePackagePdf from "./savePackagePdf.js";
 
 const bull = (
 	<Box
-	  component="span"
-	  sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+		component="span"
+		sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
 	>•</Box>
-  );
+);
 
 const PackageDetailsFor1Day = ({ key }) => {
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
@@ -41,13 +43,14 @@ const PackageDetailsFor1Day = ({ key }) => {
 	// const userHotelRates = useSelector((state) => state.packBuilderData.hotelRates) || [];
 	const [userHotelRates, setUserHotelRates] = useState([]);
 	const [selectedDaysToCopyDetails, setSelectedDaysToCopyDetails] = useState({});
-	const [ geminiLoading, setGeminiLoading] = useState(false);
+	const [geminiLoading, setGeminiLoading] = useState(false);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const dispatch = useDispatch();
 	const currDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || '';
 	console.log("pack day daya ", userHotelRates, currentDayIndex, selectedHotels, totalDayPrices, currDayPrice);
 	console.log("userHotelRates", userHotelRates, "\ncurrentDayIndex", currentDayIndex, "\nselectedHotels", selectedHotels, "\ntotalDayPrices", totalDayPrices, "\ncurrDayPrice", currDayPrice);
-
+	const { reqId } = useParams();
+	
 	useEffect(() => {
 		if (!reqData || !reqData?.destination || !userData?.phone) return;
 		console.log("reqtest- get Hotel rates", reqData, userData);
@@ -86,7 +89,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 		dispatch(addNewHotelToCurrDay());
 	}
 
-	const checkPricefor1Day = () => {
+	const checkPricefor1Day = async() => {
 		console.log("checkPricefor1Day", selectedHotels);
 		let totalHotelPriceForCurrDay = selectedHotels.reduce((acc, h) => {
 			let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
@@ -128,12 +131,12 @@ const PackageDetailsFor1Day = ({ key }) => {
 	const generateItineraryDay1 = async () => {
 		console.log(reqData, selectedHotels, 'gemRes -- ');
 		setGeminiLoading(true);
-		let gemRes = await aiHotelDetails({ reqData, selectedHotels});
+		let gemRes = await aiHotelDetails({ reqData, selectedHotels });
 		setGeminiLoading(false);
-		dispatch(setItineraryDesc({text: gemRes}))
+		dispatch(setItineraryDesc({ text: gemRes }))
 	}
 
-	console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]);
+	// console.log("SELECTEDHOTEL:", selectedHotels, selectedHotels[0]);
 	return (<Grid container spacing={1} key={key}>
 		{
 			(selectedHotels || []).map((hData = [], hIndex) => {
@@ -152,7 +155,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 							</Grid>
 							&nbsp;
 							<Grid item xs={4}>
-								<InputLabel id={`room-day${hIndex + 1}`} sx={{fontSize: 12}}>
+								<InputLabel id={`room-day${hIndex + 1}`} sx={{ fontSize: 12 }}>
 									Location:
 								</InputLabel>
 								<TextField variant="outlined" size="small" onChange={(e) => dispatch(setHotelLocation({ hotelIndex: hIndex, data: e.target.value }))}
@@ -162,23 +165,23 @@ const PackageDetailsFor1Day = ({ key }) => {
 						</Grid>
 						{!isEmptyObject(hData["selectedRooms"]) && (<HotelRoomsView hotelIndex={hIndex} />)}
 					</Grid>
-					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{my: 2}}>
+					<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{ my: 2 }}>
 						<Button size="small" variant="outlined" onClick={generateItineraryDay1} sx={{ width: 'fit-content' }}>
 							Generate Itinerary for Day {currentDayIndex + 1}
 							{
-								geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }}/>
+								geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }} />
 							}
 						</Button>
 						&nbsp;
 						{
-							itineraryDesc[currentDayIndex]?.text && (<Box sx={{border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1}}>
+							itineraryDesc[currentDayIndex]?.text && (<Box sx={{ border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1 }}>
 								<InputLabel id={'iti-desc'} sx={{ fontSize: 12 }}>Itinerary Description:</InputLabel>
 								{
 									itineraryDesc[currentDayIndex]?.text.map((itiText) => {
-										return (<Box sx={{ p: 1  }}>
+										return (<Box sx={{ p: 1 }}>
 											{bull} <small>{parse(itiText)}</small>
 										</Box>)
-									}) 
+									})
 								}
 							</Box>)
 						}
@@ -196,7 +199,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 					<Button size="small" variant="outlined" onClick={addHoteltoCurrDay} sx={{ minWidth: "fit-content", my: 'auto' }}>Add Hotel +</Button>
 				</Box>
 				<Box display="flex" sx={{ pl: 2 }}>
-					<div style={{display: 'flex'}}><Typography variant="caption" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography></div>
+					<div style={{ display: 'flex' }}><Typography variant="caption" color="primary" sx={{ mb: 1, margin: 'auto' }}>Copy Details for: &nbsp;</Typography></div>
 					<FormGroup row={true} sx={{ display: "flex" }}>
 						{
 							(daysArr || []).map((aa, aIndex) => {
@@ -221,7 +224,10 @@ const PackageDetailsFor1Day = ({ key }) => {
 			</Box>
 		</Grid>
 		<Grid item xs={12}>
-			<Typography variant="body1" sx={{m: 1}}>Total Day {currentDayIndex + 1} Price - <b>Rs {currDayPrice}</b></Typography>
+			<Typography variant="body1" sx={{ m: 1 }}>Total Day {currentDayIndex + 1} Price - <b>Rs {currDayPrice}</b></Typography>
+		</Grid>
+		<Grid item xs={12}>
+			<SavePackagePdf/>
 		</Grid>
 	</Grid>)
 }

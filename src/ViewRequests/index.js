@@ -27,7 +27,7 @@ const ViewRequest = () => {
     const [userReqList, setUserReqList] = useState([]);
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
-
+    // console.log("USER_WHOLEDATA", userData);
     useEffect(() => {
       const getReqs = async () => {
         const unsubscribe = await onSnapshot(
