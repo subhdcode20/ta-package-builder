@@ -127,32 +127,41 @@ export default function Login() {
   return (
     <>
 
-      <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid  >
         <CssBaseline />
-        <Grid
+        {/* <Grid
           item
           xs={false}
           sm={5}
           md={8}
-        />
-        <Grid item xs={12} sm={6} md={4} component={Paper} elevation={7} square>
-          <Box
+        >
+        </Grid> */}
+        <Grid item display={'flex'} width={'100%'} justifyContent={'center'}>
+          {/* <Box
             sx={{
-              my: 8,
+              my: 3,
               mx: 4,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
             }}
+          > */}
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-around"
+            alignItems="center"
+            minHeight="70vh"
+            minWidth="50vw"
+            paddingX={3}
+            border={'1px solid'}
+            borderColor={'secondary'}
+            borderRadius={2}
+            marginTop={2}
           >
+            {/* <img src="/afLogo.png" width="300px" /> */}
             <Typography
-              component="h5"
-              variant="h5"
-              style={{
-                fontSize: 15,
-                marginTop: "1em",
-                fontWeight: "600",
-              }}
+              variant="h4" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }}
             >
               {!showOtpView ? "Sign in" : "OTP Verification"}
             </Typography>

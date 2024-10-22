@@ -177,11 +177,14 @@ const PackageData = ({ packageDetails }) => {
             </Box>
           </Box>
         ))
-      ) : (
+      ) : (<>
         <Typography variant="body1" sx={{ color: '#777', paddingTop: 2 }}>
-          No package details available
+          No packages created for this Request!
         </Typography>
-      )}
+        <Typography variant="body1" sx={{ color: '#777', paddingTop: 2 }}>
+          Click <b>Edit</b> to create package for this Request.
+        </Typography>
+      </>)}
     </Box>
   );
 };
