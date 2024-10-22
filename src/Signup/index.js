@@ -76,46 +76,47 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
-
     if (!personalInfo.name || !personalInfo.phone || !personalInfo.companyName || !personalInfo.address || !personalInfo.email ||
       !companyInfo.companyLogo || !companyInfo.businessDocs || !companyInfo.panCard) {
       setMissingInput(true);
       return;
     }
-
-
     setLoading(true);
+    try {
+      const uploadPromises = [
+        companyInfo.companyLogo ? handleFileUpload(companyInfo.companyLogo, "companyLogo") : null,
+        companyInfo.businessDocs ? handleFileUpload(companyInfo.businessDocs, "businessDocs") : null,
+        companyInfo.panCard ? handleFileUpload(companyInfo.panCard, "panCard") : null,
+        companyInfo.gst ? handleFileUpload(companyInfo.gst, "gst") : null,
+      ];
 
-    const uploadPromises = [
-      companyInfo.companyLogo ? handleFileUpload(companyInfo.companyLogo, "companyLogo") : null,
-      companyInfo.businessDocs ? handleFileUpload(companyInfo.businessDocs, "businessDocs") : null,
-      companyInfo.panCard ? handleFileUpload(companyInfo.panCard, "panCard") : null,
-      companyInfo.gst ? handleFileUpload(companyInfo.gst, "gst") : null,
-    ];
+      const [companyLogoUrl, businessDocsUrl, panCardUrl, gstUrl] = await Promise.all(uploadPromises);
 
-    const [companyLogoUrl, businessDocsUrl, panCardUrl, gstUrl] = await Promise.all(uploadPromises);
+      const formData = {
+        ...personalInfo,
+        companyInfo: {
+          companyLogo: companyLogoUrl,
+          businessDocs: businessDocsUrl,
+          panCard: panCardUrl,
+          gst: gstUrl,
+        },
+        // others,
+        "phone": `+91${personalInfo.phone}`,
+        "createdAt": Date.now(),
+        userId: `U-${nanoid()}`
+      };
 
-    const formData = {
-      ...personalInfo,
-      companyInfo: {
-        companyLogo: companyLogoUrl,
-        businessDocs: businessDocsUrl,
-        panCard: panCardUrl,
-        gst: gstUrl,
-      },
-      // others,
-      "phone": `+91${personalInfo.phone}`,
-      "createdAt": Date.now(),
-      userId: `U-${nanoid()}`
-    };
-
-    let docRef = doc(db, "userDetails", `+91${personalInfo.phone}`)
-    await setDoc(docRef, formData);
-    setTimeout(() => {
+      let docRef = doc(db, "userDetails", `+91${personalInfo.phone}`)
+      await setDoc(docRef, formData);
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/login");
+      }, 1000);
+      // alert("Form submitted successfully!");
+    } catch (error) {
+      console.log("signup error", error);
       setLoading(false);
-      navigate("/login");
-    }, 1000);
-    // alert("Form submitted successfully!");
+    }
   };
 
   const handleSavePdfData = async (companyLogo) => {
