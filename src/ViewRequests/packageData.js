@@ -13,170 +13,173 @@ const PackageData = ({ packageDetails }) => {
       </Typography>
 
       {packageDetails?.length > 0 ? (
-        packageDetails.map((pkg, pkgIndex) => (
-          <Box
-            key={pkgIndex}
-            sx={{
-              marginBottom: 4,
-              padding: 3,
-              backgroundColor: '#fff',
-              borderRadius: 4,
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-              transition: 'box-shadow 0.3s ease',
-            }}
-          >
-            <Typography variant="h6" sx={{ marginBottom: 3, fontWeight: 'bold', color: '#444' }}>
-              Package {pkgIndex + 1}
-            </Typography>
-
-            <Box sx={{ display: 'flex', gap: 4, marginBottom: 3 }}>
-              <Typography sx={{ fontWeight: 'bold', color: '#555' }}>Star Category:</Typography>
-              <Typography>{pkg?.req?.starCategory?.label || 'N/A'}</Typography>
-            </Box>
-
-            <Divider sx={{ marginBottom: 3 }} />
-
+        packageDetails.map((pkg, pkgIndex) => {
+          let { hotels = [] } = pkg;
+          return (
             <Box
+              key={pkgIndex}
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 3,
-                overflowX: 'auto',
-                whiteSpace: 'nowrap',
+                marginBottom: 4,
+                padding: 3,
+                backgroundColor: '#fff',
+                borderRadius: 4,
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                transition: 'box-shadow 0.3s ease',
               }}
             >
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#fafafa', borderRadius: 2 }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold' }}></Box>
-                {pkg?.hotels?.map((hotelGroup, dayIndex) => (
-                  <Box
-                    key={dayIndex}
-                    sx={{
-                      minWidth: 220,
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      color: '#555',
-                      padding: '8px',
-                    }}
-                  >
-                    Day {dayIndex + 1}
-                  </Box>
-                ))}
+              <Typography variant="h6" sx={{ marginBottom: 3, fontWeight: 'bold', color: '#444' }}>
+                Package {pkgIndex + 1}
+              </Typography>
+
+              <Box sx={{ display: 'flex', gap: 4, marginBottom: 3 }}>
+                <Typography sx={{ fontWeight: 'bold', color: '#555' }}>Star Category:</Typography>
+                <Typography>{pkg?.req?.starCategory?.label || 'N/A'}</Typography>
               </Box>
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Hotel Name</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel.hotelName || 'N/A'}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+              <Divider sx={{ marginBottom: 3 }} />
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Location</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel.location || 'N/A'}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 3,
+                  overflowX: 'auto',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#fafafa', borderRadius: 2 }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold' }}></Box>
+                  {pkg?.hotels?.map((hotelGroup, dayIndex) => (
+                    <Box
+                      key={dayIndex}
+                      sx={{
+                        minWidth: 220,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        color: '#555',
+                        padding: '8px',
+                      }}
+                    >
+                      Day {dayIndex + 1}
+                    </Box>
+                  ))}
+                </Box>
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Room Name</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel?.selectedRooms?.map((room, roomIndex) => (
-                          <Box key={roomIndex} sx={{ marginBottom: 1 }}>
-                            {room?.roomName || 'N/A'}
-                          </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Hotel Name</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel.hotelName || 'N/A'}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Meal Plan (MP)</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel?.selectedRooms?.map((room, roomIndex) => (
-                          <Box key={roomIndex} sx={{ marginBottom: 1 }}>
-                            {room?.mp || 'N/A'}
-                          </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Location</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel.location || 'N/A'}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Adults</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel?.selectedRooms?.map((room, roomIndex) => (
-                          <Box key={roomIndex} sx={{ marginBottom: 1 }}>
-                            {room?.selectedOccupancy?.adults || 'N/A'}
-                          </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Room Name</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel?.selectedRooms?.map((room, roomIndex) => (
+                            <Box key={roomIndex} sx={{ marginBottom: 1 }}>
+                              {room?.roomName || 'N/A'}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
 
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Child</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel?.selectedRooms?.map((room, roomIndex) => (
-                          <Box key={roomIndex} sx={{ marginBottom: 1 }}>
-                            {room?.selectedOccupancy?.child || 'N/A'}
-                          </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
-              </Box>
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Meal Plan (MP)</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel?.selectedRooms?.map((room, roomIndex) => (
+                            <Box key={roomIndex} sx={{ marginBottom: 1 }}>
+                              {room?.mp || 'N/A'}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
 
-              {/* Row for Room Price */}
-              <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
-                <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Room Price</Box>
-                {pkg?.hotels?.map((hotelGroup, index) => (
-                  <Box key={index} sx={{ minWidth: 220 }}>
-                    {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
-                      <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
-                        {hotel?.selectedRooms?.map((room, roomIndex) => (
-                          <Box key={roomIndex} sx={{ marginBottom: 1 }}>
-                            {room?.roomPrice || 'N/A'}
-                          </Box>
-                        ))}
-                      </Box>
-                    ))}
-                  </Box>
-                ))}
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Adults</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel?.selectedRooms?.map((room, roomIndex) => (
+                            <Box key={roomIndex} sx={{ marginBottom: 1 }}>
+                              {room?.selectedOccupancy?.adults || 'N/A'}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
+
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0', backgroundColor: '#f9f9f9', borderRadius: 2 }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Child</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel?.selectedRooms?.map((room, roomIndex) => (
+                            <Box key={roomIndex} sx={{ marginBottom: 1 }}>
+                              {room?.selectedOccupancy?.child || 'N/A'}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
+
+                {/* Row for Room Price */}
+                <Box sx={{ display: 'flex', gap: 3, padding: '8px 0' }}>
+                  <Box sx={{ minWidth: 160, fontWeight: 'bold', color: '#666' }}>Room Price</Box>
+                  {pkg?.hotels?.map((hotelGroup, index) => (
+                    <Box key={index} sx={{ minWidth: 220 }}>
+                      {hotelGroup?.hotels?.map((hotel, hotelIndex) => (
+                        <Box key={hotelIndex} sx={{ textAlign: 'center', color: '#444' }}>
+                          {hotel?.selectedRooms?.map((room, roomIndex) => (
+                            <Box key={roomIndex} sx={{ marginBottom: 1 }}>
+                              {room?.roomPrice || 'N/A'}
+                            </Box>
+                          ))}
+                        </Box>
+                      ))}
+                    </Box>
+                  ))}
+                </Box>
               </Box>
             </Box>
-          </Box>
-        ))
+          )}
+        )
       ) : (<>
         <Typography variant="body1" sx={{ color: '#777', paddingTop: 2 }}>
           No packages created for this Request!

@@ -32,12 +32,12 @@ const PopUp = (props) => {
                 textAlign: 'center',
             }}>
 
-                <Typography sx={{ textAlign: 'center', color: 'orange', fontSize: '18px', fontWeight:600 }}>
-                    <CheckCircleIcon sx={{ color: 'orange' }} />
+                <Typography sx={{ textAlign: 'center', color: 'primary', fontSize: '18px', fontWeight:600 }}>
+                    <CheckCircleIcon sx={{ color: 'green' }} />
                     <br />
                     {props.primaryText}<span style={{ fontSize: '25px' }}>{props.checkMark && " ✔"} </span>
                 </Typography>
-                <Typography sx={{ textAlign: 'center', color: 'orange', fontSize: '16px' }}>
+                <Typography sx={{ textAlign: 'center', color: 'secondary', fontSize: '16px' }}>
                     {props.secondaryText}
                 </Typography>
                 <Button
@@ -45,7 +45,7 @@ const PopUp = (props) => {
                     variant="outlined"
                     href={props.forwardRef || null}
                     onClick={props.onClick}
-                    sx={{ alignItems: 'center', mt: 2, color:"orange" }}
+                    sx={{ alignItems: 'center', mt: 2, color: "secondary" }}
                 >
                     {props.submitText}
                 </Button>
