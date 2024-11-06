@@ -9,12 +9,14 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import RadioGroup from '@mui/material/RadioGroup';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { isEmptyObject } from '../Utility.js';
-import { addNewRoomToHotel, handleRoomSelect, selectedRoomOccupancy, 
+import { handleRoomSelect, selectedRoomOccupancy, handleRemoveRoom, 
 	setMealPlanFor1Room, setPriceFor1Room, setRoomOccChildAge } from './packBuilderSlice.js';
 import RoomSearchFree from "./roomSearchCommon.js";
 
@@ -35,6 +37,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	// ]);
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
+	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currDayhotelData = currDayHotels[hotelIndex];
 	const selectedRooms = currDayhotelData.selectedRooms;
 	const roomsData = Object.values(currDayhotelData?.roomRates || {});
@@ -46,10 +49,6 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		// handleDataChange(dayIndex, data);
 		console.log("handleRoomChange ", hotelIndex, roomIndex, data)
 		dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
-	}
-
-	const handleAddRoom = () => {
-		dispatch(addNewRoomToHotel({hotelIndex}));
 	}
 
 	const handleOccChange = (e, rindex, keyType) => {
@@ -100,12 +99,22 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 			(selectedRooms || []).map((rItem, rindex) => {
 				console.log("rItem render ", rItem, rindex);
 				let childAges = rItem?.selectedOccupancy?.childAges || [];
-				return (<Grid item xs={12}>
+				return (<Grid item xs={12} sx={{ position: 'relative', border: '1px solid', borderRadius: '5px', my: 0.5 }}>
+					{
+						(rindex >= reqData?.roomOcc.length) && (<IconButton aria-label="delete" size="small" color="primary" 
+						onClick={() => dispatch(handleRemoveRoom({hotelIndex, deleteIndex: rindex}))}
+						sx={{ position: 'absolute', top: '0', right: '0' }}
+					>
+						<DeleteIcon fontSize='small'/>
+					</IconButton>)}
 					<Grid container spacing={2}>
 						<Grid item xs={12} md={4} lg={4}>
-							<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12}}>
-								&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
-							</InputLabel>
+							<Box display={"flex"} flexDirection={'row'}>
+								
+								<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12, my: 'auto'}}>
+									&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
+								</InputLabel>
+							</Box>
 							
 							<RoomSearchFree 
 								selectedRoom={ selectedRooms[rindex] || null } 
@@ -164,13 +173,13 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 						</Grid>
 				    </Grid>
 					{
-						childAges.length > 0 && (<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
+						childAges.length > 0 && (<Grid container spacing={3} sx={{ pt: 3, pl: 2 }}>
 							{childAges.map((c, cIndex) => {
 								console.log("childAges room details", c, cIndex)
 								return (
-									<Grid item xs={12} md={6} lg={6} >
-										<Grid container spacing={1}>
-											<Grid item xs={6} md={6} lg={6}>
+									<Grid item xs={12} md={6} lg={6} sx={{ pl: '8px !important', pt: '8px !important' }}>
+										<Grid container spacing={1} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+											<Grid item xs={5} sx={{ mb: 3, mx: 1 }}>
 												<InputLabel id="childPax" sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
 												<TextField
 													sx={{ width: "100%" }}
@@ -185,7 +194,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 													type="text"
 												/>
 											</Grid>
-											<Grid item xs={6} md={6} lg={6}>
+											<Grid item xs={5}>
 												{
 													Number(c.age) >= 5 && (<RadioGroup
 													aria-labelledby="demo-radio-buttons-group-label"
@@ -205,31 +214,34 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 					}
 
 					<Grid item xs={12}>
-						<InputLabel id={`room-mp-day${hotelIndex + 1}`} sx={{fontSize: 12, mt: 2}}>
+						<InputLabel id={`room-mp-day${hotelIndex + 1}`} sx={{fontSize: 12, mt: 1}}>
 							Room Meal Plan:
 						</InputLabel>
 						<FormGroup sx={{ display: "flex", flexDirection: "row" }}>
 							<FormControlLabel
 								control={
-									<Checkbox checked={rItem?.mp == "mapai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="mapai" />
+									<Checkbox size="small" checked={rItem?.mp == "mapai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="mapai" />
 								}
 								label="MAPAI"
 							/>
 							<FormControlLabel
 								control={
-									<Checkbox checked={rItem?.mp == "cpai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="cpai" />
+									<Checkbox size="small" checked={rItem?.mp == "cpai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="cpai" />
 								}
 								label="CPAI"
 							/>
 							<FormControlLabel
 								control={
-									<Checkbox checked={rItem?.mp == "apai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="apai" />
+									<Checkbox size="small" checked={rItem?.mp == "apai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="apai" />
 								}
 								label="APAI"
 							/>
 						</FormGroup>
 					</Grid>
-					<Grid item display={'flex'}>
+					{/* <Grid item xs={12}>
+						<hr />
+					</Grid> */}
+					{/* <Grid item display={'flex'}>
 						<Grid item xs={6} md={6}>
 							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
 								Room Price:
@@ -242,7 +254,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 						<Grid item xs={6} md={6} display={'flex'} justifyContent={'flex-end'}>
 							<Button size="small" variant="outlined" onClick={handleAddRoom} sx={{ my: 'auto' }}>Add Room +</Button>
 						</Grid>
-					</Grid>
+					</Grid> */}
 				</Grid>)
 			})
 		}

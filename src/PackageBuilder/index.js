@@ -29,8 +29,9 @@ const DayWisePackageBuilder = () => {
 	const dispatch = useDispatch();
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const totalPackPrice = useTotalPackPrice();
+	const { roomOcc = [] } = reqData || {};
 
-	console.log("USERCURR:", JSON.parse(localStorage.getItem("user") || null));
+	console.log("USERCURR:", JSON.parse(localStorage.getItem("user") || null), roomOcc, reqData);
 	useEffect(() => {
 		const getUserPdfData = async () => {
 			let docSnapPdfData = await getDoc(doc(db, "userPdfData", userData.phone));

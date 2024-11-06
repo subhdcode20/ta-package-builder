@@ -114,7 +114,7 @@ const HtmlPdfView = ({
 
             {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
               const { location, hotelName, selectedRooms = [] } = hotel;
-
+              console.log("pdf html hotel data", location, selectedRooms)
               return (
                 <View>
 

@@ -6,7 +6,7 @@ const filter = createFilterOptions();
 
 const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []}) => {
   const [defaultValue, setDefaultValue] = React.useState(selectedRoom || null);
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState(selectedRoom);
   const [roomsDropdownList, setHotelsDropdownList] = React.useState(userRoomRates || []);
   console.log("room search rnder ", selectedRoom)
 
@@ -22,14 +22,14 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
     setDefaultValue(selectedRoom);
   }, [selectedRoom])
 
-  console.log("room drop down Room", typeof (defaultValue || value || null), defaultValue, value, selectedRoom, roomsDropdownList, userRoomRates);
+  console.log("room drop down Room", defaultValue ); //defaultValue, value, selectedRoom, roomsDropdownList, userRoomRates
   return (
     <Autocomplete
       fullWidth
       size="small"
-      value={defaultValue || value || null}
+      value={value || defaultValue || null}
       onChange={(event, newValue) => {
-        console.log("mainroom onChange ", newValue, typeof newValue);
+        console.log("main room onChange ", newValue, typeof newValue);
         if (newValue && newValue.roomName) {
           // Create a new value from the user input
           setValue(newValue); //.roomName
@@ -46,7 +46,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
         if(newValue !== null) onChange(newValue);
       }}
       filterOptions={(options, params) => {
-        console.log("maindest filterOptions ", options, params, filter(options, params))
+        console.log("main room filterOptions ", options, params, filter(options, params))
         const filtered = filter(options, params);
 
         const { inputValue } = params;
@@ -67,7 +67,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
       id="free-solo-with-text-demo"
       options={roomsDropdownList}
       getOptionLabel={(option) => {
-        console.log("maindest getOptionLabel ", option, typeof option);
+        console.log("main room getOptionLabel ", option, typeof option);
         // Add "xxx" option created dynamically
         if (option.label) {
           return option.label;
@@ -76,7 +76,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
         return option.roomName;
       }}
       renderOption={(props, option) => {
-        console.log("maindest renderOption ", props, option);
+        console.log("main room renderOption ", props, option);
         const { key, ...optionProps } = props;
         return (
           <li key={key} {...optionProps}>
@@ -86,7 +86,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
       }}
       freeSolo
       renderInput={(params) => (
-        <TextField {...params} placeholder={selectedRoom || "Seach room types.. "} />
+        <TextField {...params} placeholder={"Enter room type.. "} />
       )}
     />
   );

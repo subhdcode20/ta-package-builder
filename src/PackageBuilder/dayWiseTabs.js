@@ -13,6 +13,7 @@ import { DayWiseItineraryContext } from "../Utility.js";
 import { onCurrDayIndexChange, createEmptyPackageDataDayWise, handleHotelSelect } from './packBuilderSlice.js';
 import SavePackagePdf from './savePackagePdf.js';
 import useTotalPackPrice from "./totalPriceBreakup.js";
+import { Box } from '@mui/material';
 
 const DayWiseTabs = ({reqDatass = {}}) => {
 	// const [currentDayIndex, setCurrentDayIndex] = useState(0);
@@ -25,7 +26,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 
 	const dispatch = useDispatch();
 
-	const { noOfNights = 0 } = reqData;
+	const { noOfNights = 0, roomOcc = [] } = reqData;
 
   	const handleChange = (event, newValue) => {
     	dispatch(onCurrDayIndexChange(newValue));
@@ -33,7 +34,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 
   	useEffect(() => {
   		console.log("initial nights value ", noOfNights)
-  		dispatch(createEmptyPackageDataDayWise({noOfNights}));
+  		dispatch(createEmptyPackageDataDayWise({noOfNights, roomOcc}));
   		// let newDaysArr = [], newHotelsArr = [];
   		// for(let ii = 0; ii < noOfNights+1; ii++) {
   		// 	newDaysArr.push({
@@ -74,7 +75,12 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 				</CardContent>
 			</Card>)
 		}
-		<Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography>
+		<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} sx={{ m: 1 }}>
+			<Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography>
+			
+			<SavePackagePdf/>
+			
+		</Box>
 		{/* <div style={{marginLeft: '8px', marginBottom: '8px'}}><SavePackagePdf /></div> */}
 	</DayWiseItineraryContext.Provider>
 	</div>)

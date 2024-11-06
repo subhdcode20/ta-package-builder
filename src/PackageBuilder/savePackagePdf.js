@@ -71,11 +71,11 @@ const SavePackagePdf = () => {
 		// setTimeout(() => navigate("/itinerary/"+newReqId));
     }
 
-    return (<Button size="small" variant="outlined" onClick={savePackageWithPdf}>
+    return (<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
 		Save Package Details
-		{
-			loading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }} />
-		}
+		{/* {
+			loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} />
+		} */}
 	</Button>)
 }
 
