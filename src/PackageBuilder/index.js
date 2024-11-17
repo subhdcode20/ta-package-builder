@@ -13,7 +13,7 @@ import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePa
 import ReqDataView from '../Commons/reqCard.js';
 // // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import PackagePdfView from '../PackagePdf/index.js';
-import useTotalPackPrice from './totalPriceBreakup.js';
+import useTotalPackPrice from './useTotalPackPrice.js';
 // import axios from 'axios';
 
 const DayWisePackageBuilder = () => {

@@ -244,11 +244,37 @@ export const todoSlice = createSlice({
       console.log("handleRemoveRoom final", newRooms, currentHotelRooms);
       currDayHotels[hotelIndex]["selectedRooms"] = newRooms;
     },
+    calculatePriceFor1Day: (state, action) => {
+      const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      console.log("checkPricefor1Day", currDayHotels);
+      let totalHotelPriceForCurrDay = currDayHotels.reduce((acc, h) => {
+        let totalRoomsPriceForCurrHotel = h.selectedRooms.reduce((rAcc, r) => {
+          let { mp = null, roomPrice = null, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {} } = r;
+          console.log("checkPricefor1Day 1Hotel 1Room", rAcc + Number(roomPrice, mp, roomPrice, selectedOccupancy, currDayHotels));
+          if (!mp) {
+            // TODO: show validation error
+            return 0;
+          }
+          // if(stdRoomPrice) {
+          // 	let rPrice = stdRoomPrice[mp], childPrice = extraRates["extraChild"];
+          // 	console.log("checkPricefor1Day 1Room", mp, rPrice, rAcc + Number(rPrice) * Number(selectedOccupancy?.adults));
+          // 	rAcc += Number(rPrice) * Number(selectedOccupancy?.adults);
+          // 	return rAcc + Number(childPrice) * Number(selectedOccupancy?.child);
+          // } else if(roomPrice) {
+          return rAcc + Number(roomPrice);
+          // }
+        }, 0);
+        console.log("checkPricefor1Day 1Hotel", acc + totalRoomsPriceForCurrHotel);
+        return acc + totalRoomsPriceForCurrHotel;
+      }, 0);
+      
+      state.totalDayPrices[state.currDayIndex]["totalPrice"] = totalHotelPriceForCurrDay;
+    },
     setHotelPriceForCurrDay: (state, action) => {
       let { totalHotelPriceForCurrDay = null, selectedHotelCurrDay = [], copyDetailsToDays = {} } = action.payload;
       let currDayPrice = state.totalDayPrices[state.currDayIndex] || {};
       currDayPrice["totalPrice"] = totalHotelPriceForCurrDay;
-      console.log("save day daya 11", copyDetailsToDays && !isEmptyObject(copyDetailsToDays), copyDetailsToDays, selectedHotelCurrDay);
+      console.log("setHotelPriceForCurrDay", totalHotelPriceForCurrDay, copyDetailsToDays && !isEmptyObject(copyDetailsToDays), copyDetailsToDays);
       if (copyDetailsToDays && !isEmptyObject(copyDetailsToDays)) {
         Object.keys(copyDetailsToDays).forEach(dayNo => {
           // if(dayNo <= 0) continue;
@@ -342,7 +368,25 @@ export const todoSlice = createSlice({
         location: data,
       };
       console.log("setHotelLocation 2", currDayHotels[hotelIndex], state, state.currDayIndex, state.selectedHotels, hotelIndex, data)
-    }
+    },
+    setTotalPackagePrice: (state, action) => {
+      let { totalPackPrice = '' } = action?.payload;
+      console.log("finalPackPrice", totalPackPrice);
+      if(!totalPackPrice) return;
+      state["finalPackPrice"] = totalPackPrice;
+    },
+    handleRemoveItiItem: (state, action) => {
+      let { itiTextIndex = null } = action.payload;
+      console.log("handleRemoveItiItem", itiTextIndex);
+      if(isNaN(itiTextIndex)) return;
+      // const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
+      const currDayItiData = state.itineraryDesc[state.currDayIndex]["text"];
+      if(itiTextIndex >= currDayItiData.length) return;
+      // let newData = [ ...currDayItiData ];
+      // newData.splice(itiTextIndex, 1);
+      currDayItiData.splice(itiTextIndex, 1);
+      console.log("handleRemoveItiItem final", currDayItiData.length);
+    } 
   }
 });
 
@@ -361,13 +405,16 @@ export const {
   selectedRoomOccupancy,
   setRoomOccChildAge,
   handleRemoveRoom,
+  calculatePriceFor1Day,
   setHotelPriceForCurrDay,
   setMealPlanFor1Room,
   setReqsHistory,
   setPriceFor1Room,
   setItineraryDesc,
   updateItineraryDesc,
-  setHotelLocation
+  setHotelLocation,
+  setTotalPackagePrice,
+  handleRemoveItiItem
 } = todoSlice.actions;
 
 // this is for configureStore

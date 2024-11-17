@@ -15,10 +15,12 @@ import RadioGroup from '@mui/material/RadioGroup';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { isEmptyObject } from '../Utility.js';
+// import { isEmptyObject } from '../Utility.js';
 import { handleRoomSelect, selectedRoomOccupancy, handleRemoveRoom, 
 	setMealPlanFor1Room, setPriceFor1Room, setRoomOccChildAge } from './packBuilderSlice.js';
-import RoomSearchFree from "./roomSearchCommon.js";
+// import RoomSearchFree from "./roomSearchCommon.js";
+
+import PackDetailsFor1Room from './packDetailsFor1Room.js';
 
 const roomsList = [
 	{
@@ -35,9 +37,9 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	// 		key: `H-${dayIndex + 1}-R-${0}`
 	// 	}
 	// ]);
+	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
-	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currDayhotelData = currDayHotels[hotelIndex];
 	const selectedRooms = currDayhotelData.selectedRooms;
 	const roomsData = Object.values(currDayhotelData?.roomRates || {});
@@ -45,42 +47,42 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	const dispatch = useDispatch();
 
 	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, roomsData);
-	const handleRoomChange = (roomIndex, data) => {
-		// handleDataChange(dayIndex, data);
-		console.log("handleRoomChange ", hotelIndex, roomIndex, data)
-		dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
-	}
+	// const handleRoomChange = (roomIndex, data) => {
+	// 	// handleDataChange(dayIndex, data);
+	// 	console.log("handleRoomChange ", hotelIndex, roomIndex, data)
+	// 	dispatch(handleRoomSelect({hotelIndex, roomIndex, data}));
+	// }
 
-	const handleOccChange = (e, rindex, keyType) => {
-		console.log("occ handleOccChange", e.target.value, keyType, rindex);
-		dispatch(selectedRoomOccupancy({
-			hotelIndex, 
-			roomIndex: rindex, 
-			keyType, 
-			value: e.target.value
-		}));
-	}
+	// const handleOccChange = (e, rindex, keyType) => {
+	// 	console.log("occ handleOccChange", e.target.value, keyType, rindex);
+	// 	dispatch(selectedRoomOccupancy({
+	// 		hotelIndex, 
+	// 		roomIndex: rindex, 
+	// 		keyType, 
+	// 		value: e.target.value
+	// 	}));
+	// }
 
-	const handleOccChildAgeChange = (rindex, childIndex, age, extraBed = false) => {
-		console.log("handleOccChildAgeChange form ", rindex, childIndex, age, extraBed);
-		dispatch(setRoomOccChildAge({
-			hotelIndex, 
-			roomIndex: rindex,
-			childIndex,
-			age,
-			extraBed
-		}));
-	}
+	// const handleOccChildAgeChange = (rindex, childIndex, age, extraBed = false) => {
+	// 	console.log("handleOccChildAgeChange form ", rindex, childIndex, age, extraBed);
+	// 	dispatch(setRoomOccChildAge({
+	// 		hotelIndex, 
+	// 		roomIndex: rindex,
+	// 		childIndex,
+	// 		age,
+	// 		extraBed
+	// 	}));
+	// }
 	
-	const handleMealPlanChange = (e, rindex) => {
-		const selectedMp = e.target.checked ? e.target.name : '';
-		console.log("handleMealPlanChange", e.target.checked, e.target.name, selectedMp);
-		dispatch(setMealPlanFor1Room({
-			hotelIndex, 
-			roomIndex: rindex,
-			mealPlan: selectedMp
-		}));
-	}
+	// const handleMealPlanChange = (e, rindex) => {
+	// 	const selectedMp = e.target.checked ? e.target.name : '';
+	// 	console.log("handleMealPlanChange", e.target.checked, e.target.name, selectedMp);
+	// 	dispatch(setMealPlanFor1Room({
+	// 		hotelIndex, 
+	// 		roomIndex: rindex,
+	// 		mealPlan: selectedMp
+	// 	}));
+	// }
 
 	const handleRoomPriceChange = (e, rIndex) => {
 		const roomPrice = e.target.value;
@@ -98,7 +100,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		{
 			(selectedRooms || []).map((rItem, rindex) => {
 				console.log("rItem render ", rItem, rindex);
-				let childAges = rItem?.selectedOccupancy?.childAges || [];
+				// let childAges = rItem?.selectedOccupancy?.childAges || [];
 				return (<Grid item xs={12} sx={{ position: 'relative', border: '1px solid', borderRadius: '5px', my: 0.5 }}>
 					{
 						(rindex >= reqData?.roomOcc.length) && (<IconButton aria-label="delete" size="small" color="primary" 
@@ -107,137 +109,9 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 					>
 						<DeleteIcon fontSize='small'/>
 					</IconButton>)}
-					<Grid container spacing={2}>
-						<Grid item xs={12} md={4} lg={4}>
-							<Box display={"flex"} flexDirection={'row'}>
-								
-								<InputLabel id={`room_H-${hotelIndex + 1}`} sx={{fontSize: 12, my: 'auto'}}>
-									&nbsp;&nbsp;{`Select Room ${rindex + 1}*`} 
-								</InputLabel>
-							</Box>
-							
-							<RoomSearchFree 
-								selectedRoom={ selectedRooms[rindex] || null } 
-								onChange={(val) => handleRoomChange(rindex, val)}  
-								userRoomRates={roomsData}
-							/>
-							{/* <Autocomplete
-						      fullWidth
-						      size="small"
-						      value={ rItem || null }
-						      onChange={(event, newValue) => {
-						      	 console.log("hotel selected", newValue)
-						         handleRoomChange(rindex, newValue);
-						      }}
-						      selectOnFocus
-						      clearOnBlur
-						      handleHomeEndKeys
-						      id="hotel-name"
-						      options={roomsData}
-						      getOptionLabel={(option) => {
-						        console.log("hotel getOptionLabel ", option, typeof option);
-						        // Regular option
-						        return option.roomName;
-						      }}
-						      renderOption={(props, option) => {
-						        console.log("maindest renderOption ", props, option);
-						        const { key, ...optionProps } = props;
-						        return (
-						          <li key={key} {...optionProps}>
-						            {option.roomName}
-						          </li>
-						        );
-						      }}
-						      renderInput={(params) => (
-						        <TextField {...params} sx={{fontSize: 12, m: 0, padding: 0}} />
-						      )}
-						    /> */}
-						</Grid>
-						<Grid item xs={6} md={2} lg={2}>
-							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
-								Adults:
-							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" 
-								onChange={(e) => handleOccChange(e, rindex, "adults")} 
-								value={rItem?.selectedOccupancy?.adults}
-							/>
-						</Grid>
-						<Grid item xs={6} md={2} lg={2}>
-							<InputLabel id={`room-day${hotelIndex + 1}`} sx={{fontSize: 12}}>
-								Children:
-							</InputLabel>
-							<TextField variant="outlined" type="number" size="small" 
-								onChange={(e) => handleOccChange(e, rindex, "child")} 
-								value={ rItem?.selectedOccupancy?.child}
-							/>
-						</Grid>
-				    </Grid>
-					{
-						childAges.length > 0 && (<Grid container spacing={3} sx={{ pt: 3, pl: 2 }}>
-							{childAges.map((c, cIndex) => {
-								console.log("childAges room details", c, cIndex)
-								return (
-									<Grid item xs={12} md={6} lg={6} sx={{ pl: '8px !important', pt: '8px !important' }}>
-										<Grid container spacing={1} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-											<Grid item xs={5} sx={{ mb: 3, mx: 1 }}>
-												<InputLabel id="childPax" sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-												<TextField
-													sx={{ width: "100%" }}
-													id={`childPax-${cIndex}${Number(c.age)}`}
-													variant="outlined"
-													size="small"
-													onChange={(e) => handleOccChildAgeChange(rindex, cIndex, e.target.value, c.extraBed)}
-													inputProps={{
-														type: "number",
-													}}
-													value={c.age}
-													type="text"
-												/>
-											</Grid>
-											<Grid item xs={5}>
-												{
-													Number(c.age) >= 5 && (<RadioGroup
-													aria-labelledby="demo-radio-buttons-group-label"
-													defaultValue="false"
-													name="radio-buttons-group"
-													onChange={(e) => handleOccChildAgeChange(rindex, cIndex, c.age, e.target.value)}
-												>
-													<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
-													<FormControlLabel value="true" control={<Radio size="small"  />} label="With Bed" />
-												</RadioGroup>)}
-											</Grid>
-										</Grid>
-									</Grid>
-								);
-							})}
-						</Grid>)
-					}
 
-					<Grid item xs={12}>
-						<InputLabel id={`room-mp-day${hotelIndex + 1}`} sx={{fontSize: 12, mt: 1}}>
-							Room Meal Plan:
-						</InputLabel>
-						<FormGroup sx={{ display: "flex", flexDirection: "row" }}>
-							<FormControlLabel
-								control={
-									<Checkbox size="small" checked={rItem?.mp == "mapai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="mapai" />
-								}
-								label="MAPAI"
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox size="small" checked={rItem?.mp == "cpai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="cpai" />
-								}
-								label="CPAI"
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox size="small" checked={rItem?.mp == "apai"} onChange={(e) => handleMealPlanChange(e, rindex)} name="apai" />
-								}
-								label="APAI"
-							/>
-						</FormGroup>
-					</Grid>
+					<PackDetailsFor1Room hotelIndex={hotelIndex} roomIndex={rindex} roomItem={rItem}  />
+					
 					{/* <Grid item xs={12}>
 						<hr />
 					</Grid> */}

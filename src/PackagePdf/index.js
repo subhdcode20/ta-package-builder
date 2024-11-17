@@ -19,6 +19,8 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	const [userPdfData, setUserPdfData] = useState({});
     const [loading, setLoading] = useState(false);
     const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
+	// const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
+	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || [];
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
     useEffect(() => {
@@ -41,13 +43,18 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("packagePdf render => ", pkgSelectedHotels, userPdfData);
+    console.log("packagePdf render => ", finalPackPrice, pkgSelectedHotels, userPdfData);
 
     return (<>
         {
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} reqData={{ req: reqData }} userData={userPdfData} />
+				<HtmlTemplate 
+					dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
+					reqData={{ req: reqData }} 
+					userData={userPdfData}
+					totalPackPrice={finalPackPrice}
+				/>
 			</Box>)
 		}
     </>);

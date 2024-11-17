@@ -10,7 +10,10 @@ import { submitPackageData } from './packBuilderSlice.js';
 import { db, auth } from "../firebaseConfig";
 
 const SavePackagePdf = () => {
-    const selectedPackDetails = useSelector((state) => state.packBuilderData.selectedHotels) || {};
+    const selectedPackHotels = useSelector((state) => state.packBuilderData.selectedHotels) || {};
+	const selectedItineraryText = useSelector((state) => state.packBuilderData.itineraryDesc) || {};
+	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || {};
+	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || {};
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const {reqId} = useParams();
@@ -20,26 +23,35 @@ const SavePackagePdf = () => {
     const savePackageWithPdf = async () => {
 		// TODO: handle data validation, show validation errors
 		setLoading(true);
+
+		//calculate Package Price
+		
 		try {
 			let newPackId = nanoid();
 			console.log("new pack save pdf", newPackId);
-			let finalHotelDetails = selectedPackDetails
+			let finalHotelDetails = selectedPackHotels
 			// .map((p) => {
 			// 	return {
 			// 		"hotels": p
 			// 	}
 			// });
 			// dispatch(submitReqData({reqData: newReqData}));
-			console.log("new pack post 2: ", newPackId, finalHotelDetails, reqData);
 			let finalPackDetails = {
-				hotels: finalHotelDetails, 
+				hotels: finalHotelDetails,
+				itiTexts: selectedItineraryText,
 				packageId: newPackId,
-				userId: userData?.phone,
+				totalDayPrices,
+				finalPackPrice,
 				createdAt: Date.now(),
-				req: {
-					...reqData
-				}
+				userId: userData?.phone,
+				reqId,
+				destination: reqData?.destination,
+				noOfNights: reqData?.noOfNights,
+				startDate: reqData?.startDate,
+				trackingId: reqData?.trackingId
 			}
+			console.log("new pack post finalPackDetails ", newPackId, finalPackDetails);
+
 			dispatch(submitPackageData(finalPackDetails));
 			let packRef = await setDoc(doc(db, "packages", newPackId), finalPackDetails);
 			

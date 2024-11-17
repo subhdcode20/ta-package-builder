@@ -5,15 +5,17 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
-import { onCurrDayIndexChange, createEmptyPackageDataDayWise, handleHotelSelect } from './packBuilderSlice.js';
+import { onCurrDayIndexChange, createEmptyPackageDataDayWise, setTotalPackagePrice } from './packBuilderSlice.js';
 import SavePackagePdf from './savePackagePdf.js';
-import useTotalPackPrice from "./totalPriceBreakup.js";
-import { Box } from '@mui/material';
+import useTotalPackPrice from "./useTotalPackPrice.js";
 
 const DayWiseTabs = ({reqDatass = {}}) => {
 	// const [currentDayIndex, setCurrentDayIndex] = useState(0);
@@ -22,6 +24,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArray = useSelector((state) => state.packBuilderData.daysArr);
+	const finalPackPrice = useSelector((state) => state.packBuilderData?.finalPackPrice);
 	const totalPackPrice = useTotalPackPrice();
 
 	const dispatch = useDispatch();
@@ -68,19 +71,28 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	    </AppBar>
 	    {
 			(daysArray && daysArray.length > 0) && (<Card container>
-				<CardContent>
+				<CardContent sx={{ pb: 1 }}>
 					<PackDetailsFor1Day 
 						key={`day-${currentDayIndex}`} 
 					/>
 				</CardContent>
 			</Card>)
 		}
-		<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} sx={{ m: 1 }}>
-			<Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography>
-			
-			<SavePackagePdf/>
-			
-		</Box>
+			{/* <Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography> */}
+		{
+			(currentDayIndex == daysArray.length - 1) && (<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} sx={{ m: 1 }}>
+				<Box display={'flex'} flexDirection={'column'}>
+					<InputLabel htmlFor="total-pack-price-input" sx={{fontSize: 12}}>
+						Total Package Price:
+					</InputLabel>
+					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+						onChange={(e) => dispatch(setTotalPackagePrice({ totalPackPrice: e.target.value }))} 
+						value={finalPackPrice || totalPackPrice || ''} sx={{margin: "auto"}}
+					/>
+				</Box>
+				<SavePackagePdf/>
+			</Box>)
+		}
 		{/* <div style={{marginLeft: '8px', marginBottom: '8px'}}><SavePackagePdf /></div> */}
 	</DayWiseItineraryContext.Provider>
 	</div>)
