@@ -32,21 +32,16 @@ const roomsList = [
 ]
 
 const HotelRoomsBuilder = ({ hotelIndex = null }) => {
-	// const [roomsData, setRoomsData] = useState([
-	// 	{
-	// 		key: `H-${dayIndex + 1}-R-${0}`
-	// 	}
-	// ]);
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const currDayHotels = useSelector((state) => state.packBuilderData.selectedHotels[currentDayIndex]?.hotels);
 	const currDayhotelData = currDayHotels[hotelIndex];
 	const selectedRooms = currDayhotelData.selectedRooms;
-	const roomsData = Object.values(currDayhotelData?.roomRates || {});
+	const hotelRates = Object.values(currDayhotelData?.roomRates || {});
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const dispatch = useDispatch();
 
-	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, roomsData);
+	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, hotelRates);
 	// const handleRoomChange = (roomIndex, data) => {
 	// 	// handleDataChange(dayIndex, data);
 	// 	console.log("handleRoomChange ", hotelIndex, roomIndex, data)
@@ -94,8 +89,8 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 		}));
 	}
 
-	console.log("room builder render HotelRoomView", currDayhotelData, selectedRooms, roomsData);
-	console.log("ROOMDATA", roomsData[0]?.occupancy?.child)
+	console.log("room builder render HotelRoomView", currDayhotelData, selectedRooms, hotelRates);
+	console.log("ROOMDATA", hotelRates[0]?.occupancy?.child)
 	return (<Grid container spacing={2} sx={{padding: 2}}>
 		{
 			(selectedRooms || []).map((rItem, rindex) => {

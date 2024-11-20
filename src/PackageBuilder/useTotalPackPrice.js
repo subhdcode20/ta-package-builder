@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 const useTotalPackPrice = () => {
     const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
+    const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || 0;
     const [totalPackPrice, setTotalPackPrice] = useState(0);
 
     useEffect(() => {
@@ -18,9 +19,9 @@ const useTotalPackPrice = () => {
             }
         }, 0);
         setTotalPackPrice(totalPrice);
-    }, [totalDayPrices])
+    }, [totalDayPrices, finalTransferPrice])
 
-    return totalPackPrice;
+    return Number(totalPackPrice) + Number(finalTransferPrice);
 }
 
 export default useTotalPackPrice;

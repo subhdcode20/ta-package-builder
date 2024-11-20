@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -29,9 +29,10 @@ const PackDetailsFor1Room = ({ hotelIndex, roomIndex, roomItem,  }) => {
 	const dispatch = useDispatch();
     let { roomPrice = '', selectedOccupancy = {} } = roomItem;
     let childAges = selectedOccupancy?.childAges || [];
+    const userInteraction = useRef(false);
     
     useEffect(() => {
-        if(roomPrice) dispatch(calculatePriceFor1Day());
+        if(userInteraction.current && roomPrice) dispatch(calculatePriceFor1Day());
     }, [roomPrice])
 
 	const handleRoomChange = (roomIndex, data) => {
@@ -64,12 +65,19 @@ const PackDetailsFor1Room = ({ hotelIndex, roomIndex, roomItem,  }) => {
 	const handleMealPlanChange = (e, roomIndex) => {
 		const selectedMp = e.target.checked ? e.target.name : '';
 		console.log("handleMealPlanChange", e.target.checked, e.target.name, selectedMp);
+        userInteraction.current = true;
 		dispatch(setMealPlanFor1Room({
 			hotelIndex, 
 			roomIndex: roomIndex,
 			mealPlan: selectedMp
 		}));
 	}
+
+    useEffect(() => {
+        return () => { userInteraction.current = false };
+    }, [])
+
+    console.log("PackDetailsFor1Room render", userInteraction.current)
 
     return (<>
         <Grid container spacing={2}>
@@ -132,6 +140,7 @@ const PackDetailsFor1Room = ({ hotelIndex, roomIndex, roomItem,  }) => {
                                         aria-labelledby="demo-radio-buttons-group-label"
                                         defaultValue="false"
                                         name="radio-buttons-group"
+                                        value={Boolean(c?.extraBed)}
                                         onChange={(e) => handleOccChildAgeChange(roomIndex, cIndex, c.age, e.target.value)}
                                     >
                                         <FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />

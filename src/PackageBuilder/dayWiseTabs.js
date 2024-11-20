@@ -13,7 +13,9 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
-import { onCurrDayIndexChange, createEmptyPackageDataDayWise, setTotalPackagePrice } from './packBuilderSlice.js';
+import { onCurrDayIndexChange, createEmptyPackageDataDayWise, setTotalPackagePrice,
+	setTotalTransferPrice
+} from './packBuilderSlice.js';
 import SavePackagePdf from './savePackagePdf.js';
 import useTotalPackPrice from "./useTotalPackPrice.js";
 
@@ -24,6 +26,7 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
 	const daysArray = useSelector((state) => state.packBuilderData.daysArr);
+	const finalTransferPrice = useSelector((state) => state.packBuilderData?.finalTransferPrice);
 	const finalPackPrice = useSelector((state) => state.packBuilderData?.finalPackPrice);
 	const totalPackPrice = useTotalPackPrice();
 
@@ -48,6 +51,10 @@ const DayWiseTabs = ({reqDatass = {}}) => {
   		// setDaysArray(newDaysArr);
   		// setSelectedHotels(newHotelsArr);
   	}, [noOfNights])
+
+	useEffect(() => {
+		dispatch(setTotalPackagePrice({ totalPackPrice: totalPackPrice }));
+	}, [totalPackPrice])
 
 	const contextValue = {
 		currentDayIndex
@@ -80,8 +87,17 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 		}
 			{/* <Typography variant="body1" sx={{m: 1}}>Total Package Price - <b>Rs {totalPackPrice}</b></Typography> */}
 		{
-			(currentDayIndex == daysArray.length - 1) && (<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} sx={{ m: 1 }}>
-				<Box display={'flex'} flexDirection={'column'}>
+			(currentDayIndex == daysArray.length - 1) && (<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} flexWrap={'wrap'} sx={{ m: 1 }}>
+				<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
+					<InputLabel htmlFor="total-pack-price-input" sx={{fontSize: 12}}>
+						Total Transfer Price:
+					</InputLabel>
+					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+						onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))} 
+						value={finalTransferPrice || ''} sx={{margin: "auto"}}
+					/>
+				</Box>
+				<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
 					<InputLabel htmlFor="total-pack-price-input" sx={{fontSize: 12}}>
 						Total Package Price:
 					</InputLabel>

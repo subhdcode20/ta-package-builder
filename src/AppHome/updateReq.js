@@ -28,12 +28,13 @@ const ReqCopy = () => {
             fetchReqData(); // Call the function to fetch data when reqId is available
         }
     }, [reqId]);
+
     console.log("REQDATA:", reqData)
     let checkFlow = (!reqData) ? false : true
     console.log("CHECKDATA : ", checkFlow);
     return (
         <div>
-            <AppHome isUpdateflow = {checkFlow} requestData = {reqData}/>
+            <AppHome isUpdateflow={checkFlow} requestData={reqData}/>
         </div>
     )
 }

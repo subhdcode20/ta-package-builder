@@ -84,7 +84,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		if (requestData) {
 			setReqData(requestData);
 			// setStartDate(new Date(requestData.startDate));
-			setRoomOcc(requestData.setRoomOcc || []);
+			setRoomOcc(requestData.roomOcc || []);
 			setDestination(requestData.destination || '');
 		}
 	}, [requestData]);
@@ -204,6 +204,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		}
 		if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
 		if (reqData.noOfCabs !== requestData.noOfCabs) updatedFields.noOfCabs = reqData.noOfCabs;
+		if (reqData.pickUp !== requestData.pickUp) updatedFields.pickUp = reqData.pickUp;
 		// updatedFields.childAges = childAges;
 		updatedFields.roomOcc = roomOcc;
 
@@ -321,7 +322,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: isMobile ? 1 : 2, bgcolor: "transparent" }}>
 				<Box sx={{ "display": "flex", mb: 2 }}>
 					<Typography variant="h6" sx={{ margin: 'auto' }}>
-						<b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b>
+						<b>{(isUpdateflow) ? `Update Your Request` : `Create New Request`}</b>
 					</Typography>
 				</Box>
 
@@ -550,6 +551,9 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 													})
 												}
 											</Grid>
+										</Grid>
+										<Grid item xs={12} md={12} lg={10}>
+											<hr />
 										</Grid>
 									</Grid>)
 								})

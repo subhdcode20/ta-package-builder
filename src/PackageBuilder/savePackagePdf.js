@@ -14,6 +14,7 @@ const SavePackagePdf = () => {
 	const selectedItineraryText = useSelector((state) => state.packBuilderData.itineraryDesc) || {};
 	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || {};
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || {};
+	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || {};
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const {reqId} = useParams();
@@ -29,7 +30,12 @@ const SavePackagePdf = () => {
 		try {
 			let newPackId = nanoid();
 			console.log("new pack save pdf", newPackId);
-			let finalHotelDetails = selectedPackHotels
+			let finalHotelDetails = selectedPackHotels.map((day, dayIndex) => {
+				let dayHotels = { ...day?.hotels[0] };
+				delete dayHotels.roomRates;
+				day.hotels[0] = dayHotels;
+				return day;
+			})
 			// .map((p) => {
 			// 	return {
 			// 		"hotels": p
@@ -42,6 +48,7 @@ const SavePackagePdf = () => {
 				packageId: newPackId,
 				totalDayPrices,
 				finalPackPrice,
+				finalTransferPrice,
 				createdAt: Date.now(),
 				userId: userData?.phone,
 				reqId,

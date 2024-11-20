@@ -22,13 +22,13 @@ const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1
 
     // Provide a prompt that contains text
     const day1Prompt = `Write a summarized travel itinerary for the 1st day of the Trip with following details: 
-     Welcome and Pick up: ${pickUp || "Airport"}. Location: ${location}. Stay tonight at: Hotel ${hotelName}.
+     Welcome and Pick up: ${pickUp || "Airport"}. Destination for the Day: ${location}. Stay tonight at: Hotel ${hotelName}.
      Structure your response in json more specifically an Array of Strings with every string mentioning parts of the Itenerary.
      Include the sightseeing of the Location for the day.
      Summarize in maximum 5 points or strings in the array. Your response string should be a valid JSON string.
     `
     const dayNPrompt = `Write a summarized travel itinerary for a day of the Trip with following details: 
-     Pick up from Hotel: ${currDayPickup || "Hotel"}. Location: ${location}. Stay tonight at: Hotel ${hotelName}.
+     Pick up from Hotel: ${currDayPickup || "Hotel"}. Destination for the Day: ${location}. Stay tonight at: Hotel ${hotelName}.
      Dont mention time of the day.
      Structure your response in json more specifically an Array of Strings with every string mentioning parts of the Itenerary.
      Include the sightseeing of the Location for the day.

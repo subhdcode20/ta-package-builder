@@ -6,7 +6,7 @@ const filter = createFilterOptions();
 
 const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []}) => {
   const [defaultValue, setDefaultValue] = React.useState(selectedRoom || null);
-  const [value, setValue] = React.useState(selectedRoom);
+  const [value, setValue] = React.useState('');
   const [roomsDropdownList, setHotelsDropdownList] = React.useState(userRoomRates || []);
   console.log("room search rnder ", selectedRoom)
 
@@ -27,7 +27,7 @@ const FreeSoloCreateOption = ({selectedRoom = null, onChange, userRoomRates = []
     <Autocomplete
       fullWidth
       size="small"
-      value={value || defaultValue || null}
+      value={defaultValue || value || null}
       onChange={(event, newValue) => {
         console.log("main room onChange ", newValue, typeof newValue);
         if (newValue && newValue.roomName) {

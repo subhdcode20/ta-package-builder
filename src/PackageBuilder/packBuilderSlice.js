@@ -39,6 +39,8 @@ export const todoSlice = createSlice({
     itineraryDesc: [],
     totalDayPrices: [],
     reqHistory: [],
+    finalPackPrice: '',
+    finalTransferPrice: ''
   },
   reducers: {
     submitReqData: (state, action) => {
@@ -70,8 +72,12 @@ export const todoSlice = createSlice({
         newSelectedRooms.push(newHotelArr[i].selectedRooms);
       }
       state.packageData = packageData
-      state.selectedHotels = newSelectedHotels;
-      state.selectedRooms = newSelectedRooms;
+      state.selectedHotels = packageData.hotels  //newSelectedHotels;
+      // state.selectedRooms = newSelectedRooms;
+      state.totalDayPrices = packageData?.totalDayPrices || []
+      state.itineraryDesc = packageData?.itiTexts || []
+      state.finalTransferPrice = packageData?.finalTransferPrice || '';
+      state.finalPackPrice = packageData?.finalPackPrice || '';
       
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
@@ -178,7 +184,7 @@ export const todoSlice = createSlice({
       const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
       currentHotelRooms[roomIndex] = {
         ...currentHotelRooms[roomIndex],
-        ...data
+        roomName: data?.roomName
       };
     },
     selectedRoomOccupancy: (state, action) => {
@@ -269,6 +275,10 @@ export const todoSlice = createSlice({
       }, 0);
       
       state.totalDayPrices[state.currDayIndex]["totalPrice"] = totalHotelPriceForCurrDay;
+      // let totalPackCalc = state.totalDayPrices.reduce((acc, p) => {
+      //   return acc + Number(p?.totalPrice || 0);
+      // }, 0)
+      // state.finalPackPrice = totalPackCalc;
     },
     setHotelPriceForCurrDay: (state, action) => {
       let { totalHotelPriceForCurrDay = null, selectedHotelCurrDay = [], copyDetailsToDays = {} } = action.payload;
@@ -298,23 +308,27 @@ export const todoSlice = createSlice({
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;
       const currDayHotels = state.selectedHotels[state.currDayIndex]?.hotels;
       const currentHotelRooms = currDayHotels[hotelIndex]["selectedRooms"];
-      let currentRoom = { ...currentHotelRooms[roomIndex] };
-      let { occupancy: roomMaxOcc = {}, selectedOccupancy = {}, stdRoomPrice = {}, extraRates = {},  } = currentRoom;
+      let { roomName = '', selectedOccupancy = {}} = { ...currentHotelRooms[roomIndex] };
+      const currentHotelRates = currDayHotels[hotelIndex]["roomRates"] || {};
+      const currRoomRates = {...currentHotelRates[roomName]} || {};
+      const isRoomRateAvailable = Boolean(currRoomRates)
+      // let { roomName = '' } = currentRoom;
+      let { occupancy: roomMaxOcc = {}, stdRoomPrice = {}, extraRates = {} } = currRoomRates;
       let { adults, child, childAges = []} = selectedOccupancy;
       let currRoomPrice = 0, 
         totalExtraAdults = Number(selectedOccupancy.adults) - Number(roomMaxOcc.adult);
       if(totalExtraAdults < 0) totalExtraAdults = 0;
-      let totalAdultPrice = Number(currentRoom[itiRoomPriceFieldsMap[mealPlan]]) + ( Number(currentRoom[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]]) * Number(totalExtraAdults) );
+      let totalAdultPrice = Number(currRoomRates[itiRoomPriceFieldsMap[mealPlan]]) + ( Number(currRoomRates[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]]) * Number(totalExtraAdults) );
       let totalChildPrice = [...childAges].reduce((acc, ch) => {
-        console.log("calculate child price 1", ch.age, currentRoom?.minChildAgeForExtra, [...childAges][0], ch, ch.extraBed, mealPlan, itiRoomPriceFieldsMap[`extraChildBed-${ch.extraBed}`][mealPlan] )
-        if(ch.age >= currentRoom?.minChildAgeForExtra) 
-          return  acc + Number( currentRoom[ itiRoomPriceFieldsMap[`extraChildBed-${ch.extraBed.toString()}`][mealPlan] ] );
-        else return acc + 0
+        console.log("calculate child price 1", ch.age, currRoomRates?.minChildAgeForExtra, [...childAges][0], ch, ch.extraBed, mealPlan, itiRoomPriceFieldsMap[`extraChildBed-${ch.extraBed}`][mealPlan] )
+        if(ch.age >= currRoomRates?.minChildAgeForExtra) 
+          return  acc + Number( currRoomRates[ itiRoomPriceFieldsMap[`extraChildBed-${ch.extraBed.toString()}`][mealPlan] ] );
+        else return acc + 0;
       }, 0)
       
-      // Number(currentRoom[itiRoomPriceFieldsMap[mealPlan]]) + ( Number(currentRoom[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]]) * Number(totalExtraAdults) );
-      console.log("calculate child price",  totalChildPrice)
-      console.log("calculate room price ", currentRoom, roomMaxOcc.adult, mealPlan, itiRoomPriceFieldsMap, itiRoomPriceFieldsMap[mealPlan], currentRoom[itiRoomPriceFieldsMap[mealPlan]], selectedOccupancy.adults, totalExtraAdults, itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan], currentRoom[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]], totalAdultPrice);
+      // Number(currRoomRates[itiRoomPriceFieldsMap[mealPlan]]) + ( Number(currRoomRates[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]]) * Number(totalExtraAdults) );
+      console.log("calculate child price", totalChildPrice, totalAdultPrice, currRoomRates[itiRoomPriceFieldsMap[mealPlan]], currRoomRates[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]], totalExtraAdults, selectedOccupancy.adults, roomMaxOcc.adult, currRoomRates[ itiRoomPriceFieldsMap[`extraChildBed-false`][mealPlan] ])
+      console.log("calculate room price ", roomName, currRoomRates, roomMaxOcc.adult, mealPlan, itiRoomPriceFieldsMap, itiRoomPriceFieldsMap[mealPlan], currRoomRates[itiRoomPriceFieldsMap[mealPlan]], selectedOccupancy.adults, totalExtraAdults, itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan], currRoomRates[itiRoomPriceFieldsMap["extraAdultPrices"][mealPlan]], totalAdultPrice);
     
 
       // if (stdRoomPrice) {
@@ -386,7 +400,25 @@ export const todoSlice = createSlice({
       // newData.splice(itiTextIndex, 1);
       currDayItiData.splice(itiTextIndex, 1);
       console.log("handleRemoveItiItem final", currDayItiData.length);
-    } 
+    },
+    setTotalTransferPrice: (state, action) => {
+      let { transferPrice = 0 } = action?.payload;
+      if(isNaN(transferPrice)) return;
+      state["finalTransferPrice"] = transferPrice;
+      
+      // let totalPackCalc = state.totalDayPrices.reduce((acc, p) => {
+      //   return acc + Number(p?.totalPrice || 0);
+      // }, 0);
+      // console.log('trasfer change ', transferPrice, totalPackCalc, Number(transferPrice) + Number(totalPackCalc))
+      // state.finalPackPrice = Number(transferPrice) + Number(totalPackCalc);
+    },
+    calcTotalPackagePrice: (state, action) => {
+      // separate out logic to calc total Pack price. Hotels + Transfer
+      let totalPackCalc = state.totalDayPrices.reduce((acc, p) => {
+        return acc + Number(p?.totalPrice || 0);
+      }, 0);
+      state.finalPackPrice = Number(state["finalTransferPrice"]) + Number(totalPackCalc);
+    }
   }
 });
 
@@ -414,7 +446,8 @@ export const {
   updateItineraryDesc,
   setHotelLocation,
   setTotalPackagePrice,
-  handleRemoveItiItem
+  handleRemoveItiItem,
+  setTotalTransferPrice
 } = todoSlice.actions;
 
 // this is for configureStore
