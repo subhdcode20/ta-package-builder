@@ -42,8 +42,10 @@ const HtmlPdfView = ({
     email,
     name
   },
-  totalPrice
-}) => (
+  totalPackPrice= ''
+}) => {
+  console.log("pdf template render ", logoB64Str)
+  return (
   <Document>
     <Page style={styles.page} wrap={false}>
       <View>
@@ -114,7 +116,7 @@ const HtmlPdfView = ({
 
             {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
               const { location, hotelName, selectedRooms = [] } = hotel;
-
+              console.log("pdf html hotel data", location, selectedRooms)
               return (
                 <View>
 
@@ -195,13 +197,13 @@ const HtmlPdfView = ({
           <Text style={styles.bullet}>• Anything not mentioned under Package Inclusions</Text>
           <Text style={styles.bullet}>• Cost incidental to any change in the itinerary/stay due to flight cancellation due to bad weather, ill health, and roadblocks, and/or any factors beyond control.</Text>
           <Text style={styles.bullet}>• Return flight/train fare</Text>
-          <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text>
+          {/* <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text> */}
           <Text style={styles.bullet}>• Domestic/International hotel check-in is at 1400 hrs and checkout is at 1200 hrs. Early check-in and late checkout are subject to availability and consent of the hotel.</Text>
         </View>
 
         <View style={styles.priceSection}>
           <Text style={styles.priceTitle}>Total Package Price</Text>
-          <Text style={styles.totalPrice}>{`INR ${totalPrice || 'N/A'}`}</Text>
+          <Text style={styles.totalPrice}>{`INR ${totalPackPrice || 'N/A'}`}</Text>
         </View>
 
         <View style={styles.footerContainer}>
@@ -217,7 +219,7 @@ const HtmlPdfView = ({
       </View>
     </Page>
   </Document>
-);
+)};
 
 const styles = StyleSheet.create({
   page: {
@@ -486,12 +488,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const RenderPreview = (props) => (
-  <div style={{ width: '100%', height: 'auto' }}>
+const RenderPreview = (props) => {
+  console.log("RenderPreview ", props);
+  return (<div style={{ width: '100%', height: 'auto' }}>
     <PDFViewer width={'100%'} height={'800'}>
       <HtmlPdfView {...props} />
     </PDFViewer>
-  </div>
-);
+  </div>)
+};
 
 export default RenderPreview;

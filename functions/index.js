@@ -16,7 +16,8 @@ const csv = require('csv-parser')
 const axios = require('axios');
 const cors = require('cors');
 const concat = require('concat-stream');
-const { nanoid } = require("nanoid");
+// const { nanoid } = require("nanoid"); //needs esm import systax only
+const { v4: uuidv4 } = require('uuid')
 // const { arrayUnion } = require("firebase-admin/firestore");
 
 admin.initializeApp();
@@ -204,13 +205,45 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                 // const dbCollection = await db.collection('userRates')
                 logger.log("all row data", results);
                 let userHotelRateDocRef = db.collection("userRates").doc(`${res.locals.user}-${req.params.destinationName.toLowerCase()}`);
-                let finalDocData = results.map((rate) => {
-                    return {
-                        hotelRateId: nanoid(5),
-                        hotelName: rate['Hotel Name'],
-                        location: rate['location'],
-                        starCategory: rate['Star Category'],
-                        roomRates: {
+                let hotelsMap = {}
+                // let finalRatesData = {};
+                results.forEach((rate) => {
+                    let currHotelData = hotelsMap[rate['Hotel Name']] || null;
+                    logger.log('new row currHotelData initial ', rate['Hotel Name'], rate['Room Name'], currHotelData, hotelsMap, currHotelData && currHotelData['roomRates']);
+                    if( currHotelData && currHotelData['roomRates'] ) {
+                        // hotel already added, update Rooms to hotel 
+                        
+                        currHotelData['roomRates'][rate['Room Name']] = {
+                            roomName: rate['Room Name'],
+                            cpaiPrice: rate['CPAI'],
+                            mapaiPrice: rate['MAPAI'],
+                            apaiPrice: rate['APAI'],
+                            extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
+                            extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
+                            extraBedApaiPrice: rate['Extra Bed Adult APAI'],
+                            extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
+                            extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
+                            extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
+                            occupancy: {
+                                adult: rate['Adult Occupancy'],
+                                child: rate['Child Occupancy']
+                            },
+                            minChildAgeForExtra: rate['Min Child Age For extra charge'],
+                            childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
+                            childNoBedMapaiPrice: rate['Child Without Bed MAPAI'],
+                            childNoBedApaiPrice: rate['Child Without Bed APAI']
+                        }
+                    } else {
+                        // new Hotel data, add Hotel and its Rooms
+                        currHotelData = {
+                            hotelRateId: uuidv4(),
+                            hotelName: rate['Hotel Name'],
+                            location: rate['location'],
+                            starCategory: rate['Star Category'],
+                            validFrom: validFromDate,
+                            validUntil: validUntilDate
+                        }
+                        currHotelData['roomRates'] = {
                             [rate['Room Name']]: {
                                 roomName: rate['Room Name'],
                                 cpaiPrice: rate['CPAI'],
@@ -231,14 +264,48 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                                 childNoBedMapaiPrice: rate['Child Without Bed MAPAI'],
                                 childNoBedApaiPrice: rate['Child Without Bed APAI']
                             }
-                        },
-                        validFrom: validFromDate,
-                        validUntil: validUntilDate
+                        }
                     }
-                })
-                logger.log("set final data row data", finalDocData);
+                    logger.log('new row currHotelData final ', rate['Hotel Name'], rate['Room Name'], currHotelData, hotelsMap );
+                    hotelsMap[rate['Hotel Name']] = currHotelData;
+
+                    // return {
+                    //     hotelRateId: nanoid(5),
+                    //     hotelName: rate['Hotel Name'],
+                    //     location: rate['location'],
+                    //     starCategory: rate['Star Category'],
+                    //     roomRates: {
+                    //         [rate['Room Name']]: {
+                    //             roomName: rate['Room Name'],
+                    //             cpaiPrice: rate['CPAI'],
+                    //             mapaiPrice: rate['MAPAI'],
+                    //             apaiPrice: rate['APAI'],
+                    //             extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
+                    //             extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
+                    //             extraBedApaiPrice: rate['Extra Bed Adult APAI'],
+                    //             extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
+                    //             extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
+                    //             extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
+                    //             occupancy: {
+                    //                 adult: rate['Adult Occupancy'],
+                    //                 child: rate['Child Occupancy']
+                    //             },
+                    //             minChildAgeForExtra: rate['Min Child Age For extra charge'],
+                    //             childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
+                    //             childNoBedMapaiPrice: rate['Child Without Bed MAPAI'],
+                    //             childNoBedApaiPrice: rate['Child Without Bed APAI']
+                    //         }
+                    //     },
+                    //     validFrom: validFromDate,
+                    //     validUntil: validUntilDate
+                    // }
+                });
+
+                // finalRatesData = Object.values(hotelsMap);
+
+                logger.log("set final data row data", Object.values(hotelsMap));
                 let updateDocRes = await userHotelRateDocRef.set({
-                    hotels: finalDocData,
+                    hotels: Object.values(hotelsMap),
                     createdAt: Date.now(),
                     userId: res.locals.user
                 }, { merge: true });
@@ -331,5 +398,38 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
     } catch (err) {
         logger.log(`Uploaded rate sheet processing failed => ${err}`)
         return res.status(500).send({message: 'Something went wrong processing your request', error: err})
+    }
+});
+
+
+app.post("/api/get-logo-b64", async (req, res) => {
+    let { logoUrl = '' } = req.body;
+    logger.log('getLogoB64 initial url ', logoUrl);
+    try {
+        if(!logoUrl) {
+            throw new Error(`Logo url missing`);
+        }
+        const response = await fetch(logoUrl);
+        if (!response.ok) {
+            throw new Error(`Logo Fetch failed with status: ${response.status} - ${response.statusText}`);
+        }
+
+        const blob = await response.arrayBuffer();
+        logger.log("getLogoB64 Blob", blob);
+        let finalB64Str = Buffer.from(blob).toString('base64');
+
+        // const fileExtension = url.split('.').pop().split('?')[0];
+        // const fileName = `user-logo.png`; //`user-logo-${res.locals.user}`  //`file.${fileExtension}`;
+        // const newFile = new File([blob], fileName, { type: blob.type });
+        // logger.log("getLogoB64 file", newFile);
+        // let finalB64Str = _base64_encode(newFile);
+        res.status(200).json({
+            data: `data:image/png;base64,${finalB64Str}`
+        })
+    } catch (error) {
+        logger.log("getLogoB64 catch", error);
+        res.status(500).json({
+            error: error
+        })   
     }
 })

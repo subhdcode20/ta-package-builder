@@ -85,14 +85,14 @@ const FreeSoloCreateOption = ({ selectedHotel = null, onChange, userHotelRates =
         if (option.label) {
           return option.label;
         }
-        return option.hotelName 
+        return `${option.hotelName} ${option?.starCategory || ''}` 
       }}
       renderOption={(props, option) => {
         console.log("maindest renderOption ", props, option);
         const { key, ...optionProps } = props;
         return (
           <li key={key} {...optionProps}>
-            {option.label ? option.label : option.hotelName}
+            {option.label ? option.label : `${option.hotelName} ${option?.starCategory ? ` - ${option?.starCategory}⭐` : ''}`}
           </li>
         );
       }}

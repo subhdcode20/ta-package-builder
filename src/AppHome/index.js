@@ -17,7 +17,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
 import MainDestSelect from "../Commons/mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
@@ -29,25 +30,26 @@ import { CabTypes } from "../Constants.js"
 
 const initialFormData = {
 	destination: "",
-	adultPax: "",
-	childPax: "",
+	// adultPax: "",
+	// childPax: "",
 	noOfNights: "",
 	pickUp: "",
 	startDate: "",
 	trackingId: "",
 	starCategory: "",
-	noOfRooms: '',
+	// noOfRooms: '',
 	cabType: "",
+	noOfCabs: ""
 };
 
 const requiredFields = [
 	"destination",
-	"adultPax",
+	// "adultPax",
 	"noOfNights",
 	"startDate",
 	"trackingId",
 	"starCategory",
-	"noOfRooms",
+	// "noOfRooms",
 	"pickUp",
 	"cabType",
 ];
@@ -55,7 +57,7 @@ const requiredFields = [
 const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) => {
 	const [destination, setDestination] = useState("");
 	const [reqData, setReqData] = useState({ ...initialFormData, destination });
-	const [childAges, setChildAges] = useState([]);
+	// const [childAges, setChildAges] = useState([]);
 	const [postSaved, setPostSaved] = useState(false);
 	const userData = JSON.parse(localStorage.getItem("user"));
 	const navigate = useNavigate();
@@ -64,19 +66,26 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	const [pickUp, setPickUp] = useState([]);
 	const [formErrors, setFormErrors] = useState({});
 	const [buttonLoading, setButtonLoading] = useState(false);
+	const [roomOcc, setRoomOcc] = useState([
+		{
+			adultPax: '',
+			childPax: '',
+			childAges: []
+		}
+	]);
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
 	useEffect(() => {
+		if (copyNew && requestData) {
+			requestData.trackingId = "";
+		}
 		if (requestData) {
 			setReqData(requestData);
-			setStartDate(new Date(requestData.startDate));
-			setChildAges(requestData.childAges || []);
+			// setStartDate(new Date(requestData.startDate));
+			setRoomOcc(requestData.roomOcc || []);
 			setDestination(requestData.destination || '');
-		}
-		if (requestData && copyNew) {
-			requestData.trackingId = "";
 		}
 	}, [requestData]);
 
@@ -102,34 +111,51 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setReqData(req);
 	};
 
-	const handlePickUpSelect = (val) => {
-		handleFormChange({ target: { value: val } }, "pickUp");
-	};
+	// const handlePickUpSelect = (val) => {
+	// 	handleFormChange({ target: { value: val } }, "pickUp");
+	// };
 
-	useEffect(() => {
-		console.log("set childages ", reqData.childPax, typeof reqData.childPax, isNaN(reqData.childPax));
-		let newChildPax = reqData.childPax || 0;
-		if (isNaN(reqData.childPax)) return;
-		let newChildAges = [];
-		let len = childAges.length;
-		for (let ii = 0; ii < newChildPax; ii++) {
-			if (!isEmptyObject(childAges[ii])) {
-				newChildAges.push({ ...childAges[ii] });
-			} else {
-				newChildAges.push({ age: null, extraBed: false });
-			}
-		}
-		console.log("child age effect ", reqData.childPax, childAges.map(i => `${i.age}-${i.extraBed}`), newChildAges)
-		setChildAges(newChildAges);
-	}, [reqData.childPax])
+	// useEffect(() => {
+	// 	console.log("set childages ", reqData.childPax, typeof reqData.childPax, isNaN(reqData.childPax));
+	// 	let newChildPax = reqData.childPax || 0;
+	// 	if (isNaN(reqData.childPax)) return;
+	// 	let newChildAges = [];
+	// 	let len = childAges.length;
+	// 	for (let ii = 0; ii < newChildPax; ii++) {
+	// 		if (!isEmptyObject(childAges[ii])) {
+	// 			newChildAges.push({ ...childAges[ii] });
+	// 		} else {
+	// 			newChildAges.push({ age: null, extraBed: false });
+	// 		}
+	// 	}
+	// 	console.log("child age effect ", reqData.childPax, childAges.map(i => `${i.age}-${i.extraBed}`), newChildAges)
+	// 	setChildAges(newChildAges);
+	// }, [reqData.noOfRooms])
+	
+	// useEffect(() => {
+	// 	console.log("set childages ", reqData.childPax, typeof reqData.childPax, isNaN(reqData.childPax));
+	// 	let newChildPax = reqData.childPax || 0;
+	// 	if (isNaN(reqData.childPax)) return;
+	// 	let newChildAges = [];
+	// 	let len = childAges.length;
+	// 	for (let ii = 0; ii < newChildPax; ii++) {
+	// 		if (!isEmptyObject(childAges[ii])) {
+	// 			newChildAges.push({ ...childAges[ii] });
+	// 		} else {
+	// 			newChildAges.push({ age: null, extraBed: false });
+	// 		}
+	// 	}
+	// 	console.log("child age effect ", reqData.childPax, childAges.map(i => `${i.age}-${i.extraBed}`), newChildAges)
+	// 	setChildAges(newChildAges);
+	// }, [reqData.childPax])
 
 	const handlePost = async () => {
 		setButtonLoading(true);
-		console.log("new Req post: ", reqData, childAges);
+		console.log("new Req post: ", reqData, roomOcc);
 		// TODO: handle data validation, show validation errors
 
 		let newReqId = nanoid();
-		let newReqData = { ...reqData, reqId: newReqId, childAges };
+		let newReqData = { ...reqData, roomOcc };
 		dispatch(submitReqData({ reqData: newReqData }));
 		let reqRef = await setDoc(doc(db, "requests", newReqId), {
 			...newReqData,
@@ -154,23 +180,21 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setButtonLoading(false);
 	}
 
-
-
 	const handleUpdatePost = async () => {
 		setButtonLoading(true);
-		console.log("Updating Request: ", reqData, childAges);
+		console.log("Updating Request: ", reqData, roomOcc);
 
 		let updatedFields = {};
 
 		if (reqData.noOfNights !== requestData.noOfNights) {
 			updatedFields.noOfNights = reqData.noOfNights;
 		}
-		if (reqData.adultPax !== requestData.adultPax) {
-			updatedFields.adultPax = reqData.adultPax;
-		}
-		if (reqData.childPax !== requestData.childPax) {
-			updatedFields.childPax = reqData.childPax;
-		}
+		// if (reqData.adultPax !== requestData.adultPax) {
+		// 	updatedFields.adultPax = reqData.adultPax;
+		// }
+		// if (reqData.childPax !== requestData.childPax) {
+		// 	updatedFields.childPax = reqData.childPax;
+		// }
 
 		if (reqData.starCategory !== requestData.starCategory) {
 			updatedFields.starCategory = reqData.starCategory;
@@ -179,10 +203,12 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			updatedFields.destination = reqData.destination;
 		}
 		if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
-		if (reqData.noOfRooms !== requestData.noOfRooms) updatedFields.noOfRooms = reqData.noOfRooms;
-		updatedFields.childAges = childAges;
+		if (reqData.noOfCabs !== requestData.noOfCabs) updatedFields.noOfCabs = reqData.noOfCabs;
+		if (reqData.pickUp !== requestData.pickUp) updatedFields.pickUp = reqData.pickUp;
+		// updatedFields.childAges = childAges;
+		updatedFields.roomOcc = roomOcc;
 
-		if (Object.keys(updatedFields).length > 0 || childAges.length > 0) {
+		if (Object.keys(updatedFields).length > 0 || roomOcc.length > 0) {
 			updatedFields.updatedAt = Date.now();
 			dispatch(submitReqData({ reqData }));
 			await updateDoc(doc(db, "requests", requestData.reqId), updatedFields);
@@ -193,64 +219,120 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 		setButtonLoading(false);
 	}
-	const handleChildAgeChange = (age, childIndex, extraBedValue = false) => {
-		console.log("child age change", age, typeof age, Number(age), "---", childIndex, !isNaN(age), age > MAX_CHILD_AGE);
-		console.log("MAXAGE: ", MAX_CHILD_AGE, childIndex, age);
+
+	const handleChildAgeChange = (age, roomIndex, childIndex, extraBedValue = false) => {
+		console.log("child age change", roomOcc, age, roomIndex, childIndex, extraBedValue);
+		// console.log("MAXAGE: ", MAX_CHILD_AGE, childIndex, age);
 		if (isNaN(age)) return;
 		if (age > MAX_CHILD_AGE) {
 			// TODO: show error
 			return;
 		}
 		if (age == 0) age = ''
-		console.log("PREVIOUSAGE", childAges);
-		let newChildAges = [...childAges];
-		// if (newChildAges.length < childIndex) {
-		// 	for (let i = newChildAges.length; i <= childIndex; i++) {
-		// 		newChildAges[i] = null;
-		// 	}
-		// }
-		newChildAges[childIndex] = {
-			age: age,
-			extraBed: extraBedValue
-		};
-		console.log("NEWCHILDRENAGES", newChildAges);
-		setChildAges(newChildAges);
+		let newRoomData = roomOcc.map((r, rIndex) => {
+			console.log("child age change room", r, rIndex, r.childAges, Number(rIndex) === Number(roomIndex));
+			if(Number(rIndex) === Number(roomIndex)) {
+				// let newChildAges = r["childAges"] || [];
+				// r.childAges.map((c, cIndex) => {
+				// 	if(cIndex === childIndex) {
+				// 		return 
+				// 	} 
+				// })
+				return {
+					...r,
+					childAges: r.childAges.map((c, cIndex) => {
+						if(Number(cIndex) === Number(childIndex)) {
+							return {
+								...c,
+								age,
+								extraBed: extraBedValue
+							}
+						} else return c 
+					})
+				}
+			} else return r;
+		})
+		console.log("child age change 2 ", newRoomData);
+
+		// let childRoom = r[roomIndex];
+		// let newChildAges = childAges in childRoom ? [...childRoom["childAges"]] : [];
+		// // if (newChildAges.length < childIndex) {
+		// // 	for (let i = newChildAges.length; i <= childIndex; i++) {
+		// // 		newChildAges[i] = null;
+		// // 	}
+		// // }
+		// newChildAges[childIndex] = {
+		// 	age: age,
+		// 	extraBed: extraBedValue
+		// };
+		// console.log("NEWCHILDRENAGES", newChildAges);
+		// // setChildAges(newChildAges);
+		// childRoom["childAges"] = newChildAges;
+		setRoomOcc(newRoomData);
+	}
+
+	const handleRoomOccChange = (e, rIndex, field) => {
+		let val = e.target.value;
+		if(isNaN(rIndex) || !field) return;
+		console.log("room occ change ", typeof roomOcc, val, rIndex, field);
+		let roomsData = [ ...roomOcc ];
+		roomsData[rIndex][field] = val;
+		if(field == "childPax") {
+			let childAges = roomsData[rIndex]["childAges"] || []; 
+			if (isNaN(val)) return;
+			let newChildAges = [];
+			// let len = childAges.length;
+			for (let ii = 0; ii < val; ii++) {
+				if (!isEmptyObject(childAges[ii])) {
+					newChildAges.push({ ...childAges[ii] });
+				} else {
+					newChildAges.push({ age: null, extraBed: false });
+				}
+			}
+			roomsData[rIndex]["childAges"] = newChildAges
+		}
+		console.log("room occ change 2 ", roomsData, val, rIndex, field);
+		setRoomOcc(roomsData);
+	} 
+
+	const addRoomOcc = ( ) => {
+		let newRoomsData = [ ...roomOcc ];
+		newRoomsData.push({
+			childPax: '',
+			adultPax: '',
+			childAges: []
+		})
+		setRoomOcc(newRoomsData);
+	}
+
+	const handleRemoveRoom = (deleteIndex) => {
+		let newRoomsData = [ ...roomOcc ];
+		newRoomsData.splice(deleteIndex, 1)
+		setRoomOcc(newRoomsData);
 	}
 
 	const handleChildExtraBedChange = (e, childIndex) => {
 		console.log("child extra bed type ", e.target.value);
 	}
 
-	console.log("child home render ", reqData.childPax, childAges, storeReqData)
+	console.log("child home render ", roomOcc, roomOcc.length > 0, reqData.childPax, storeReqData)
 	console.log("DESTINATION", destination)
 	return (
 		<Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", mt: 2 }}>
-			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: isMobile ? 1 : 3, bgcolor: "transparent" }}>
+			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: isMobile ? 1 : 2, bgcolor: "transparent" }}>
 				<Box sx={{ "display": "flex", mb: 2 }}>
 					<Typography variant="h6" sx={{ margin: 'auto' }}>
-						<b>{(isUpdateflow) ? `Update Request` : `Create New Request`}</b>
+						<b>{(isUpdateflow) ? `Update Your Request` : `Create New Request`}</b>
 					</Typography>
 				</Box>
 
-				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 5 }}>
-					<Grid item xs={12}>
+				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 2 }}>
+					<Grid item xs={4}>
 						<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 						{/* <br /> */}
 					</Grid>
 
-					<Grid item xs={12}>
-						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
-						<TextField
-							error={formErrors["trackingId"]}
-							sx={{ width: "100%" }}
-							id="trackingId"
-							value={reqData.trackingId || ''}
-							variant="outlined"
-							size="small"
-							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
-						/>
-					</Grid>
-					<Grid item xs={6} md={3} lg={3}>
+					<Grid item xs={4}>
 						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>Total Nights*</InputLabel>
 						<TextField
 							error={formErrors["noOfNights"]}
@@ -265,7 +347,8 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							}}
 						/>
 					</Grid>
-					<Grid item xs={6} md={3} lg={3}>
+
+					{/* <Grid item xs={6} md={3} lg={3}>
 						<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Total Adult Pax*</InputLabel>
 						<TextField
 							error={formErrors["adultPax"]}
@@ -294,71 +377,38 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 								type: "number",
 							}}
 						/>
-					</Grid>
+					</Grid> */}
 
-
-					{
-
-						childAges.length > 0 && (<Grid container spacing={5} sx={{ padding: isMobile ? 4 : 4 }}>
-							{childAges.map((c, cIndex) => {
-								return (
-									<Grid item xs={12} md={6} lg={6} >
-										<Grid container spacing={1}>
-											<Grid item xs={6} md={6} lg={6}>
-												<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
-												<TextField
-													error={formErrors["childPax"]}
-													sx={{ width: "100%" }}
-													id={`childPax-${cIndex}${Number(c.age)}`}
-													variant="outlined"
-													size="small"
-													onChange={(e) => handleChildAgeChange(e.target.value || '', cIndex)}
-													inputProps={{
-														type: "number",
-													}}
-													value={c.age}
-													type="text"
-												/>
-											</Grid>
-											<Grid item xs={6} md={6} lg={6}>
-												{
-													Number(c.age) >= 5 && (<RadioGroup
-														aria-labelledby="demo-radio-buttons-group-label"
-														defaultValue="false"
-														name="radio-buttons-group"
-														onChange={(e) => handleChildAgeChange(c?.age, cIndex, Boolean(e.target.value))}
-													>
-														<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
-														<FormControlLabel value="true" control={<Radio size="small" />} label="With Bed" />
-													</RadioGroup>)}
-											</Grid>
-										</Grid>
-									</Grid>
-								);
-							})}
-						</Grid>)
-					}
-					<Grid item xs={6}>
-						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
-						<Autocomplete
-							disablePortal
-							id="cabType-filter"
-							includeInputInList
-							onChange={(e, val) => handleFormChange({ target: { value: val } }, "cabType")}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									error={formErrors["cabType"]}
-									variant="outlined"
-									size="small"
-								/>
-							)}
-							options={CabTypes}
-							value={reqData.cabType}
-							defaultValue={reqData.cabType}
+					<Grid item xs={4} md={4}>
+						<InputLabel id="trackingId" error={formErrors["trackingId"]} sx={{ fontSize: 12 }}>Lead Pax Name*</InputLabel>
+						<TextField
+							error={formErrors["trackingId"]}
 							sx={{ width: "100%" }}
+							id="trackingId"
+							value={reqData.trackingId || ''}
+							variant="outlined"
+							size="small"
+							disabled={isUpdateflow}
+							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
 						/>
 					</Grid>
+
+					{/* <Grid item xs={6} md={3} lg={3}>
+						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
+						<TextField
+							error={formErrors["noOfRooms"]}
+							sx={{ width: "100%" }}
+							id="noOfRooms"
+							value={reqData.noOfRooms || ''}
+							variant="outlined"
+							size="small"
+							onChange={(e) => handleFormChange(e, "noOfRooms")}
+							inputProps={{
+								type: "number",
+							}}
+						/>
+					</Grid> */}
+
 					<Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
 						<InputLabel id="startDate" error={formErrors["startDate"]} sx={{ fontSize: 12 }}>{"Start Date*"}</InputLabel>
 						<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -414,22 +464,109 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 						/>
 					</Grid>
 
-					<Grid item xs={6} md={4}>
-						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>No of Rooms*</InputLabel>
-						<TextField
-							error={formErrors["noOfRooms"]}
-							sx={{ width: "100%" }}
-							id="noOfRooms"
-							value={reqData.noOfRooms || ''}
-							variant="outlined"
-							size="small"
-							onChange={(e) => handleFormChange(e, "noOfRooms")}
-							inputProps={{
-								type: "number",
-							}}
-						/>
-					</Grid>
-					<Grid item xs={6} md={4}>
+					{
+						roomOcc.length > 0 && (<>
+						<Grid item xs={12} sx={{ m: 1, ml: 2, mt: 2, pb: 2, border: `1px solid`, borderRadius: '5px', borderColor: 'secondary', width: 'inherit' }}>
+							{
+								roomOcc.map((r, rIndex) => {
+									console.log("room render ", rIndex, r, (r.childAges || []).length);
+									return (<Grid container spacing={2} 
+										
+									>
+										<Grid item xs={12} md={12} lg={2} >
+											<Box display={'flex'} justifyContent={'space-between'}>
+												<Typography variant='caption'><b>Room {rIndex + 1}</b></Typography>
+												<IconButton aria-label="delete" size="small" color="primary" onClick={() => handleRemoveRoom(rIndex)}>
+													<DeleteIcon fontSize='small'/>
+												</IconButton>
+											</Box>
+										</Grid>
+										<Grid item xs={12} md={12} lg={10}>
+											<Grid container spacing={1}>
+												<Grid item xs={4} md={3} lg={3}>
+													<InputLabel id="adultPax" error={formErrors["adultPax"]} sx={{ fontSize: 12 }}>Adult Pax*</InputLabel>
+													<TextField
+														error={formErrors["adultPax"]}
+														sx={{ width: "100%" }}
+														id="adultPax"
+														variant="outlined"
+														size="small"
+														value={r.adultPax || ''}
+														onChange={(e) => handleRoomOccChange(e, rIndex, "adultPax")}
+														inputProps={{
+															type: "number",
+														}}
+													/>
+												</Grid>
+												<Grid item xs={4} md={3} lg={3}>
+													<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>Child Pax*</InputLabel>
+													<TextField
+														error={formErrors["childPax"]}
+														sx={{ width: "100%" }}
+														id="childPax"
+														variant="outlined"
+														size="small"
+														value={r.childPax || ''}
+														onChange={(e) => handleRoomOccChange(e, rIndex, "childPax")}
+														inputProps={{
+															type: "number",
+														}}
+													/>
+												</Grid>
+												
+												{
+													(r.childAges || []).map((c, cIndex) => {
+														return (<Grid item xs={12} md={6} lg={6} >
+																<Grid container spacing={1}>
+																	<Grid item xs={6} md={4} lg={6}>
+																		<InputLabel id="childPax" error={formErrors["childPax"]} sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
+																		<TextField
+																			error={formErrors["childPax"]}
+																			sx={{ width: "100%" }}
+																			id={`childPax-${rIndex}-${cIndex}-${Number(c.age)}`}
+																			variant="outlined"
+																			size="small"
+																			onChange={(e) => handleChildAgeChange(e.target.value || '', rIndex, cIndex)}
+																			inputProps={{
+																				type: "number",
+																			}}
+																			value={c.age}
+																			type="text"
+																		/>
+																	</Grid>
+																	<Grid item xs={6} md={6} lg={6}>
+																		{
+																			Number(c.age) >= 5 && (<RadioGroup
+																				aria-labelledby="demo-radio-buttons-group-label"
+																				defaultValue="false"
+																				name="radio-buttons-group"
+																				onChange={(e) => handleChildAgeChange(c?.age, rIndex, cIndex, Boolean(e.target.value))}
+																			>
+																				<FormControlLabel value="false" control={<Radio size="small" defaultChecked />} label="Without Bed" />
+																				<FormControlLabel value="true" control={<Radio size="small" />} label="With Bed" />
+																			</RadioGroup>)
+																		}
+																	</Grid>
+															</Grid>
+														</Grid>)
+													})
+												}
+											</Grid>
+										</Grid>
+										<Grid item xs={12} md={12} lg={10}>
+											<hr />
+										</Grid>
+									</Grid>)
+								})
+							}
+							<Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', pt: '0px !important', m: 1, mb: 0 }}>
+								<Button size="small" variant="outlined" onClick={addRoomOcc} sx={{ minWidth: "fit-content", my: 'auto' }}>Add Room +</Button>
+							</Grid>
+						</Grid>
+						</>)
+					}
+					
+					<Grid item xs={4} md={4}>
 						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>PickUp*</InputLabel>
 						<TextField
 							error={formErrors["pickUp"]}
@@ -439,6 +576,42 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							variant="outlined"
 							size="small"
 							onChange={(e) => handleFormChange(e, "pickUp")}
+						/>
+					</Grid>
+					<Grid item xs={4} md={4}>
+						<InputLabel id="cabType" error={formErrors["cabType"]} sx={{ fontSize: 12 }}>Cab Type*</InputLabel>
+						<Autocomplete
+							disablePortal
+							id="cabType-filter"
+							includeInputInList
+							onChange={(e, val) => handleFormChange({ target: { value: val } }, "cabType")}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									error={formErrors["cabType"]}
+									variant="outlined"
+									size="small"
+								/>
+							)}
+							options={CabTypes}
+							value={reqData.cabType}
+							defaultValue={reqData.cabType}
+							sx={{ width: "100%" }}
+						/>
+					</Grid>
+					<Grid item xs={4} md={4}>
+						<InputLabel id="noOfNights" error={formErrors["noOfNights"]} sx={{ fontSize: 12 }}>No of Cabs*</InputLabel>
+						<TextField
+							error={formErrors["noOfCabs"]}
+							sx={{ width: "100%" }}
+							id="noOfCabs"
+							variant="outlined"
+							size="small"
+							value={reqData.noOfCabs || ''}
+							onChange={(e) => handleFormChange(e, "noOfCabs")}
+							inputProps={{
+								type: "number",
+							}}
 						/>
 					</Grid>
 

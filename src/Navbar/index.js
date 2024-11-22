@@ -25,7 +25,7 @@ const navItems = [""];
 
 const pages = [
   {
-    name: "Dashboard",
+    name: "Home",
     link: "/home",
   },
   {
@@ -44,7 +44,7 @@ const pages = [
 
 const priorityPages = [
   {
-    name: "Dashboard",
+    name: "Home",
     link: "/home",
   },
   {
@@ -131,6 +131,7 @@ function NavBar(props) {
           <div>
             {/* logo */}
           </div>
+          <img src="/logo.jpg" width={'100px'} alt="logo" />
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {priorityPages.map((item) => (<Link to={item.link}>
               <Button key={item} sx={{ color: "#000" }}>

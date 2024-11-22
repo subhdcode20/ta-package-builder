@@ -2,10 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import { db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
@@ -17,7 +15,10 @@ const ReqsListTable = ({ reqsList = [] }) => {
   const [expandedRow, setExpandedRow] = React.useState(null);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [packageDetails, setPackageDetails] = React.useState(null);
+  const [selectedRequestData, setSelectedRequestData] = React.useState(null); 
   const navigate = useNavigate();
+
+  console.log("CHECKPACKAGE_DATA:", selectedRequestData);
 
   React.useEffect(() => {
     if (!reqsList) return;
@@ -39,6 +40,8 @@ const ReqsListTable = ({ reqsList = [] }) => {
   };
   const selectRow = async (id, packages) => {
     setSelectedRow(id);
+    const selectedReq = tableData.find((row) => row.id === id);
+    setSelectedRequestData(selectedReq);
     if (packages?.length) {
       const packageData = await Promise.all(
         packages.map(async (packageId) => {
@@ -175,7 +178,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
       />
             {selectedRow && (
         <Collapse in={!!selectedRow}>
-          <PackageData packageDetails={packageDetails} />
+          <PackageData packageDetails={packageDetails} reqData = {selectedRequestData} />
         </Collapse>
       )}
     </Box>

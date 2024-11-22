@@ -33,7 +33,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (<>
+      <PublicNavbar />
+      <Login />
+    </>),
     errorElement: <ErrorPage />,
   },
 
@@ -76,7 +79,7 @@ const router = createBrowserRouter([
     path: "/request/:reqId/edit",
     element: (
       <AppLayout>
-        <ReqCopy   />
+        <ReqCopy />
       </AppLayout>
     ),
     errorElement: <ErrorPage />,

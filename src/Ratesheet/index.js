@@ -214,8 +214,8 @@ const UploadRatesheet = () => {
             <PopUp
                 open={submitMsg}
                 onClose={handleSubmitMsg}
-                primaryText="Submission Successful"
-                secondaryText="RateSheet will be activated within 1 Day"
+                primaryText="Upload Successful"
+                secondaryText={`Create a package for ${ratesheet?.Bali || "this destination"} to auto calculate Prices!`}
                 submitText="Close"
                 onClick={handleSubmitMsg}
             />
