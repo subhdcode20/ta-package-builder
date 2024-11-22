@@ -399,4 +399,37 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
         logger.log(`Uploaded rate sheet processing failed => ${err}`)
         return res.status(500).send({message: 'Something went wrong processing your request', error: err})
     }
+});
+
+
+app.post("/api/get-logo-b64", async (req, res) => {
+    let { logoUrl = '' } = req.body;
+    logger.log('getLogoB64 initial url ', logoUrl);
+    try {
+        if(!logoUrl) {
+            throw new Error(`Logo url missing`);
+        }
+        const response = await fetch(logoUrl);
+        if (!response.ok) {
+            throw new Error(`Logo Fetch failed with status: ${response.status} - ${response.statusText}`);
+        }
+
+        const blob = await response.arrayBuffer();
+        logger.log("getLogoB64 Blob", blob);
+        let finalB64Str = Buffer.from(blob).toString('base64');
+
+        // const fileExtension = url.split('.').pop().split('?')[0];
+        // const fileName = `user-logo.png`; //`user-logo-${res.locals.user}`  //`file.${fileExtension}`;
+        // const newFile = new File([blob], fileName, { type: blob.type });
+        // logger.log("getLogoB64 file", newFile);
+        // let finalB64Str = _base64_encode(newFile);
+        res.status(200).json({
+            data: `data:image/png;base64,${finalB64Str}`
+        })
+    } catch (error) {
+        logger.log("getLogoB64 catch", error);
+        res.status(500).json({
+            error: error
+        })   
+    }
 })

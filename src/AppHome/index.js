@@ -388,6 +388,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 							value={reqData.trackingId || ''}
 							variant="outlined"
 							size="small"
+							disabled={isUpdateflow}
 							onChange={!isUpdateflow ? ((e) => handleFormChange(e, "trackingId")) : undefined}
 						/>
 					</Grid>
