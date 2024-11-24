@@ -76,18 +76,19 @@ const ReqsListTable = ({ reqsList = [] }) => {
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>Select</TableCell>
-              <TableCell>Created On</TableCell>
-              <TableCell>Dest</TableCell>
-              <TableCell>Travel Date</TableCell>
-              <TableCell>Nights</TableCell>
-              <TableCell>Pick Up</TableCell>
-              <TableCell>Hotel Category</TableCell>
-              <TableCell>Adult</TableCell>
-              <TableCell>Child</TableCell>
-              <TableCell>Tracking ID</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell><b>Select</b></TableCell>
+              <TableCell><b>Created On</b></TableCell>
+              <TableCell><b>Dest</b></TableCell>
+              <TableCell><b>Travel Date</b></TableCell>
+              <TableCell><b>Nights</b></TableCell>
+              <TableCell><b>Pick Up</b></TableCell>
+              <TableCell><b>Hotel Category</b></TableCell>
+              <TableCell><b>Adult</b></TableCell>
+              <TableCell><b>Child</b></TableCell>
+              <TableCell><b>Tracking ID</b></TableCell>
+              <TableCell><b>Actions</b></TableCell>
             </TableRow>
+
           </TableHead>
           <TableBody>
             {tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
