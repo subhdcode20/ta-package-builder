@@ -56,11 +56,13 @@ const HtmlPdfView = ({
         />
 
         <View style={styles.body}>
-          <Image
-            style={[styles.logo, { position: 'absolute', top: -50 }]}
-            src={logoB64Str}
-            resizeMode="contain"
-          />
+          {
+            logoB64Str && (<Image
+              style={[styles.logo, { position: 'absolute', top: -50 }]}
+              src={logoB64Str}
+              resizeMode="contain"
+            />)
+          }
 
           <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
@@ -207,7 +209,9 @@ const HtmlPdfView = ({
         </View>
 
         <View style={styles.footerContainer}>
-          <Image style={styles.footerLogo} src={logoB64Str} resizeMode="contain" />
+          {
+            logoB64Str && (<Image style={styles.footerLogo} src={logoB64Str} resizeMode="contain" />)
+          }
           <View style={styles.footerDetails}>
             <Text style={styles.footerText}>{req?.address}</Text>
             <Text style={styles.footerText}>Email: {email}</Text>
