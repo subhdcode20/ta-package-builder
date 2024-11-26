@@ -23,11 +23,11 @@ import { store } from '../appStore/store.js';
 //   ], 
 //   .. 
 // ]
-
+// phone: "+917880473111", name: "Subham Dey", userId: "ajaj"
 export const todoSlice = createSlice({
   name: 'packBuilder',
   initialState: {
-    userData: { phone: "+917880473111", name: "Subham Dey", userId: "ajaj" },
+    userData: {}, 
     reqData: null,
     packageData: null,
     newPackageData: {},

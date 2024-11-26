@@ -27,6 +27,7 @@ function PrivateRoute({ children, authed = false, props }) {
 
 const AppLayout = ({ children, showNavBar = true }) => {
   let userData = JSON.parse(localStorage.getItem("user") || null);
+  console.log("layout userData ", userData, userData.phone)
   const isLoggedIn = Boolean(userData);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
@@ -41,7 +42,7 @@ const AppLayout = ({ children, showNavBar = true }) => {
 						let signedInIdToken = await auth.currentUser.getIdToken(
 							/* forceRefresh */ true,
 						);
-						console.log("signedInIdToken ", signedInIdToken, typeof signedInIdToken);
+						console.log("signedInIdToken ", userData.phone, signedInIdToken, typeof signedInIdToken);
 						localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
             userData['firebaseIdToken'] = signedInIdToken;
 					}

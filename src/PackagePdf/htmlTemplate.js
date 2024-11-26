@@ -44,7 +44,7 @@ const HtmlPdfView = ({
   },
   totalPackPrice= ''
 }) => {
-  console.log("pdf template render ", logoB64Str)
+  console.log("pdf template render ", logoB64Str, hotels)
   return (
   <Document>
     <Page style={styles.page} wrap={false}>
@@ -63,7 +63,12 @@ const HtmlPdfView = ({
               resizeMode="contain"
             />)
           }
-
+          {/* <Image
+              style={[styles.logo, { position: 'absolute', top: -50 }]}
+              src={logoB64Str || ''}
+              resizeMode="contain"
+              debug
+            /> */}
           <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
           <View style={styles.infoBox}>
@@ -212,6 +217,7 @@ const HtmlPdfView = ({
           {
             logoB64Str && (<Image style={styles.footerLogo} src={logoB64Str} resizeMode="contain" />)
           }
+          {/* <Image style={styles.footerLogo} src={logoB64Str} resizeMode="contain" /> */}
           <View style={styles.footerDetails}>
             <Text style={styles.footerText}>{req?.address}</Text>
             <Text style={styles.footerText}>Email: {email}</Text>
@@ -242,7 +248,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 100,
-    height: 100,
+    height: 'auto',
     alignSelf: "center",
   },
   image: {
