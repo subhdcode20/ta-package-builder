@@ -37,6 +37,10 @@ const pages = [
     link: "/upload-ratesheet",
   },
   {
+    name: "Profile",
+    link: "/my-profile",
+  },
+  {
     name: "Logout",
     link: "/logout",
   }
