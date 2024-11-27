@@ -202,28 +202,26 @@ const PackageDetailsFor1Day = ({ key }) => {
 	// console.log("SELECTEDHOTEL:", currDayHotels, currDayHotels[0]);
 	return (<Grid container spacing={1} key={key}>
 		{
-			(currDayHotels || []).map((hData = [], hIndex) => {
-				console.log('day hotels inside render ', hData, currDayHotels[hIndex])
+			// (currDayHotels || []).map((hData = [], hIndex) => {
+			// 	console.log('day hotels inside render ', hData, currDayHotels[hIndex])
 				
-				if(currentDayIndex >= daysArr.length - 1) {
-					return (<>
-						<Grid item xs={4} md={4}>
-							<InputLabel id="trackingId" sx={{ fontSize: 12 }}>Drop location</InputLabel>
-							<TextField
-								sx={{ width: "100%" }}
-								id="pickUp"
-								value={reqData.dropLoc || ''}
-								variant="outlined"
-								size="small"
-								onChange={(e) => handleDropLocChange(e.target.value)}
-							/>
-						</Grid>
-						<Grid item xs={12} md={12} sx={{ display: 'flex' }}>
-							<GenerateItineraryBtn />
-						</Grid>
-					</>);
-				}
-			})
+				(currentDayIndex >= daysArr.length - 1) && (<>
+					<Grid item xs={4} md={4}>
+						<InputLabel id="trackingId" sx={{ fontSize: 12 }}>Drop location</InputLabel>
+						<TextField
+							sx={{ width: "100%" }}
+							id="pickUp"
+							value={reqData.dropLoc || ''}
+							variant="outlined"
+							size="small"
+							onChange={(e) => handleDropLocChange(e.target.value)}
+						/>
+					</Grid>
+					<Grid item xs={12} md={12} sx={{ display: 'flex' }}>
+						<GenerateItineraryBtn />
+					</Grid>
+				</>)
+			// })
 		}
 
 		{

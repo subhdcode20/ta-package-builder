@@ -17,7 +17,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
     // // const { packageId } = useParams();
     // // const [packageData, setPackageData] = useState([]);
 	const { userData } = useContext(MainContext)
-	const [userPdfData, setUserPdfData] = useState({});
+	const [userPdfData, setUserPdfData] = useState(userData || {});
     const [loading, setLoading] = useState(false);
     const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
 	// const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
