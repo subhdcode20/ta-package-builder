@@ -11,9 +11,9 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import Visibility from "@mui/icons-material/Visibility";
 import Edit from "@mui/icons-material/Edit";
+import Close from "@mui/icons-material/Close";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../firebaseConfig";
@@ -24,7 +24,9 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [editedData, setEditedData] = useState(null);
   const [isEdited, setIsEdited] = useState(false);
-  const [viewFile, setViewFile] = useState(null); 
+  const [viewFile, setViewFile] = useState(null);
+  const [destinations, setDestinations] = useState([]);
+  const [destinationInput, setDestinationInput] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,8 +34,10 @@ const Profile = () => {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setUserData(docSnap.data());
-        setEditedData(docSnap.data());
+        const data = docSnap.data();
+        setUserData(data);
+        setEditedData(data);
+        setDestinations(data.destinations || []); 
       } else {
         alert("No user data found!");
       }
@@ -87,20 +91,38 @@ const Profile = () => {
   const handleUpdate = async () => {
     const userDocRef = doc(db, "userDetails", userPhone);
     try {
-      await updateDoc(userDocRef, editedData);
+      await updateDoc(userDocRef, { ...editedData, destinations });
       alert("Profile updated successfully!");
-      window.location.reload(); 
+      window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
     }
   };
 
+  const handleDestinationAdd = () => {
+    if (destinationInput.trim()) {
+      setDestinations([...destinations, destinationInput]);
+      setDestinationInput("");
+      setIsEdited(true);
+    }
+  };
+
+  const handleDestinationRemove = (index) => {
+    const updatedDestinations = destinations.filter((_, i) => i !== index);
+    setDestinations(updatedDestinations);
+    setIsEdited(true);
+  };
+
   if (!userData) return <Typography>Loading...</Typography>;
 
   return (
     <Container maxWidth="md" sx={{ marginTop: 4 }}>
-      <Paper elevation={3} sx={{ padding: 4 }}>
+      <Paper elevation={0} sx={{ padding: 4, border: "1px solid #ddd" }}>
+        <Typography variant="h4" sx={{ marginBottom: 4 }}>
+          Profile Details
+        </Typography>
+
         <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
           <Box sx={{ position: "relative", marginRight: 3 }}>
             <Avatar
@@ -109,11 +131,11 @@ const Profile = () => {
               sx={{ width: 120, height: 120 }}
             />
             <IconButton
-              color="primary"
+              color="secondary"
               component="label"
               sx={{ position: "absolute", bottom: -10, right: -10 }}
             >
-              <PhotoCamera />
+              <Edit />
               <input type="file" hidden accept="image/*" onChange={handleLogoChange} />
             </IconButton>
           </Box>
@@ -170,6 +192,46 @@ const Profile = () => {
             />
           </Grid>
         </Grid>
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Destinations
+        </Typography>
+        <Box display="flex" gap={2} sx={{ marginTop: 2, marginBottom: 2 }}>
+          <TextField
+            fullWidth
+            label="Add Destination"
+            value={destinationInput}
+            onChange={(e) => setDestinationInput(e.target.value)}
+            variant="outlined"
+          />
+          <Button variant="contained" color="primary" onClick={handleDestinationAdd}>
+            Add
+          </Button>
+        </Box>
+        <Box display="flex" flexWrap="wrap" gap={2}>
+          {destinations.map((destination, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px 16px",
+                background: "#f5f5f5",
+                borderRadius: 2,
+                border: "1px solid #ddd",
+              }}
+            >
+              <Typography>{destination}</Typography>
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleDestinationRemove(index)}
+              >
+                <Close fontSize="small" />
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
 
         <Typography variant="h6" sx={{ marginTop: 4 }}>
           Company Information
