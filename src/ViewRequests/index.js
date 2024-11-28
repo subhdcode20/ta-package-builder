@@ -27,7 +27,8 @@ const ViewRequest = () => {
     const [userReqList, setUserReqList] = useState([]);
     const userData = useSelector((state) => state.packBuilderData.userData) || {};
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
-    // console.log("USER_WHOLEDATA", userData);
+    console.log("USER_WHOLEDATA", userData.phone);
+
     useEffect(() => {
       const getReqs = async () => {
         const unsubscribe = await onSnapshot(
@@ -35,22 +36,25 @@ const ViewRequest = () => {
           async (snapshot) => {
             // ...
             if (!snapshot.exists()) return;
-            let data = snapshot.data();
-            console.log("snapshot", data, data.reqsList, snapshot);
-            let userReqIdList = data.reqsList.map((i) => {
-              return getDoc(doc(db, "requests", i));
-            });
-            let response = await Promise.all(userReqIdList);
-            let userReqsData = response.map(i => {
-              let itemData = i.data();
-              return {
-                ...itemData,
-                id: itemData.reqId
-              }
-            })
-            console.log("snapshot response", userReqsData, response.map(i => i.data()), userReqIdList);
-            let sortedRes = userReqsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-            setUserReqList(sortedRes);
+            let data = snapshot.data() || {};
+            let { reqsList = [] } = data;
+            if(reqsList || reqsList.length > 0) {
+              console.log("snapshot reqs", data, reqsList, snapshot);
+              let userReqIdList = reqsList.map((i) => {
+                return getDoc(doc(db, "requests", i));
+              });
+              let response = await Promise.all(userReqIdList);
+              let userReqsData = response.map(i => {
+                let itemData = i.data();
+                return {
+                  ...itemData,
+                  id: itemData.reqId
+                }
+              })
+              console.log("snapshot response", userReqsData, response.map(i => i.data()), userReqIdList);
+              let sortedRes = userReqsData.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+              setUserReqList(sortedRes);
+            }
           //   setReqs(
           //     data.sort(
           //       (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0),
@@ -80,8 +84,8 @@ const ViewRequest = () => {
 			// }
 		}
 
-		getReqs();
-	}, [])
+		if(userData.phone) getReqs();
+	}, [userData])
 
     return (<>
       <Box sx={{"display": "flex", mb: 2}}>

@@ -15,7 +15,7 @@ import { setItineraryDesc, updateItineraryDesc, handleRemoveItiItem } from './pa
 // Wrap in an async function so you can use await
 const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1}) => {
     let { pickUp = '', noOfNights = 0, dropLoc } = reqData;
-    let { location, hotelName } = selectedHotels[currentDayIndex]?.hotels[0]
+    let { location, hotelName } = selectedHotels[currentDayIndex]?.hotels[0] || {}
     let currDayPickup = pickUp;
     if(currentDayIndex > 0) currDayPickup = selectedHotels[currentDayIndex - 1]?.hotels[0].hotelName;
     console.log('day data for gemRes ', pickUp, currDayPickup, location, " -- ", reqData, selectedHotels, currentDayIndex)

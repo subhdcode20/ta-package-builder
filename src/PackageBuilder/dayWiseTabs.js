@@ -9,6 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
@@ -93,6 +94,9 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 						Total Transfer Price:
 					</InputLabel>
 					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+						InputProps={{
+							startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
+						}}
 						onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))} 
 						value={finalTransferPrice || ''} sx={{margin: "auto"}}
 					/>
@@ -102,6 +106,9 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 						Total Package Price:
 					</InputLabel>
 					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+						InputProps={{
+							startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
+						}}
 						onChange={(e) => dispatch(setTotalPackagePrice({ totalPackPrice: e.target.value }))} 
 						value={finalPackPrice || totalPackPrice || ''} sx={{margin: "auto"}}
 					/>
