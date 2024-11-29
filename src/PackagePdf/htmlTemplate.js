@@ -108,9 +108,8 @@ const HtmlPdfView = ({
       </View>
     </Page>
     <Page style={[styles.page, styles.page2]}>
-      <View>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
-          <View key={currDayIndex} style={styles.daySection}>
+          <View key={currDayIndex} style={[styles.daySection, styles.noSplitSection]}>
             <View style={styles.dayHeader}>
               <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
             </View>
@@ -226,7 +225,6 @@ const HtmlPdfView = ({
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
-      </View>
     </Page>
   </Document>
 )};
@@ -238,7 +236,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',  //'#f5f5f5',
   },
   page2: {
-    padding: '8px'
+    padding: '8px',
+  },
+  noSplitSection: {
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    pageBreakInside: 'avoid',
   },
   headerImage: {
     width: '100%',
@@ -356,6 +361,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
   hotelContainer: {
+    wrap:false,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 15,
@@ -490,7 +496,7 @@ const styles = StyleSheet.create({
   pageNumber: {
     position: 'absolute',
     fontSize: 10,
-    bottom: 15,
+    bottom: 5,
     left: 0,
     right: 0,
     textAlign: 'center',
