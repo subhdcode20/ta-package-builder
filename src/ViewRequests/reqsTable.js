@@ -13,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
-import { db } from '../firebaseConfig';
+import Typography from '@mui/material/Typography';
 import { doc, getDoc } from 'firebase/firestore';
+
+import { db } from '../firebaseConfig';
 import PackageData from './packageData';
+import { useUrlParams } from '../Utility.js';
 
 const ReqsListTable = ({ reqsList = [] }) => {
   const [tableData, setTableData] = React.useState([]);
@@ -25,11 +28,18 @@ const ReqsListTable = ({ reqsList = [] }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const navigate = useNavigate();
+  const urlParamsData = useUrlParams();
 
   React.useEffect(() => {
     if (!reqsList) return;
     setTableData(reqsList.map((dd) => dd));
   }, [reqsList]);
+
+  React.useEffect(() => {
+    if(!urlParamsData) return
+
+    if(urlParamsData.get('reqId') && tableData) selectRow(urlParamsData.get('reqId'))
+  }, [urlParamsData, tableData])
 
   const handleCopy = (reqId) => {
     navigate(`/request/${reqId}/edit`);
@@ -39,10 +49,13 @@ const ReqsListTable = ({ reqsList = [] }) => {
     navigate(`/request/${reqId}/copy-new`);
   };
 
-  const selectRow = async (id, packages) => {
+  const selectRow = async (id) => {
     setSelectedRow(id);
     const selectedReq = tableData.find((row) => row.id === id);
+    if(!selectedReq) return;
+    console.log('selected row ', selectedReq)
     setSelectedRequestData(selectedReq);
+    let { packages = [] } = selectedReq; 
     if (packages?.length) {
       const packageData = await Promise.all(
         packages.map(async (packageId) => {
@@ -90,12 +103,18 @@ const ReqsListTable = ({ reqsList = [] }) => {
             </TableRow>
 
           </TableHead>
+          {
+            tableData.length == 0 && <Box sx={{ m: 2, display: 'flex', width: 'max-content', justifyContent: 'space-evenly' }}>
+              <Typography variant='body2' sx={{ margin: 'auto' }}>No Requests Created Yet! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
+              <Button size="small" variant='text' onClick={() => navigate('/home')}>Now!</Button>
+            </Box>
+          }
           <TableBody>
             {tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow key={row.id}>
                 <TableCell>
                   <Radio
-                    checked={selectedRow === row.id}
+                    checked={selectedRequestData?.id === row.id}
                     onChange={() => selectRow(row.id, row.packages)}
                   />
                 </TableCell>
@@ -144,8 +163,8 @@ const ReqsListTable = ({ reqsList = [] }) => {
           </TableFooter>
         </Table>
       </TableContainer>
-      {selectedRow && (
-        <Collapse in={!!selectedRow}>
+      {selectedRequestData && (
+        <Collapse in={!!selectedRequestData}>
           <PackageData packageDetails={packageDetails} reqData={selectedRequestData} />
         </Collapse>
       )}

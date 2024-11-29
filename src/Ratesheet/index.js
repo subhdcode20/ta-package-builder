@@ -21,6 +21,11 @@ import { MainContext } from "../Utility";
 import ViewRatesSheets from "./viewActiveRatesheets.js";
 // const userData = JSON.parse(localStorage.getItem("user"));
 
+const bull = (<Box
+    component="span"
+    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+>•</Box>)
+
 const UploadRatesheet = () => {
     // const { userId } = useParams();
     const { phone: userId = '' } = JSON.parse(localStorage.getItem("user"));
@@ -107,8 +112,30 @@ const UploadRatesheet = () => {
             }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
                     <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px', marginTop:1 }}>
-                        Upload Ratesheet
+                        Upload Your Ratesheet
                     </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 3 }}>
+                    <Typography variant="body1" sx={{ mb: 0.5 }}>
+                        {bull} Submit your Rates for Hotels as an Excel sheet. We will auto calculate Hotel Prices as you select them!
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 0.5 }}>
+                        {bull} Download the Ratesheet Template below and fill your data according to mentioned columns.
+                    </Typography>
+                    <Typography variant="body1" >
+                        {bull} Submit it back here and you can start using it immediately.
+                    </Typography>
+                </Box>
+
+                <Box sx={{ mb: 3, display: 'flex', alignItems: "center", gap: 1 }}>
+                    <InfoIcon color='primary' fontSize="small" />
+                    <Typography sx={{ fontSize: 13 }}>To Download RateSheet Template</Typography>
+                    <Link href={url} target="_blank">
+                        <Button variant="outlined" size="small">
+                            Click here
+                        </Button>
+                    </Link>
                 </Box>
 
                 <Box sx={{ mb: 2, width: isMobile ? '100%' : '55%' }}>
@@ -176,16 +203,6 @@ const UploadRatesheet = () => {
                             style={{ width: '100%' }}
                         />
                     </Button>
-                </Box>
-
-                <Box sx={{ mb: 3, display: 'flex', alignItems: "center", gap: 1 }}>
-                    <InfoIcon color='primary' fontSize="small" />
-                    <Typography sx={{ fontSize: 13 }}>To Download RateSheet Template</Typography>
-                    <Link href={url} target="_blank">
-                        <Button variant="outlined" size="small">
-                            Click here
-                        </Button>
-                    </Link>
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>

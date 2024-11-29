@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 // import {Base64Encode} from 'base64-stream';
 // import concatStream from 'concat-stream';
 
@@ -13,6 +14,12 @@ export const isEmptyObject = (obj) => {
   }
   return true;
 };
+
+export const useUrlParams = () => {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 export const itiRoomPriceFieldsMap = {
   "cpai": "cpaiPrice",

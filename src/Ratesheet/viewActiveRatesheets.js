@@ -158,8 +158,10 @@ const RateSheetTable = ({ reqsList = [] }) => {
 
   console.log("req list table", userData, destination, userRates, userRates[destination.toLowerCase()]);
   const tableData = userRates[destination.toLowerCase()]?.hotels  || [];
+
   return (<>
     <hr style={{ margin: 'auto', maxWidth: '50%', marginTop: '16px', marginBottom: '16px' }} />
+
     <Box sx={{
         display: "flex",
         flexDirection: "column",
@@ -174,9 +176,20 @@ const RateSheetTable = ({ reqsList = [] }) => {
     }}>
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '20px', marginTop:1 }}>
-                Upload Ratesheet
+                View Your Ratesheets
             </Typography>
         </Box>
+
+        {
+          tableData.length > 0
+          ? (<Box flex={1} sx={{ ml: 2, width: isMobile ? '100%' : '55%' }}>
+            <MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
+          </Box>)
+          : (<Box sx={{ m: 2, display: 'flex', width: 'max-content', justifyContent: 'space-evenly' }}>
+            <Typography variant='body2' sx={{ margin: 'auto' }}>No Rate Sheet Uploaded Yet! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
+            <Button size="small" variant='text'>Now!</Button>
+          </Box>)
+        }
         {/* <Box sx={{ display: 'flex', flexDirection: 'row', margin: "auto", width: "100%"}}>
           <Typography variant="body1" sx={{ mt: 2 }}>
               Check your Rate sheet Data:
@@ -184,9 +197,7 @@ const RateSheetTable = ({ reqsList = [] }) => {
           &nbsp;
         </Box> */}
         
-        <Box flex={1} sx={{ ml: 2, width: isMobile ? '100%' : '55%' }}>
-          <MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
-        </Box>
+        
         {
           (tableData && tableData.length > 0) &&  <Typography variant="subtitle1" sx={{ my: 1 }}>
             Active Ratesheets for <b>{`${destination}`}</b>:
@@ -199,7 +210,7 @@ const RateSheetTable = ({ reqsList = [] }) => {
             </Typography>
           )
         }
-        <Box sx={{ margin: "auto", height: 400, width: "100%" }}>
+        <Box sx={{ margin: "auto", maxHeight: 500, width: "100%" }}>
             {
               tableData.map((rate) => <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
                 <AccordionSummary

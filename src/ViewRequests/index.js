@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 import { db, auth } from "../firebaseConfig";
-import { isEmptyObject } from '../Utility.js';
+import { useUrlParams } from '../Utility.js';
 import { nanoid } from 'nanoid';
 import  Button from '@mui/material/Button';
 // import ReqsTable from "./reqsTable.js";
@@ -25,12 +25,14 @@ const ReqsTable = loadable(
 
 const ViewRequest = () => {
     const [userReqList, setUserReqList] = useState([]);
-    const userData = useSelector((state) => state.packBuilderData.userData) || {};
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const urlParamsData = useUrlParams();
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
-    console.log("USER_WHOLEDATA", userData.phone);
+    console.log("USER_WHOLEDATA", userData.phone, urlParamsData.get('reqId'), typeof urlParamsData, urlParamsData?.reqId);
 
     useEffect(() => {
       const getReqs = async () => {
+        console.log('view my reqs ', userData.phone)
         const unsubscribe = await onSnapshot(
           doc(db, "userRequests", userData.phone),
           async (snapshot) => {
@@ -85,7 +87,7 @@ const ViewRequest = () => {
 		}
 
 		if(userData.phone) getReqs();
-	}, [userData])
+	}, [])
 
     return (<>
       <Box sx={{"display": "flex", mb: 2}}>

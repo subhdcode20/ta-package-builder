@@ -9,8 +9,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const PackageData = ({ packageDetails = [], reqData = {} }) => {
-  const { pickUp, cabType, dropLoc } = reqData;
-
+  const { pickUp, cabType, dropLoc } = reqData || {};
+  console.log('PackageData render ', reqData)
   return (
     <Box
       sx={{
