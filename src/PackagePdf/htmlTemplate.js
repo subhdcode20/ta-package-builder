@@ -111,7 +111,7 @@ const HtmlPdfView = ({
       </Page>
       <Page style={[styles.page, styles.page2]}>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
-          <View key={currDayIndex} style={[styles.daySection, styles.noSplitSection]}>
+          <View key={currDayIndex} style={styles.daySection}>
             <View style={styles.dayHeader}>
               <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
             </View>
@@ -128,52 +128,55 @@ const HtmlPdfView = ({
               return (
                 <View>
 
-                  <View key={hotelIndex} style={styles.hotelContainer}>
-                    <Image
-                      style={styles.hotelImage}
-                      src="/hotelIcon.png"
-                      resizeMode="cover"
-                    />
-                    <View style={styles.hotelDetails}>
-                      <Text style={styles.hotelName}>{hotelName}</Text>
+                  <View key={hotelIndex} wrap={false} style={styles.hotelContainer}>
+                    <View style={styles.hotelDetailsOuter}>
+                        <Image
+                        style={styles.hotelImage}
+                        src="/hotelIcon.png"
+                        resizeMode="cover"
+                      />
+                      <View style={styles.hotelDetails}>
+                        <Text style={styles.hotelName}>{hotelName}</Text>
+                        {selectedRooms.map((currRoom, roomIndex) => {
+                          const {
+                            roomName,
+                            selectedOccupancy: { adults = 0, child = 0, childAges = [] } = {},
+                            mp,
+                          } = currRoom;
 
-                      {selectedRooms.map((currRoom, roomIndex) => {
-                        const {
-                          roomName,
-                          selectedOccupancy: { adults = 0, child = 0, childAges = [] } = {},
-                          mp,
-                        } = currRoom;
+                          let mealPlan = '';
+                          if (mp === 'mapai') {
+                            mealPlan = 'Breakfast and (Lunch or Dinner)';
+                          } else if (mp === 'cpai') {
+                            mealPlan = 'Breakfast ONLY';
+                          } else if (mp === 'apai') {
+                            mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
+                          } else {
+                            mealPlan = 'No meal plan specified';
+                          }
 
-                        let mealPlan = '';
-                        if (mp === 'mapai') {
-                          mealPlan = 'Breakfast and (Lunch or Dinner)';
-                        } else if (mp === 'cpai') {
-                          mealPlan = 'Breakfast ONLY';
-                        } else if (mp === 'apai') {
-                          mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
-                        } else {
-                          mealPlan = 'No meal plan specified';
-                        }
-
-                        return (
-                          <View key={roomIndex} style={styles.roomDetails}>
-                            <Text style={styles.roomType}>{roomName}</Text>
-                            <Text style={styles.roomOccupancy}>
-                              {adults} Adults, {child} Child
-                            </Text>
-                            {childAges.some((child) => child.extraBed === 'true') && (
-                              <Text style={styles.extraBedText}>With Extra Bed</Text>
-                            )}
-                            <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                          </View>
-                        );
-                      })}
+                          return (
+                            <View key={roomIndex} style={styles.roomDetails}>
+                              <Text style={styles.roomType}>{roomName}</Text>
+                              <Text style={styles.roomOccupancy}>
+                                {adults} Adults, {child} Child
+                              </Text>
+                              {childAges.some((child) => child.extraBed === 'true') && (
+                                <Text style={styles.extraBedText}>With Extra Bed</Text>
+                              )}
+                              <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                            </View>
+                          );
+                        })}
 
 
+                      </View>
+
+                      
                     </View>
                   </View>
                   {itiDesc[currDayIndex]?.text && (
-                    <View style={styles.itiDescContainer}>
+                    <View wrap={false} style={styles.itiDescContainer}>
                       <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex + 1}</Text>
                       {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                         <Text key={pointIndex} style={styles.itiDescText}>{`${pointIndex + 1}. ${point}`}</Text>
@@ -244,13 +247,6 @@ const styles = StyleSheet.create({
   },
   page2: {
     padding: '8px',
-  },
-  noSplitSection: {
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    pageBreakInside: 'avoid',
   },
   headerImage: {
     width: '100%',
@@ -343,16 +339,17 @@ const styles = StyleSheet.create({
   },
   daySection: {
     marginBottom: 20,
+    pageBreakInside: 'avoid',
   },
   dayHeader: {
-    backgroundColor: '#B8E0D2',
-    padding: 8,
+    // backgroundColor: '#B8E0D2',
+    padding: 3,
     borderRadius: 3,
     marginVertical: 8,
     alignSelf: 'flex-start',
   },
   dayTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#333333',
   },
@@ -368,24 +365,29 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
   hotelContainer: {
-    wrap: false,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 15,
-    backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
+    borderWidth: 1,
   },
   hotelImage: {
-    width: 80,
-    height: 80,
-    marginRight: 15,
+    width: 120,
+    height: 120,
+    marginLeft: 5,
+    marginRight:15,
+    marginTop: 20,
     borderRadius: 5,
     resizeMode: 'cover',
   },
   hotelDetails: {
     flex: 1,
     flexDirection: 'column',
+  },
+  hotelDetailsOuter: {
+    flex: 1,
+    flexDirection: 'row',
   },
   hotelName: {
     fontSize: 16,
@@ -396,8 +398,9 @@ const styles = StyleSheet.create({
   roomDetails: {
     marginVertical: 5,
     padding: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f9f9f9',
     borderRadius: 3,
+    pageBreakInside: 'avoid',
   },
   roomType: {
     fontSize: 14,
@@ -428,7 +431,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     padding: 15,
-    backgroundColor: '#e0e0e0',
+    // backgroundColor: '#e0e0e0',
+    borderWidth: 1,
     borderRadius: 5,
   },
   priceTitle: {
@@ -461,16 +465,16 @@ const styles = StyleSheet.create({
   itiDescContainer: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white',
     borderRadius: 5,
   },
   itiDescTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   itiDescText: {
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 3,
   },
   footerContainer: {
@@ -480,8 +484,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 30,
     borderTopWidth: 1,
-    borderTopColor: '#dddddd',
-    backgroundColor: '#f0f0f0',
+    // borderTopColor: '#dddddd',
+    // backgroundColor: '#f0f0f0',
   },
   footerLogo: {
     width: 80,
