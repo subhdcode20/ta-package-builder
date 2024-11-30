@@ -47,7 +47,7 @@ const FreeSoloCreateOption = ({destination = null, handleDestSelect}) => {
         if (inputValue !== '' && !isExisting) {
           filtered.push({
             inputValue,
-            label: `Find B2B cab quotes for "${inputValue}"`,
+            label: `${inputValue}`,
           });
         }
 

@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { submitPackageData } from './packBuilderSlice.js';
@@ -15,10 +15,11 @@ const SavePackagePdf = () => {
 	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || {};
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || {};
 	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || {};
-    const userData = useSelector((state) => state.packBuilderData.userData) || {};
+    const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const {reqId} = useParams();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [ loading, setLoading ] = useState(false);
 
     const savePackageWithPdf = async () => {
@@ -87,7 +88,7 @@ const SavePackagePdf = () => {
 				
 
 		// return;
-		// setTimeout(() => navigate("/itinerary/"+newReqId));
+		setTimeout(() => navigate(`/my-reqs?reqId=${reqId}`));
     }
 
     return (<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>

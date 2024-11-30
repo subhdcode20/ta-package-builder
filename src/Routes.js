@@ -16,6 +16,7 @@ import UploadRatesheet from "./Ratesheet/index.js";
 import ReqCopy from "./AppHome/updateReq.js";
 import ReqCopyNew from "./AppHome/reqCopyNew.js";
 import PublicNavbar from './Navbar/publicNavbar.js';
+import Profile from "./Profile/index.js";
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -114,6 +115,15 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <UploadRatesheet/>
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/my-profile",
+    element: (
+      <AppLayout>
+        <Profile/>
       </AppLayout>
     ),
     errorElement: <ErrorPage />,
