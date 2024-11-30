@@ -45,7 +45,6 @@ const HtmlPdfView = ({
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
-
   console.log("pdf template render ", logoB64Str, hotels)
   return (
     <Document>
@@ -58,19 +57,19 @@ const HtmlPdfView = ({
           />
 
           <View style={styles.body}>
-            {
+            {/* {
               logoB64Str && (<Image
                 style={[styles.logo, { position: 'absolute', top: -50 }]}
                 src={logoB64Str}
                 resizeMode="contain"
               />)
-            }
-            {/* <Image
-              style={[styles.logo, { position: 'absolute', top: -50 }]}
-              src={logoB64Str || ''}
+            } */}
+            <Image
+              style={[styles.logo]}
+              src={logoB64Str || 'https://png.pngtree.com/template/20191030/ourmid/pngtree-travel-logo-airplane-design-airplane-tickets-travel-agencies-image_325199.jpg'}
               resizeMode="contain"
-              debug
-            /> */}
+              // debug
+            />
             <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
             <View style={styles.infoBox}>
@@ -250,9 +249,9 @@ const styles = StyleSheet.create({
   },
   headerImage: {
     width: '100%',
-    height: 300,
+    height: 200,
     objectFit: 'cover',
-    marginBottom: 5,
+    marginBottom: 1,
   },
   logo: {
     width: 100,
@@ -277,7 +276,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 5,
   },
   itiTextContainer: {
     marginVertical: 5,
