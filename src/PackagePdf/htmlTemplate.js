@@ -21,11 +21,11 @@ const formatDate = (timestamp) => {
   try {
     console.log("time format  ", timestamp);
     if (!timestamp) return 'N/A';
-    return format(new Date(timestamp || ''), 'dd-MMM-yyyy');  
+    return format(new Date(timestamp || ''), 'dd-MMM-yyyy');
   } catch (error) {
     console.log("time format error ", error);
   }
-  
+
 };
 
 const HtmlPdfView = ({
@@ -42,72 +42,74 @@ const HtmlPdfView = ({
     email,
     name
   },
-  totalPackPrice= ''
+  totalPackPrice = ''
 }) => {
+  console.log("HOTELS_DETAILS", JSON.stringify(hotels));
+
   console.log("pdf template render ", logoB64Str, hotels)
   return (
-  <Document>
-    <Page style={styles.page} wrap={false}>
-      <View>
-        <Image
-          style={styles.headerImage}
-          src="/kerala2.png"
-          resizeMode="cover"
-        />
+    <Document>
+      <Page style={styles.page} wrap={false}>
+        <View>
+          <Image
+            style={styles.headerImage}
+            src="/kerala2.png"
+            resizeMode="cover"
+          />
 
-        <View style={styles.body}>
-          {
-            logoB64Str && (<Image
-              style={[styles.logo, { position: 'absolute', top: -50 }]}
-              src={logoB64Str}
-              resizeMode="contain"
-            />)
-          }
-          {/* <Image
+          <View style={styles.body}>
+            {
+              logoB64Str && (<Image
+                style={[styles.logo, { position: 'absolute', top: -50 }]}
+                src={logoB64Str}
+                resizeMode="contain"
+              />)
+            }
+            {/* <Image
               style={[styles.logo, { position: 'absolute', top: -50 }]}
               src={logoB64Str || ''}
               resizeMode="contain"
               debug
             /> */}
-          <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+            <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
-          <View style={styles.infoBox}>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Lead Pax: </Text>
-              <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+            <View style={styles.infoBox}>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Lead Pax: </Text>
+                <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Destination: </Text>
+                <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Travel Date: </Text>
+                <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Guest: </Text>
+                <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Destination: </Text>
-              <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+
+            <View style={styles.hr} />
+
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/contactTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>  Emergency Contact</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Travel Date: </Text>
-              <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+            <View style={styles.emergencyContainer}>
+              <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
+              <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Guest: </Text>
-              <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
-            </View>
+
+            <View style={styles.hr} />
           </View>
-
-          <View style={styles.hr} />
-
-          <View style={styles.sectionHeaderContainer}>
-            <Image style={styles.sectionIcon} src="/contactTitle.png" />
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>  Emergency Contact</Text>
-            </View>
-          </View>
-          <View style={styles.emergencyContainer}>
-            <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
-            <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
-          </View>
-
-          <View style={styles.hr} />
         </View>
-      </View>
-    </Page>
-    <Page style={[styles.page, styles.page2]}>
+      </Page>
+      <Page style={[styles.page, styles.page2]}>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={[styles.daySection, styles.noSplitSection]}>
             <View style={styles.dayHeader}>
@@ -138,8 +140,8 @@ const HtmlPdfView = ({
                       {selectedRooms.map((currRoom, roomIndex) => {
                         const {
                           roomName,
-                          selectedOccupancy: { adults = 0, child = 0, childWithBed = 0, childWithoutBed = 0 } = {},
-                          mp, 
+                          selectedOccupancy: { adults = 0, child = 0, childAges = [] } = {},
+                          mp,
                         } = currRoom;
 
                         let mealPlan = '';
@@ -157,18 +159,22 @@ const HtmlPdfView = ({
                           <View key={roomIndex} style={styles.roomDetails}>
                             <Text style={styles.roomType}>{roomName}</Text>
                             <Text style={styles.roomOccupancy}>
-                              {adults} Adults, {child} Child{childWithBed ? `, ${childWithBed} Child with Bed` : ''}{childWithoutBed ? `, ${childWithoutBed} Child without Bed` : ''}
+                              {adults} Adults, {child} Child
                             </Text>
+                            {childAges.some((child) => child.extraBed === 'true') && (
+                              <Text style={styles.extraBedText}>With Extra Bed</Text>
+                            )}
                             <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
                           </View>
                         );
                       })}
 
+
                     </View>
                   </View>
                   {itiDesc[currDayIndex]?.text && (
                     <View style={styles.itiDescContainer}>
-                      <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex+1}</Text>
+                      <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex + 1}</Text>
                       {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                         <Text key={pointIndex} style={styles.itiDescText}>{`${pointIndex + 1}. ${point}`}</Text>
                       ))}
@@ -225,9 +231,10 @@ const HtmlPdfView = ({
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
-    </Page>
-  </Document>
-)};
+      </Page>
+    </Document>
+  )
+};
 
 const styles = StyleSheet.create({
   page: {
@@ -289,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D3B66',
     color: '#ffffff',
     borderRadius: 5,
-    marginBottom:30,
+    marginBottom: 30,
   },
   infoRow: {
     flexDirection: 'row',
@@ -316,7 +323,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
-    marginTop:20,
+    marginTop: 20,
   },
   sectionHeader: {
     flex: 1,
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333333',
   },
-    emergencyContainer: {
+  emergencyContainer: {
     marginLeft: 10,
     padding: 10,
     backgroundColor: '#e8f4f8',
@@ -361,7 +368,7 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
   hotelContainer: {
-    wrap:false,
+    wrap: false,
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 15,
@@ -412,7 +419,7 @@ const styles = StyleSheet.create({
   bullet: {
     fontSize: 12,
     marginVertical: 1,
-    lineHeight: 1.5, 
+    lineHeight: 1.5,
     color: '#555555',
   },
   priceSection: {
