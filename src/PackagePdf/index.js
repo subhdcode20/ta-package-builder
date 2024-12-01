@@ -23,7 +23,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	// const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || [];
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-	let { companyInfo: { companyLogo: logoUrl } = {}, firebaseIdToken = '' } = userData;
+	let { companyInfo: { companyLogo: logoUrl } = {}, firebaseIdToken = '' } = userData || {};
 
 	const getLogoB64encoded = async () => {
 		const axiosOptions = {
