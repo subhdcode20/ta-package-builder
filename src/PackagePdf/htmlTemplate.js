@@ -30,7 +30,8 @@ const formatDate = (timestamp) => {
 
 const HtmlPdfView = ({
   reqData: {
-    req = {}
+    req = {},
+    headerImage,
   },
   dayWiseData: {
     hotels = [],
@@ -40,36 +41,39 @@ const HtmlPdfView = ({
     phone,
     logoB64Str,
     email,
-    name
+    name,
   },
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
-  console.log("pdf template render ", logoB64Str, hotels)
+  console.log("pdf template render ", logoB64Str, hotels);
+  console.log("HEADERimg_check:", headerImage);
   return (
     <Document>
       <Page style={styles.page} wrap={false}>
         <View>
-          <Image
-            style={styles.headerImage}
-            src="/kerala2.png"
-            resizeMode="cover"
-          />
+        {headerImage && (
+            <Image
+              style={styles.headerImage}
+              src={headerImage}
+              resizeMode="cover"
+            />
+          )}
 
           <View style={styles.body}>
-            {/* {
+            {
               logoB64Str && (<Image
-                style={[styles.logo, { position: 'absolute', top: -50 }]}
+                style={[styles.logo]}
                 src={logoB64Str}
                 resizeMode="contain"
               />)
-            } */}
-            <Image
+            }
+            {/* <Image
               style={[styles.logo]}
               src={logoB64Str || 'https://png.pngtree.com/template/20191030/ourmid/pngtree-travel-logo-airplane-design-airplane-tickets-travel-agencies-image_325199.jpg'}
               resizeMode="contain"
               // debug
-            />
+            /> */}
             <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
             <View style={styles.infoBox}>
@@ -127,14 +131,10 @@ const HtmlPdfView = ({
               return (
                 <View>
 
-                  <View key={hotelIndex} wrap={false} style={styles.hotelContainer}>
+                  <View key={hotelIndex}  style={styles.hotelContainer}>
                     <View style={styles.hotelDetailsOuter}>
-                        <Image
-                        style={styles.hotelImage}
-                        src="/hotelIcon.png"
-                        resizeMode="cover"
-                      />
-                      <View style={styles.hotelDetails}>
+                        
+                      <View  style={styles.hotelDetails}>
                         <Text style={styles.hotelName}>{hotelName}</Text>
                         {selectedRooms.map((currRoom, roomIndex) => {
                           const {
@@ -155,7 +155,7 @@ const HtmlPdfView = ({
                           }
 
                           return (
-                            <View key={roomIndex} style={styles.roomDetails}>
+                            <View wrap={false} key={roomIndex} style={styles.roomDetails}>
                               <Text style={styles.roomType}>{roomName}</Text>
                               <Text style={styles.roomOccupancy}>
                                 {adults} Adults, {child} Child
@@ -171,7 +171,11 @@ const HtmlPdfView = ({
 
                       </View>
 
-                      
+                      <Image
+                        style={styles.hotelImage}
+                        src="/hotelIcon.png"
+                        resizeMode="cover"
+                      />
                     </View>
                   </View>
                   {itiDesc[currDayIndex]?.text && (
@@ -374,7 +378,7 @@ const styles = StyleSheet.create({
   hotelImage: {
     width: 120,
     height: 120,
-    marginLeft: 5,
+    marginLeft: 30,
     marginRight:15,
     marginTop: 20,
     borderRadius: 5,
