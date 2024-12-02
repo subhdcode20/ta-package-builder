@@ -12,6 +12,12 @@ import { MainContext } from '../Utility.js';
 // import PdfView from './pdfView';
 import HtmlTemplate from './htmlTemplate.js';
 
+// Temporary defined HERE:
+const destinationImages = {
+    Kerala: '/kerala2.png',
+    Karnataka: '/kerala2.png',
+    // TO add More Images
+  };
 
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
@@ -23,7 +29,12 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	// const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || [];
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-	let { companyInfo: { companyLogo: logoUrl } = {}, firebaseIdToken = '' } = userData;
+	let { companyInfo: { companyLogo: logoUrl } = {}, firebaseIdToken = '' } = userData || {};
+	const [headerImage, setHeaderImage] = useState("");
+	useEffect(() => {
+		console.log("CHECK_IMGheader:",destinationImages[reqData?.destination] );
+		setHeaderImage(destinationImages[reqData?.destination])
+	},[reqData?.destination])
 
 	const getLogoB64encoded = async () => {
 		const axiosOptions = {
@@ -85,7 +96,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
 				<HtmlTemplate 
 					dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
-					reqData={{ req: reqData }} 
+					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={finalPackPrice}
 				/>

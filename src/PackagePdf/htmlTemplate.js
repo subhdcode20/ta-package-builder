@@ -21,16 +21,17 @@ const formatDate = (timestamp) => {
   try {
     console.log("time format  ", timestamp);
     if (!timestamp) return 'N/A';
-    return format(new Date(timestamp || ''), 'dd-MMM-yyyy');  
+    return format(new Date(timestamp || ''), 'dd-MMM-yyyy');
   } catch (error) {
     console.log("time format error ", error);
   }
-  
+
 };
 
 const HtmlPdfView = ({
   reqData: {
-    req = {}
+    req = {},
+    headerImage,
   },
   dayWiseData: {
     hotels = [],
@@ -40,75 +41,78 @@ const HtmlPdfView = ({
     phone,
     logoB64Str,
     email,
-    name
+    name,
   },
-  totalPackPrice= ''
+  totalPackPrice = ''
 }) => {
-  console.log("pdf template render ", logoB64Str, hotels)
+  console.log("HOTELS_DETAILS", JSON.stringify(hotels));
+  console.log("pdf template render ", logoB64Str, hotels);
+  console.log("HEADERimg_check:", headerImage);
   return (
-  <Document>
-    <Page style={styles.page} wrap={false}>
-      <View>
-        <Image
-          style={styles.headerImage}
-          src="/kerala2.png"
-          resizeMode="cover"
-        />
+    <Document>
+      <Page style={styles.page} wrap={false}>
+        <View>
+        {headerImage && (
+            <Image
+              style={styles.headerImage}
+              src={headerImage}
+              resizeMode="cover"
+            />
+          )}
 
-        <View style={styles.body}>
-          {
-            logoB64Str && (<Image
-              style={[styles.logo, { position: 'absolute', top: -50 }]}
-              src={logoB64Str}
+          <View style={styles.body}>
+            {
+              logoB64Str && (<Image
+                style={[styles.logo]}
+                src={logoB64Str}
+                resizeMode="contain"
+              />)
+            }
+            {/* <Image
+              style={[styles.logo]}
+              src={logoB64Str || 'https://png.pngtree.com/template/20191030/ourmid/pngtree-travel-logo-airplane-design-airplane-tickets-travel-agencies-image_325199.jpg'}
               resizeMode="contain"
-            />)
-          }
-          {/* <Image
-              style={[styles.logo, { position: 'absolute', top: -50 }]}
-              src={logoB64Str || ''}
-              resizeMode="contain"
-              debug
+              // debug
             /> */}
-          <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+            <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
 
-          <View style={styles.infoBox}>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Lead Pax: </Text>
-              <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+            <View style={styles.infoBox}>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Lead Pax: </Text>
+                <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Destination: </Text>
+                <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Travel Date: </Text>
+                <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Guest: </Text>
+                <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Destination: </Text>
-              <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+
+            <View style={styles.hr} />
+
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/contactTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>  Emergency Contact</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Travel Date: </Text>
-              <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+            <View style={styles.emergencyContainer}>
+              <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
+              <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Guest: </Text>
-              <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
-            </View>
+
+            <View style={styles.hr} />
           </View>
-
-          <View style={styles.hr} />
-
-          <View style={styles.sectionHeaderContainer}>
-            <Image style={styles.sectionIcon} src="/contactTitle.png" />
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>  Emergency Contact</Text>
-            </View>
-          </View>
-          <View style={styles.emergencyContainer}>
-            <Text style={styles.emergencyText}>Agent Name: {name || 'N/A'}</Text>
-            <Text style={styles.emergencyText}>Phone: {phone || 'N/A'}</Text>
-          </View>
-
-          <View style={styles.hr} />
         </View>
-      </View>
-    </Page>
-    <Page style={[styles.page, styles.page2]}>
-      <View>
+      </Page>
+      <Page style={[styles.page, styles.page2]}>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection}>
             <View style={styles.dayHeader}>
@@ -127,49 +131,56 @@ const HtmlPdfView = ({
               return (
                 <View>
 
-                  <View key={hotelIndex} style={styles.hotelContainer}>
-                    <Image
-                      style={styles.hotelImage}
-                      src="/hotelIcon.png"
-                      resizeMode="cover"
-                    />
-                    <View style={styles.hotelDetails}>
-                      <Text style={styles.hotelName}>{hotelName}</Text>
+                  <View key={hotelIndex}  style={styles.hotelContainer}>
+                    <View style={styles.hotelDetailsOuter}>
+                        
+                      <View  style={styles.hotelDetails}>
+                        <Text style={styles.hotelName}>{hotelName}</Text>
+                        {selectedRooms.map((currRoom, roomIndex) => {
+                          const {
+                            roomName,
+                            selectedOccupancy: { adults = 0, child = 0, childAges = [] } = {},
+                            mp,
+                          } = currRoom;
 
-                      {selectedRooms.map((currRoom, roomIndex) => {
-                        const {
-                          roomName,
-                          selectedOccupancy: { adults = 0, child = 0, childWithBed = 0, childWithoutBed = 0 } = {},
-                          mp, 
-                        } = currRoom;
+                          let mealPlan = '';
+                          if (mp === 'mapai') {
+                            mealPlan = 'Breakfast and (Lunch or Dinner)';
+                          } else if (mp === 'cpai') {
+                            mealPlan = 'Breakfast ONLY';
+                          } else if (mp === 'apai') {
+                            mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
+                          } else {
+                            mealPlan = 'No meal plan specified';
+                          }
 
-                        let mealPlan = '';
-                        if (mp === 'mapai') {
-                          mealPlan = 'Breakfast and (Lunch or Dinner)';
-                        } else if (mp === 'cpai') {
-                          mealPlan = 'Breakfast ONLY';
-                        } else if (mp === 'apai') {
-                          mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
-                        } else {
-                          mealPlan = 'No meal plan specified';
-                        }
+                          return (
+                            <View wrap={false} key={roomIndex} style={styles.roomDetails}>
+                              <Text style={styles.roomType}>{roomName}</Text>
+                              <Text style={styles.roomOccupancy}>
+                                {adults} Adults, {child} Child
+                              </Text>
+                              {childAges.some((child) => child.extraBed === 'true') && (
+                                <Text style={styles.extraBedText}>With Extra Bed</Text>
+                              )}
+                              <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                            </View>
+                          );
+                        })}
 
-                        return (
-                          <View key={roomIndex} style={styles.roomDetails}>
-                            <Text style={styles.roomType}>{roomName}</Text>
-                            <Text style={styles.roomOccupancy}>
-                              {adults} Adults, {child} Child{childWithBed ? `, ${childWithBed} Child with Bed` : ''}{childWithoutBed ? `, ${childWithoutBed} Child without Bed` : ''}
-                            </Text>
-                            <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                          </View>
-                        );
-                      })}
 
+                      </View>
+
+                      <Image
+                        style={styles.hotelImage}
+                        src="/hotelIcon.png"
+                        resizeMode="cover"
+                      />
                     </View>
                   </View>
                   {itiDesc[currDayIndex]?.text && (
-                    <View style={styles.itiDescContainer}>
-                      <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex+1}</Text>
+                    <View wrap={false} style={styles.itiDescContainer}>
+                      <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex + 1}</Text>
                       {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                         <Text key={pointIndex} style={styles.itiDescText}>{`${pointIndex + 1}. ${point}`}</Text>
                       ))}
@@ -226,10 +237,10 @@ const HtmlPdfView = ({
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
-      </View>
-    </Page>
-  </Document>
-)};
+      </Page>
+    </Document>
+  )
+};
 
 const styles = StyleSheet.create({
   page: {
@@ -238,13 +249,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',  //'#f5f5f5',
   },
   page2: {
-    padding: '8px'
+    padding: '8px',
   },
   headerImage: {
     width: '100%',
-    height: 300,
+    height: 200,
     objectFit: 'cover',
-    marginBottom: 5,
+    marginBottom: 1,
   },
   logo: {
     width: 100,
@@ -269,7 +280,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 5,
   },
   itiTextContainer: {
     marginVertical: 5,
@@ -284,7 +295,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0D3B66',
     color: '#ffffff',
     borderRadius: 5,
-    marginBottom:30,
+    marginBottom: 30,
   },
   infoRow: {
     flexDirection: 'row',
@@ -311,7 +322,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
-    marginTop:20,
+    marginTop: 20,
   },
   sectionHeader: {
     flex: 1,
@@ -331,20 +342,21 @@ const styles = StyleSheet.create({
   },
   daySection: {
     marginBottom: 20,
+    pageBreakInside: 'avoid',
   },
   dayHeader: {
-    backgroundColor: '#B8E0D2',
-    padding: 8,
+    // backgroundColor: '#B8E0D2',
+    padding: 3,
     borderRadius: 3,
     marginVertical: 8,
     alignSelf: 'flex-start',
   },
   dayTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#333333',
   },
-    emergencyContainer: {
+  emergencyContainer: {
     marginLeft: 10,
     padding: 10,
     backgroundColor: '#e8f4f8',
@@ -359,20 +371,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 15,
-    backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
+    borderWidth: 1,
   },
   hotelImage: {
-    width: 80,
-    height: 80,
-    marginRight: 15,
+    width: 120,
+    height: 120,
+    marginLeft: 30,
+    marginRight:15,
+    marginTop: 20,
     borderRadius: 5,
     resizeMode: 'cover',
   },
   hotelDetails: {
     flex: 1,
     flexDirection: 'column',
+  },
+  hotelDetailsOuter: {
+    flex: 1,
+    flexDirection: 'row',
   },
   hotelName: {
     fontSize: 16,
@@ -383,8 +401,9 @@ const styles = StyleSheet.create({
   roomDetails: {
     marginVertical: 5,
     padding: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f9f9f9',
     borderRadius: 3,
+    pageBreakInside: 'avoid',
   },
   roomType: {
     fontSize: 14,
@@ -406,7 +425,7 @@ const styles = StyleSheet.create({
   bullet: {
     fontSize: 12,
     marginVertical: 1,
-    lineHeight: 1.5, 
+    lineHeight: 1.5,
     color: '#555555',
   },
   priceSection: {
@@ -415,7 +434,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
     padding: 15,
-    backgroundColor: '#e0e0e0',
+    // backgroundColor: '#e0e0e0',
+    borderWidth: 1,
     borderRadius: 5,
   },
   priceTitle: {
@@ -448,16 +468,16 @@ const styles = StyleSheet.create({
   itiDescContainer: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white',
     borderRadius: 5,
   },
   itiDescTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   itiDescText: {
-    fontSize: 12,
+    fontSize: 14,
     marginBottom: 3,
   },
   footerContainer: {
@@ -467,8 +487,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 30,
     borderTopWidth: 1,
-    borderTopColor: '#dddddd',
-    backgroundColor: '#f0f0f0',
+    // borderTopColor: '#dddddd',
+    // backgroundColor: '#f0f0f0',
   },
   footerLogo: {
     width: 80,
@@ -490,7 +510,7 @@ const styles = StyleSheet.create({
   pageNumber: {
     position: 'absolute',
     fontSize: 10,
-    bottom: 15,
+    bottom: 5,
     left: 0,
     right: 0,
     textAlign: 'center',
