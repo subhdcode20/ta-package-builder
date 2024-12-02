@@ -22,11 +22,22 @@ const Profile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userPhone = user.phone;
   const [userData, setUserData] = useState(null);
-  const [editedData, setEditedData] = useState(null);
+  const [editedData, setEditedData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
+
+  const {
+    comapnyInfo= {},
+    companyName = '',
+    name = '',
+    phone = '',
+    email = '',
+    address = '',
+  } = editedData;
+
+  const { companyLogo = '' } = comapnyInfo;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,7 +137,7 @@ const Profile = () => {
         <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
           <Box sx={{ position: "relative", marginRight: 3 }}>
             <Avatar
-              src={editedData.comapnyInfo.companyLogo}
+              src={companyLogo}
               alt="Company Logo"
               sx={{ width: 120, height: 120 }}
             />
@@ -144,7 +155,7 @@ const Profile = () => {
               fullWidth
               label="Company Name"
               name="companyName"
-              value={editedData.companyName}
+              value={companyName}
               onChange={handleInputChange}
               variant="outlined"
               sx={{ marginBottom: 2 }}
@@ -153,7 +164,7 @@ const Profile = () => {
               fullWidth
               label="Name"
               name="name"
-              value={editedData.name}
+              value={name}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -166,7 +177,7 @@ const Profile = () => {
               fullWidth
               label="Email"
               name="email"
-              value={editedData.email}
+              value={email}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -176,7 +187,7 @@ const Profile = () => {
               fullWidth
               label="Phone"
               name="phone"
-              value={editedData.phone}
+              value={phone}
               variant="outlined"
               disabled
             />
@@ -186,7 +197,7 @@ const Profile = () => {
               fullWidth
               label="Address"
               name="address"
-              value={editedData.address}
+              value={address}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -245,14 +256,14 @@ const Profile = () => {
                 </Typography>
                 <Box
                   component="img"
-                  src={editedData.comapnyInfo[key]}
+                  src={comapnyInfo[key]}
                   alt={key}
                   sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
                 />
                 <Box display="flex" gap={1} mt={1}>
                   <IconButton
                     color="primary"
-                    onClick={() => setViewFile(editedData.comapnyInfo[key])}
+                    onClick={() => setViewFile(comapnyInfo[key])}
                   >
                     <Visibility />
                   </IconButton>

@@ -46,7 +46,7 @@ const HtmlPdfView = ({
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
-  console.log("pdf template render ", logoB64Str, hotels);
+  console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check:", headerImage);
   return (
     <Document>
@@ -91,7 +91,7 @@ const HtmlPdfView = ({
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Guest: </Text>
-                <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
+                <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
               </View>
             </View>
 
@@ -158,7 +158,7 @@ const HtmlPdfView = ({
                             <View wrap={false} key={roomIndex} style={styles.roomDetails}>
                               <Text style={styles.roomType}>{roomName}</Text>
                               <Text style={styles.roomOccupancy}>
-                                {adults} Adults, {child} Child
+                                {adults} Adult{adults > 1 && 's'} {child ? `, ${child} Children` : ''}
                               </Text>
                               {childAges.some((child) => child.extraBed === 'true') && (
                                 <Text style={styles.extraBedText}>With Extra Bed</Text>
@@ -376,8 +376,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   hotelImage: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     marginLeft: 30,
     marginRight:15,
     marginTop: 20,
