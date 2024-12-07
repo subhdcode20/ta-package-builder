@@ -18,7 +18,8 @@ const ReqCardView = ({ reqData = {} }) => {
         roomOcc = [],
         startDate, 
         starCategory,
-        trackingId 
+        trackingId = '',
+        pickUp = ''
     } = reqData;
 
     const { totalAdults = 0, totalChild = 0 } = roomOcc.reduce((acc, item) => {
@@ -34,9 +35,9 @@ const ReqCardView = ({ reqData = {} }) => {
 
     console.log("pack req card render ", totalAdults, totalChild, reqData);
     return (<Paper sx={{ border: '1px solid', borderRadius: '5px', mb: 1 }}>
-        <Typography variant="subtitle1" sx={{ margin: 'auto', textAlign: 'center' }}>Request Details: <b>{trackingId}</b></Typography>
+        <Typography variant="caption" sx={{ margin: 'auto', textAlign: 'center', display: 'inherit' }}>Request Details For <b>{trackingId}</b></Typography>
         <Grid container sx={{margin: 0, display: "flex", justifyContent: "space-evenly", p: 1, pt: 0}}>
-            <Grid item xs={4} md={4} lg={2} display={'flex'} justifyContent={'flex-start'} sx={{ py: 1 }}>
+            <Grid item xs={4} md={4} lg={4} display={'flex'} justifyContent={'flex-start'} sx={{ py: 1 }}>
                 <Typography variant="caption"><b>{destination}</b></Typography>&nbsp;
             </Grid>
             <Grid item xs={4} md={2} lg={2} display={'flex'}  justifyContent={'center'} sx={{ py: 1 }}>
@@ -84,13 +85,13 @@ const ReqCardView = ({ reqData = {} }) => {
                     &nbsp;
                 </div>
             </Grid>
-            {/* <Grid item xs={4} md={2} lg={2} display={'flex'} justifyContent={'flex-start'} sx={{ py: 1 }}>
+            <Grid item xs={6} md={4} lg={4} display={'flex'} justifyContent={'flex-start'} sx={{ py: 1 }}>
                 <div style={{display: 'flex'}}>
-                    <KingBedIcon />
-                    <Typography variant="subtitle1"><b>{roomOcc.length}</b> Rooms</Typography>
+                    {/* <KingBedIcon /> */}
+                    <Typography variant="caption">Pick Up From: <b>{pickUp}</b></Typography>
                     &nbsp;
                 </div>
-            </Grid> */}
+            </Grid>
         </Grid>
     </Paper>)
 }

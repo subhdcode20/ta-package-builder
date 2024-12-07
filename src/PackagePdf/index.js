@@ -22,7 +22,7 @@ const destinationImages = {
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
     // // const [packageData, setPackageData] = useState([]);
-	const { userData } = useContext(MainContext)
+	const userData = useSelector((state) => state.packBuilderData.userData) || {};
 	const [userPdfData, setUserPdfData] = useState(userData || {});
     const [loading, setLoading] = useState(false);
     const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
@@ -99,6 +99,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={finalPackPrice}
+					userProfileData={{headerImage}}
 				/>
 			</Box>)
 		}

@@ -43,6 +43,9 @@ export const todoSlice = createSlice({
     finalTransferPrice: ''
   },
   reducers: {
+    setUserData: (state, action) => {
+      state.userData = action?.payload;
+    },
     submitReqData: (state, action) => {
       // if(!action.reqData || isEmptyObject(action.reqData)) return;
       console.log("submitReqData reducer ", state, action.payload);
@@ -289,8 +292,8 @@ export const todoSlice = createSlice({
         Object.keys(copyDetailsToDays).forEach(dayNo => {
           // if(dayNo <= 0) continue;
           let copyDayPrice = state.totalDayPrices[Number(dayNo) - 1] || {};
+          copyDayPrice["totalPrice"] = totalHotelPriceForCurrDay;
           console.log("save day daya copy", dayNo, copyDayPrice);
-          state.totalDayPrices[Number(dayNo) - 1]["totalPrice"] = totalHotelPriceForCurrDay;
 
           let copyDaySelectedHotels = state.selectedHotels[Number(dayNo) - 1];
           // let newDayData = state.selectedHotels[state.currDayIndex].map((h) => {
@@ -385,8 +388,8 @@ export const todoSlice = createSlice({
     },
     setTotalPackagePrice: (state, action) => {
       let { totalPackPrice = '' } = action?.payload;
-      console.log("finalPackPrice", totalPackPrice);
-      if(!totalPackPrice) return;
+      console.log("finalPackPrice", totalPackPrice, isNaN(totalPackPrice));
+      if(isNaN(totalPackPrice)) return;
       state["finalPackPrice"] = totalPackPrice;
     },
     handleRemoveItiItem: (state, action) => {
@@ -418,6 +421,10 @@ export const todoSlice = createSlice({
         return acc + Number(p?.totalPrice || 0);
       }, 0);
       state.finalPackPrice = Number(state["finalTransferPrice"]) + Number(totalPackCalc);
+    },
+    setProfileData: (state, action) => {
+      console.log("setProfileData ", action?.payload);
+      state["userProfileData"] = action?.payload;
     }
   }
 });
@@ -447,7 +454,9 @@ export const {
   setHotelLocation,
   setTotalPackagePrice,
   handleRemoveItiItem,
-  setTotalTransferPrice
+  setTotalTransferPrice,
+  setProfileData,
+  setUserData
 } = todoSlice.actions;
 
 // this is for configureStore

@@ -27,7 +27,8 @@ import {
 import { db, auth } from "../firebaseConfig";
 import { GenerateItineraryBtn } from "./geminiComponents.js";
 import { useParams } from "react-router-dom";
-import SavePackagePdf from "./savePackagePdf.js";
+// import SavePackagePdf from "./savePackagePdf.js";
+import EditCancellationView from "./editCancellationPolicy.js";
 
 const bull = (
 	<Box
@@ -220,6 +221,12 @@ const PackageDetailsFor1Day = ({ key }) => {
 					<Grid item xs={12} md={12} sx={{ display: 'flex' }}>
 						<GenerateItineraryBtn />
 					</Grid>
+					{/* <Grid item xs={12} md={12} sx={{ display: 'flex' }}>
+						<hr style={{ width: '100%' }} />
+					</Grid> */}
+					<Grid item xs={12} md={12}>
+						<EditCancellationView />
+					</Grid>
 				</>)
 			// })
 		}
@@ -309,7 +316,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 				<GenerateItineraryBtn />
 
 				<Grid item xs={12}>
-					<Box display="flex" flexDirection={isMobile ? "column" : "row"} justifyContent="flex-end" sx={{ my: 1 }}>
+					<Box display="flex" flexDirection={isMobile ? "column" : "row"} justifyContent="space-between" sx={{ my: 1 }}>
 						<Grid item xs={6} md={6}>
 							<InputLabel id={`room-day${currentDayIndex + 1}`} sx={{fontSize: 12}}>
 								Total Price for Day {currentDayIndex + 1}:
@@ -325,34 +332,37 @@ const PackageDetailsFor1Day = ({ key }) => {
 							/>
 						</Grid>
 						{
-							(currentDayIndex < daysArr.length - 2) && (<Box display="flex" sx={{ pl: 1 }}>
-							<Box style={{ display: 'flex' }}>
-								<Typography variant="caption" color="primary" sx={{ margin: 'auto', mr: 1 }}>Copy Hotel Details for: &nbsp;</Typography>
-							</Box>
-							<FormGroup row={true} sx={{ display: "flex" }}>
-								{
-									(daysArr || []).map((aa, aIndex) => {
-										let dayNo = aIndex + 1;
-										console.log("copy day render ", daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
-										if (aIndex > currentDayIndex) {
-											return (<FormControlLabel
-												control={<Checkbox />}
-												label={`Day ${dayNo}`}
-												checked={selectedDaysToCopyDetails[dayNo]}
-												onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
-												inputProps={{ 'aria-label': 'controlled' }}
-											/>)
-										} else return null
-									})
-								}
-							</FormGroup>
-						</Box>)}
-						{
-							Object.values(selectedDaysToCopyDetails).some(i => i) && (<Box display={'flex'}>
-								<Button size="small" variant="contained" onClick={handleSaveDayPrice} sx={{ minWidth: "fit-content", my: 'auto' }}>Save & Next</Button>
-							</Box>)
+							(currentDayIndex < daysArr.length - 2) && (<Grid item xs={6} md={6}>
+								<Box display="flex" sx={{ pl: 1 }}>
+									<Box style={{ display: 'flex' }}>
+										<Typography variant="caption" color="primary" sx={{ margin: 'auto', mr: 1 }}>Copy Hotel Details for: &nbsp;</Typography>
+									</Box>
+									<FormGroup row={true} sx={{ display: "flex" }}>
+										{
+											(daysArr || []).map((aa, aIndex) => {
+												let dayNo = aIndex + 1;
+												console.log("copy day render ", daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
+												if (aIndex > currentDayIndex) {
+													return (<FormControlLabel
+														control={<Checkbox />}
+														label={`Day ${dayNo}`}
+														checked={selectedDaysToCopyDetails[dayNo]}
+														onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
+														inputProps={{ 'aria-label': 'controlled' }}
+													/>)
+												} else return null
+											})
+										}
+									</FormGroup>
+								</Box>
+							</Grid>)
 						}
 					</Box>
+					<Grid item xs={12} md={12} display={'flex'} justifyContent={'flex-end'}>
+						<Button size="small" variant="contained" onClick={handleSaveDayPrice} 
+							sx={{ minWidth: "fit-content", my: 'auto' }}
+						>{`${!isEmptyObject(selectedDaysToCopyDetails) ? 'Save &' : ''} Next Day`}</Button>
+					</Grid>
 				</Grid>
 			</>)
 		}

@@ -21,15 +21,16 @@ import { db, storage } from "../firebaseConfig";
 const Profile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const userPhone = user.phone;
-  const [userData, setUserData] = useState(null);
+  // const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
   const [editedData, setEditedData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
+  const userData = JSON.parse(localStorage.getItem('user'));
 
   const {
-    comapnyInfo= {},
+    companyInfo= {},
     companyName = '',
     name = '',
     phone = '',
@@ -37,7 +38,8 @@ const Profile = () => {
     address = '',
   } = editedData;
 
-  const { companyLogo = '' } = comapnyInfo;
+  const { companyLogo = '' } = companyInfo;
+  console.log("profile logo", companyLogo, editedData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +48,7 @@ const Profile = () => {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setUserData(data);
+        // setUserData(data);
         setEditedData(data);
         setDestinations(data.destinations || []); 
       } else {
@@ -73,11 +75,14 @@ const Profile = () => {
     if (file) {
       const filePath = `/userDocs/${userPhone}/companyLogo`;
       const downloadURL = await uploadFileToStorage(file, filePath);
-      setEditedData({
+      const finalData = {
         ...editedData,
-        comapnyInfo: { ...editedData.comapnyInfo, companyLogo: downloadURL },
-      });
+        companyInfo: { ...editedData.companyInfo, companyLogo: downloadURL },
+      }
+      setEditedData(finalData);
       setIsEdited(true);
+      console.log("user logo local update", finalData);
+      localStorage.setItem("user", JSON.stringify({ ...userData, companyInfo: { ...editedData.companyInfo, companyLogo: downloadURL } }));
     }
   };
 
@@ -88,7 +93,7 @@ const Profile = () => {
       const downloadURL = await uploadFileToStorage(file, filePath);
       setEditedData({
         ...editedData,
-        comapnyInfo: { ...editedData.comapnyInfo, [key]: downloadURL },
+        companyInfo: { ...editedData.companyInfo, [key]: downloadURL },
       });
       setIsEdited(true);
     }
@@ -256,14 +261,14 @@ const Profile = () => {
                 </Typography>
                 <Box
                   component="img"
-                  src={comapnyInfo[key]}
+                  src={companyInfo[key]}
                   alt={key}
                   sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
                 />
                 <Box display="flex" gap={1} mt={1}>
                   <IconButton
                     color="primary"
-                    onClick={() => setViewFile(comapnyInfo[key])}
+                    onClick={() => setViewFile(companyInfo[key])}
                   >
                     <Visibility />
                   </IconButton>

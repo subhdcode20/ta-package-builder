@@ -86,7 +86,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
   return (
     <Box sx={{ margin: 'auto', width: '100%', overflowX: 'auto' }}>
       <TableContainer>
-        <Table stickyHeader>
+        <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
               <TableCell><b>Select</b></TableCell>
@@ -137,14 +137,15 @@ const ReqsListTable = ({ reqsList = [] }) => {
                     Edit
                   </Button>
                   &nbsp;
-                  <Button
+                  {
+                    (row?.packages || []).length > 0 && (<Button
                     size="small"
                     variant="contained"
                     color="secondary"
                     onClick={() => handleCopyNew(row.reqId)}
                   >
                     Copy to New Package
-                  </Button>
+                  </Button>)}
                 </TableCell>
               </TableRow>
             ))}

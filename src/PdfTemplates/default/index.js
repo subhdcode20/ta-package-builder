@@ -3,8 +3,6 @@ import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
-import DefaultTemplate from '../PdfTemplates/default/index.js';
-
 
 Font.register({
   family: 'Roboto',
@@ -45,12 +43,7 @@ const HtmlPdfView = ({
     name,
   },
   userProfileData: {
-    themeData: {
-      primaryColor = "#b352d1",
-      secondaryColor = "#000000bf",
-      textPrimary = "#212121",
-      textSecondary = "#000000"
-    } = {},
+    themeData = {},
     headerImage,
   },
   totalPackPrice = ''
@@ -58,6 +51,9 @@ const HtmlPdfView = ({
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check:", headerImage);
+  const styles = getThemedStyles(themeData) || null;
+
+  if(!styles) return null;
   return (
     <Document>
       <Page style={styles.page} wrap={false}>
@@ -252,302 +248,290 @@ const HtmlPdfView = ({
   )
 };
 
-const styles = StyleSheet.create({
-  page: {
-    fontFamily: 'Roboto',
-    fontSize: 12,
-    backgroundColor: '#ffffff',  //'#f5f5f5',
-  },
-  page2: {
-    padding: '8px',
-  },
-  headerImage: {
-    width: '100%',
-    height: 200,
-    objectFit: 'cover',
-    marginBottom: 1,
-  },
-  logo: {
-    width: 100,
-    height: 'auto',
-    alignSelf: "center",
-  },
-  image: {
-    marginVertical: 15,
-    marginHorizontal: 100,
-    width: 100,
-    alignSelf: 'center',
-  },
-  body: {
-    paddingBottom: 65,
-    paddingHorizontal: 20,
-    backgroundColor: '#ffffff',
-    paddingTop: 15,
-  },
-  title: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 20,
-    marginTop: 5,
-  },
-  itiTextContainer: {
-    marginVertical: 5,
-    padding: 8,
-    backgroundColor: '#ffffff',
-    borderRadius: 3,
-  },
-  infoBox: {
-    marginVertical: 10,
-    padding: 15,
-    width: '100%',
-    backgroundColor: '#0D3B66',
-    color: '#ffffff',
-    borderRadius: 5,
-    marginBottom: 30,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    marginVertical: 3,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginRight: 5,
-    color: '#ffffff',
-  },
-  value: {
-    fontSize: 15,
-    color: '#ffffff',
-    flex: 1,
-  },
-  hr: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#dddddd',
-    marginVertical: 15,
-    width: '100%',
-  },
-  sectionHeaderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-    marginTop: 20,
-  },
-  sectionHeader: {
-    flex: 1,
-    backgroundColor: '#b352d1',
-    padding: 10,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  sectionIcon: {
-    width: 25,
-    height: 25,
-  },
-  daySection: {
-    marginBottom: 20,
-    pageBreakInside: 'avoid',
-  },
-  dayHeader: {
-    // backgroundColor: '#B8E0D2',
-    padding: 3,
-    borderRadius: 3,
-    marginVertical: 8,
-    alignSelf: 'flex-start',
-  },
-  dayTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  emergencyContainer: {
-    marginLeft: 10,
-    padding: 10,
-    backgroundColor: '#e8f4f8',
-    borderRadius: 5,
-  },
-  emergencyText: {
-    fontSize: 15,
-    color: '#333333',
-    lineHeight: 1.5,
-  },
-  hotelContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 15,
-    padding: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-  },
-  hotelImage: {
-    width: 80,
-    height: 80,
-    marginLeft: 30,
-    marginRight:15,
-    marginTop: 20,
-    borderRadius: 5,
-    resizeMode: 'cover',
-  },
-  hotelDetails: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  hotelDetailsOuter: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  hotelName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#0D3B66',
-  },
-  roomDetails: {
-    marginVertical: 5,
-    padding: 8,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 3,
-    pageBreakInside: 'avoid',
-  },
-  roomType: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 2,
-    color: '#333333',
-  },
-  roomOccupancy: {
-    fontSize: 12,
-    color: '#555555',
-  },
-  mealPlan: {
-    fontSize: 12,
-    color: '#555555',
-  },
-  exclusionContainer: {
-    marginLeft: 10,
-  },
-  bullet: {
-    fontSize: 12,
-    marginVertical: 1,
-    lineHeight: 1.5,
-    color: '#555555',
-  },
-  priceSection: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    padding: 15,
-    // backgroundColor: '#e0e0e0',
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  priceTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    // marginBottom: 5,
-    // margin: 'auto'
-  },
-  totalPrice: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#0D3B66',
-    textAlign: 'center',
-  },
-  transferContainer: {
-    marginLeft: 10,
-    padding: 10,
-    backgroundColor: '#e8f4f8',
-    borderRadius: 5,
-  },
-  transferText: {
-    fontSize: 12,
-    color: '#333333',
-    lineHeight: 1.5,
-  },
-  exclusionSection: {
-    marginTop: 10,
-  },
-  itiDescContainer: {
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 5,
-  },
-  itiDescTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  itiDescText: {
-    fontSize: 14,
-    marginBottom: 3,
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 15,
-    marginTop: 30,
-    borderTopWidth: 1,
-    // borderTopColor: '#dddddd',
-    // backgroundColor: '#f0f0f0',
-  },
-  footerLogo: {
-    width: 80,
-    height: 80,
-    objectFit: 'contain',
-    resizeMode: 'contain',
-  },
-  footerDetails: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    flex: 1,
-    marginLeft: 20,
-  },
-  footerText: {
-    fontSize: 10,
-    color: '#333333',
-    marginBottom: 4,
-  },
-  pageNumber: {
-    position: 'absolute',
-    fontSize: 10,
-    bottom: 5,
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-    color: 'grey',
-  },
-});
+const getThemedStyles = ({themeData = {}}) => {
+    const {
+        primaryColor = "#000000bf",
+        secondaryColor = "#b352d1",
+        textPrimary = "#212121",
+        textSecondary = "#000000"
+    } = themeData;
 
-const templateMap = {
-  'default': DefaultTemplate
+    return StyleSheet.create({
+        page: {
+            fontFamily: 'Roboto',
+            fontSize: 12,
+            backgroundColor: '#ffffff',  //'#f5f5f5',
+        },
+        page2: {
+            padding: '8px',
+        },
+        headerImage: {
+            width: '100%',
+            height: 200,
+            objectFit: 'cover',
+            marginBottom: 1,
+        },
+        logo: {
+            width: 100,
+            height: 'auto',
+            alignSelf: "center",
+        },
+    image: {
+        marginVertical: 15,
+        marginHorizontal: 100,
+        width: 100,
+        alignSelf: 'center',
+    },
+    body: {
+        paddingBottom: 65,
+        paddingHorizontal: 20,
+        backgroundColor: '#ffffff',
+        paddingTop: 15,
+    },
+    title: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#333333',
+        marginBottom: 20,
+        marginTop: 5,
+    },
+    itiTextContainer: {
+        marginVertical: 5,
+        padding: 8,
+        backgroundColor: '#ffffff',
+        borderRadius: 3,
+    },
+    infoBox: {
+        marginVertical: 10,
+        padding: 15,
+        width: '100%',
+        backgroundColor: secondaryColor,  //'#0D3B66',
+        color: '#ffffff',
+        borderRadius: 5,
+        marginBottom: 30,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        marginVertical: 3,
+    },
+    label: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        marginRight: 5,
+        color: '#ffffff',
+    },
+    value: {
+        fontSize: 15,
+        color: '#ffffff',
+        flex: 1,
+    },
+    hr: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#dddddd',
+        marginVertical: 15,
+        width: '100%',
+    },
+    sectionHeaderContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 30,
+        marginTop: 20,
+    },
+    sectionHeader: {
+        flex: 1,
+        backgroundColor: primaryColor,  //'#b352d1',
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: 10,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#ffffff',
+    },
+    sectionIcon: {
+        width: 25,
+        height: 25,
+    },
+    daySection: {
+        marginBottom: 20,
+        pageBreakInside: 'avoid',
+    },
+    dayHeader: {
+        // backgroundColor: '#B8E0D2',
+        padding: 3,
+        borderRadius: 3,
+        marginVertical: 8,
+        alignSelf: 'flex-start',
+    },
+    dayTitle: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#333333',
+    },
+    emergencyContainer: {
+        marginLeft: 10,
+        padding: 10,
+        backgroundColor: '#e8f4f8',
+        borderRadius: 5,
+    },
+    emergencyText: {
+        fontSize: 15,
+        color: '#333333',
+        lineHeight: 1.5,
+    },
+    hotelContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 15,
+        padding: 10,
+        borderRadius: 5,
+        borderWidth: 1,
+    },
+    hotelImage: {
+        width: 80,
+        height: 80,
+        marginLeft: 30,
+        marginRight:15,
+        marginTop: 20,
+        borderRadius: 5,
+        resizeMode: 'cover',
+    },
+    hotelDetails: {
+      flex: 1,
+      flexDirection: 'column',
+    },
+    hotelDetailsOuter: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    hotelName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#0D3B66',
+    },
+    roomDetails: {
+        marginVertical: 5,
+        padding: 8,
+        backgroundColor: '#f9f9f9',
+        borderRadius: 3,
+        pageBreakInside: 'avoid',
+    },
+    roomType: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 2,
+        color: '#333333',
+    },
+    roomOccupancy: {
+        fontSize: 12,
+        color: '#555555',
+    },
+    mealPlan: {
+        fontSize: 12,
+        color: '#555555',
+    },
+    exclusionContainer: {
+        marginLeft: 10,
+    },
+    bullet: {
+        fontSize: 12,
+        marginVertical: 1,
+        lineHeight: 1.5,
+        color: '#555555',
+    },
+    priceSection: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+        padding: 15,
+        // backgroundColor: '#e0e0e0',
+        borderWidth: 1,
+        borderRadius: 5,
+    },
+    priceTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333333',
+        // marginBottom: 5,
+        // margin: 'auto'
+    },
+    totalPrice: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#0D3B66',
+        textAlign: 'center',
+    },
+    transferContainer: {
+        marginLeft: 10,
+        padding: 10,
+        backgroundColor: '#e8f4f8',
+        borderRadius: 5,
+    },
+    transferText: {
+        fontSize: 12,
+        color: '#333333',
+        lineHeight: 1.5,
+    },
+    exclusionSection: {
+        marginTop: 10,
+    },
+    itiDescContainer: {
+        marginVertical: 10,
+        padding: 10,
+        backgroundColor: 'white',
+        borderRadius: 5,
+    },
+    itiDescTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    itiDescText: {
+        fontSize: 14,
+        marginBottom: 3,
+    },
+  footerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 15,
+      marginTop: 30,
+      borderTopWidth: 1,
+      // borderTopColor: '#dddddd',
+      // backgroundColor: '#f0f0f0',
+    },
+    footerLogo: {
+        width: 80,
+        height: 80,
+        objectFit: 'contain',
+        resizeMode: 'contain',
+    },
+    footerDetails: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        flex: 1,
+        marginLeft: 20,
+    },
+    footerText: {
+        fontSize: 10,
+        color: '#333333',
+        marginBottom: 4,
+    },
+    pageNumber: {
+        position: 'absolute',
+        fontSize: 10,
+        bottom: 5,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
+        color: 'grey',
+    },
+});
 }
 
-const RenderPreview = (props) => {
-  console.log("RenderPreview ", props);
-  const {
-    userProfileData: {
-      templateName = 'default'  
-    } = {}
-  } = props;
 
-  const TemplateView = templateMap[templateName];
-
-  return (<div style={{ width: '100%', height: 'auto' }}>
-    <PDFViewer width={'100%'} height={'800'}>
-      {/* <HtmlPdfView {...props} /> */}
-      <TemplateView {...props} />
-    </PDFViewer>
-  </div>)
-};
-
-export default RenderPreview;
+export default HtmlPdfView;

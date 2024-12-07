@@ -4,11 +4,13 @@ import Container from "@mui/material/Container";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHref, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { db, auth } from "../firebaseConfig";
 import Navbar from '../Navbar/index.js';
 import PublicNavbar from '../Navbar/publicNavbar.js';
 import { MainContext } from "../Utility";
+import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
 
 const RedirectComponent = () => {
   useEffect(() => {
@@ -31,6 +33,8 @@ const AppLayout = ({ children, showNavBar = true }) => {
   const isLoggedIn = Boolean(userData);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
+  const dispatch = useDispatch();
+
 	useEffect(() => {
 		const fetchUserIdToken = async () => {
 			try {
@@ -44,7 +48,8 @@ const AppLayout = ({ children, showNavBar = true }) => {
 						);
 						console.log("signedInIdToken ", userData?.phone, signedInIdToken, typeof signedInIdToken);
 						localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
-            userData['firebaseIdToken'] = signedInIdToken;
+            // userData['firebaseIdToken'] = signedInIdToken;
+            dispatch(setUserData({ ...userData, firebaseIdToken: signedInIdToken }));
 					}
 				});
 			} catch (e) {
