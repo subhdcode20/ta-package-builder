@@ -425,6 +425,9 @@ export const todoSlice = createSlice({
     setProfileData: (state, action) => {
       console.log("setProfileData ", action?.payload);
       state["userProfileData"] = action?.payload;
+    },
+    selectTemplate: (state, action) => {
+      state["templateData"] = action?.payload || {name: 'default'}
     }
   }
 });
@@ -456,7 +459,8 @@ export const {
   handleRemoveItiItem,
   setTotalTransferPrice,
   setProfileData,
-  setUserData
+  setUserData,
+  selectTemplate
 } = todoSlice.actions;
 
 // this is for configureStore

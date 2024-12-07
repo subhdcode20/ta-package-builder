@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHref, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { db, auth } from "../firebaseConfig";
 import Navbar from '../Navbar/index.js';

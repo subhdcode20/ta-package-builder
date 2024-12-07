@@ -45,7 +45,7 @@ const EditCancellationPolicy = ({  }) => {
 	}
 
     console.log('edit cancellation render ', cancellationData);
-    return (<Box display={'flex'} flexDirection={'column'}>
+    return (<Box display={'flex'} flexDirection={'column'} sx={{ mt: 2 }}>
         <Grid item xs={12} md={12} lg={12} display={'flex'} flexDirection={'column'} justifyContent={'flex-end'}>
             <Button size="small" variant="outlined" onClick={getCancellationPolicy} sx={{ width: 'fit-content', margin: 'auto', mb: 1 }}>
                 Edit Your Policies

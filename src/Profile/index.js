@@ -14,9 +14,14 @@ import Typography from "@mui/material/Typography";
 import Visibility from "@mui/icons-material/Visibility";
 import Edit from "@mui/icons-material/Edit";
 import Close from "@mui/icons-material/Close";
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import { db, storage } from "../firebaseConfig";
+// import templatesMap from "../PdfTemplates/templateList.js";
+import EditCancellationView from "../PackageBuilder/editCancellationPolicy.js";
+import SelectTemplate from "./selectTemplate.js";
 
 const Profile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -28,6 +33,7 @@ const Profile = () => {
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
   const userData = JSON.parse(localStorage.getItem('user'));
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
   const {
     companyInfo= {},
@@ -132,9 +138,9 @@ const Profile = () => {
 
   if (!userData) return <Typography>Loading...</Typography>;
 
-  return (
-    <Container maxWidth="md" sx={{ marginTop: 4 }}>
-      <Paper elevation={0} sx={{ padding: 4, border: "1px solid #ddd" }}>
+  return (<Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
+    <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 4 }}>
+      <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
         <Typography variant="h4" sx={{ marginBottom: 4 }}>
           Profile Details
         </Typography>
@@ -301,7 +307,6 @@ const Profile = () => {
           </Button>
         </Box>
       </Paper>
-
       <Dialog open={!!viewFile} onClose={() => setViewFile(null)} maxWidth="md">
         <DialogTitle>View File</DialogTitle>
         <DialogContent>
@@ -316,7 +321,181 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
     </Container>
-  );
+    <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 4 }}>
+      <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
+        <Typography variant="h4" sx={{ marginBottom: 4 }}>
+          Brand Details
+        </Typography>
+
+        {/* <Box display="flex" flex={1} alignItems="center" sx={{ marginBottom: 4 }}>
+          {
+            Object.keys(templatesMap).map((t, ti) => {
+              return (<Box sx={{ position: "relative", marginRight: 3 }}>
+                <Box
+                  component="img"
+                  src={"/Kerala2.png"}
+                  alt={"kerala template"}
+                  sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
+                />
+              </Box>)
+            })
+          }
+        </Box> */}
+        <SelectTemplate />
+        
+        {/* <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
+        </Box> */}
+        <EditCancellationView />
+          
+        {/* <Box>
+          <Box flex={1}>
+            <TextField
+              fullWidth
+              label="Company Name"
+              name="companyName"
+              value={companyName}
+              onChange={handleInputChange}
+              variant="outlined"
+              sx={{ marginBottom: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={name}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              value={email}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Phone"
+              name="phone"
+              value={phone}
+              variant="outlined"
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              value={address}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Grid>
+        </Grid>
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Destinations
+        </Typography>
+        <Box display="flex" gap={2} sx={{ marginTop: 2, marginBottom: 2 }}>
+          <TextField
+            fullWidth
+            label="Add Destination"
+            value={destinationInput}
+            onChange={(e) => setDestinationInput(e.target.value)}
+            variant="outlined"
+          />
+          <Button variant="contained" color="primary" onClick={handleDestinationAdd}>
+            Add
+          </Button>
+        </Box>
+        <Box display="flex" flexWrap="wrap" gap={2}>
+          {destinations.map((destination, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px 16px",
+                background: "#f5f5f5",
+                borderRadius: 2,
+                border: "1px solid #ddd",
+              }}
+            >
+              <Typography>{destination}</Typography>
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleDestinationRemove(index)}
+              >
+                <Close fontSize="small" />
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Company Information
+        </Typography>
+        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          {["businessDocs", "gst", "panCard"].map((key) => (
+            <Grid item xs={12} sm={6} md={4} key={key}>
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                  {key.replace(/([A-Z])/g, " $1").toUpperCase()}
+                </Typography>
+                <Box
+                  component="img"
+                  src={companyInfo[key]}
+                  alt={key}
+                  sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
+                />
+                <Box display="flex" gap={1} mt={1}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => setViewFile(companyInfo[key])}
+                  >
+                    <Visibility />
+                  </IconButton>
+                  <IconButton color="secondary" component="label">
+                    <Edit />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*,application/pdf"
+                      onChange={(e) => handleFileChange(key, e)}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+          <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpdate}
+            disabled={!isEdited}
+          >
+            Update
+          </Button>
+        </Box> */}
+      </Paper>
+    </Container>
+  </Box>);
 };
 
 export default Profile;
