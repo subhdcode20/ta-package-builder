@@ -4,36 +4,44 @@ import Typography from '@mui/material/Typography';
 import { doc, getDoc } from 'firebase/firestore';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Box from "@mui/material/Box";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import { db } from '../firebaseConfig';
 import { MainContext } from '../Utility.js';
 // import PdfView from './pdfView';
 import HtmlTemplate from './htmlTemplate.js';
+import { setProfileData } from '../PackageBuilder/packBuilderSlice.js';
 
 // Temporary defined HERE:
 const destinationImages = {
-    Kerala: '/kerala2.png',
-    Karnataka: '/kerala2.png',
+    "kerala": '/kerala2.png',
+    "karnataka": '/kerala2.png',
+	"bali": '/bali-banner.jpg',
     // TO add More Images
   };
 
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
     // // const [packageData, setPackageData] = useState([]);
-	const userData = useSelector((state) => state.packBuilderData.userData) || {};
+	const arrFlightsText = useSelector((state) => state.packBuilderData.arrFlightsText) || null;
+	const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
+	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
 	const [userPdfData, setUserPdfData] = useState(userData || {});
     const [loading, setLoading] = useState(false);
     const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
 	// const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || [];
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-	let { companyInfo: { companyLogo: logoUrl } = {}, firebaseIdToken = '' } = userData || {};
+	let { companyInfo: { companyLogo: logoUrl } = {} } = userData || {};
+	const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
 	const [headerImage, setHeaderImage] = useState("");
+
+	const dispatch = useDispatch();
+
 	useEffect(() => {
-		console.log("CHECK_IMGheader:",destinationImages[reqData?.destination] );
-		setHeaderImage(destinationImages[reqData?.destination])
+		console.log("CHECK_IMGheader:",destinationImages[reqData?.destination.toLowerCase()] );
+		setHeaderImage(destinationImages[reqData?.destination.toLowerCase()])
 	},[reqData?.destination])
 
 	const getLogoB64encoded = async () => {
@@ -51,13 +59,34 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		console.log('request axios ', axiosOptions);
 	
 		let response = await axios(axiosOptions);
-		console.log('response axios ', response);
+		console.log('response axios ', response, userData);
 		setUserPdfData(prev => ({ 
-			...prev, 
+			...userData, 
 			logoB64Str: response.data?.data
 		}))
 		// setNewUserData(prev => ({ ...prev, logoB64Str: response.data?.data }));
 	}
+
+	const getProfileData = async () => {
+		// console.log(reqData, 'gemRes -- ');
+        console.log("Get Profile package builder", userData, userData.phone, userProfileData);
+        if(userProfileData) return;
+        setLoading(true);
+        let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
+        if (docSnapPdfData.exists()) {
+            console.log("Profile Date", docSnapPdfData.data());
+            dispatch(setProfileData(docSnapPdfData.data()));
+        }
+        setLoading(false);
+        // setCancellationData(cData);
+	}
+
+    useEffect(() => {
+		console.log("ger profile package builder ", userProfileData);
+        // if(!userProfileData) {
+		// }
+		getProfileData();
+    }, [])
 
     // useEffect(() => {
 	// 	// const getUserPdfData = async () => {
@@ -95,11 +124,11 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
 				<HtmlTemplate 
-					dayWiseData={{"hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
+					dayWiseData={{"flights": arrFlightsText, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={finalPackPrice}
-					userProfileData={{headerImage}}
+					userProfileData={{ ...userProfileData, headerImage}}
 				/>
 			</Box>)
 		}

@@ -15,25 +15,33 @@ import Visibility from "@mui/icons-material/Visibility";
 import Edit from "@mui/icons-material/Edit";
 import Close from "@mui/icons-material/Close";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useSelector, useDispatch } from 'react-redux';
 
 import { db, storage } from "../firebaseConfig";
 // import templatesMap from "../PdfTemplates/templateList.js";
 import EditCancellationView from "../PackageBuilder/editCancellationPolicy.js";
+import EditExclusions from "./editExclusions.js";
+import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
 import SelectTemplate from "./selectTemplate.js";
+// import EditCancellationPolicy from "../PackageBuilder/editCancellationPolicy.js";
+import { isEmptyObject } from "../Utility.js";
 
 const Profile = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userPhone = user.phone;
-  // const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')));
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const userDataStore = useSelector((state) => state.packBuilderData.userData) || null;
   const [editedData, setEditedData] = useState({});
+  // const [brandData, setBrandData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
+  const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
   const userData = JSON.parse(localStorage.getItem('user'));
+  const userPhone = userData.phone;
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const dispatch = useDispatch();
 
   const {
     companyInfo= {},
@@ -45,7 +53,7 @@ const Profile = () => {
   } = editedData;
 
   const { companyLogo = '' } = companyInfo;
-  console.log("profile logo", companyLogo, editedData);
+  console.log("profile logo", userData, companyLogo, editedData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,11 +64,14 @@ const Profile = () => {
         const data = docSnap.data();
         // setUserData(data);
         setEditedData(data);
+        console.log("get user ", data)
+        dispatch(setUserData({ ...data }));
         setDestinations(data.destinations || []); 
       } else {
         alert("No user data found!");
       }
     };
+
     fetchData();
   }, [userPhone]);
 
@@ -114,11 +125,33 @@ const Profile = () => {
     const userDocRef = doc(db, "userDetails", userPhone);
     try {
       await updateDoc(userDocRef, { ...editedData, destinations });
+      localStorage.setItem("user", JSON.stringify({ ...editedData, destinations }));
       alert("Profile updated successfully!");
       window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
+    }
+  };
+
+  const handleBrandUpdate = async () => {
+    console.log("update BrandUpdate", userProfileData, userDataStore?.templateName);
+    if(!userDataStore || isEmptyObject(userDataStore)) return;
+    const userProfileDocRef = doc(db, "userProfileData", userPhone);
+    const userDocRef = doc(db, "userDetails", userPhone);
+    try {
+      if(userProfileData || !isEmptyObject(userProfileData)) await setDoc(userProfileDocRef, userProfileData, { merge: true });
+      await setDoc(userDocRef, {
+        ...editedData,
+        templateName: userDataStore?.templateName
+      },
+      { merge: true });
+      localStorage.setItem("user", JSON.stringify({ ...editedData, templateName: userDataStore?.templateName }));
+      alert("Brand data updated successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.log("Error updating Brand data:", error);
+      alert("Failed to update Brand data.");
     }
   };
 
@@ -141,7 +174,7 @@ const Profile = () => {
   return (<Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
     <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 4 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 4 }}>
+        <Typography variant="h4" sx={{ marginBottom: 2 }}>
           Profile Details
         </Typography>
 
@@ -323,7 +356,7 @@ const Profile = () => {
     </Container>
     <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 4 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 4 }}>
+        <Typography variant="h4" sx={{ marginBottom: 2 }}>
           Brand Details
         </Typography>
 
@@ -346,7 +379,25 @@ const Profile = () => {
         {/* <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
         </Box> */}
         <EditCancellationView />
+
+        <EditExclusions />
           
+
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+          <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBrandUpdate}
+            // disabled={!isEdited}
+          >
+            Update
+          </Button>
+        </Box>
+
+
         {/* <Box>
           <Box flex={1}>
             <TextField

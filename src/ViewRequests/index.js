@@ -91,7 +91,9 @@ const ViewRequest = () => {
 
     return (<>
       <Box sx={{"display": "flex", mb: 2}}>
-        <Typography variant="h6" sx={{margin: 'auto'}}><b>Your Request History</b></Typography>
+        <Typography variant="h6" fontWeight="bold" sx={{ fontWeight: 'bold', color: '#333', margin: 'auto', textAlign: "center" }}>
+        Your Request History
+        </Typography>
       </Box>
       { userReqList && (<ReqsTable reqsList={userReqList} />) }
         

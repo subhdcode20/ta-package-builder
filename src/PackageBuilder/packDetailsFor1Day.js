@@ -29,6 +29,7 @@ import { GenerateItineraryBtn } from "./geminiComponents.js";
 import { useParams } from "react-router-dom";
 // import SavePackagePdf from "./savePackagePdf.js";
 import EditCancellationView from "./editCancellationPolicy.js";
+import EditExclusions from "../Profile/editExclusions.js";
 
 const bull = (
 	<Box
@@ -226,6 +227,9 @@ const PackageDetailsFor1Day = ({ key }) => {
 					</Grid> */}
 					<Grid item xs={12} md={12}>
 						<EditCancellationView />
+					</Grid>
+					<Grid item xs={12} md={12}>
+						<EditExclusions />
 					</Grid>
 				</>)
 			// })

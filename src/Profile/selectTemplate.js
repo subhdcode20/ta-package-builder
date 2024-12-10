@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import { useSelector, useDispatch } from 'react-redux';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { templatesMap, defaultTemplate } from "../PdfTemplates/templateList.js";
 import { selectTemplate } from '../PackageBuilder/packBuilderSlice.js';
@@ -86,7 +87,10 @@ const ImageMarked = styled('span')(({ theme }) => ({
 }));
 
 export default function ButtonBaseDemo() {
-    const selectedTemplate = useSelector((state) => state.packBuilderData.templateData) || defaultTemplate;
+    const userData = useSelector((state) => state.packBuilderData.userData);
+    const templateName = userData?.templateName || "Default";
+    let selectedTemplate = templatesMap[templateName.toLowerCase()];
+    const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
     const dispatch = useDispatch();
 
@@ -97,9 +101,10 @@ export default function ButtonBaseDemo() {
         dispatch(selectTemplate(selectedData));
     }
     
+  console.log("select temiplate ", selectedTemplate, userData);
   return (<>
     <Typography variant='caption' >Select Template for PDF</Typography>
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '100%' }}>
+    <Box sx={{ display: 'flex', flexWrap: 'no-wrap', minWidth: 300, width: '100%' }}>
         {Object.values(templatesMap).map((image, iIndex) => {
             console.log("image- ", image, image.thumbnail, defaultTemplate);
             return (
@@ -107,7 +112,7 @@ export default function ButtonBaseDemo() {
             focusRipple
             key={image.name}
             style={{
-                width: image.width,
+                width: isMobile ? '20%' : "30%",
                 border: selectedTemplate?.name == image.name ? '5px solid green' : '3px solid lightgrey',
                 borderRadius: '5px',
                 marginRight: '4px'

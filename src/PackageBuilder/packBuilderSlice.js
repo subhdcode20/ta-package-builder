@@ -44,6 +44,7 @@ export const todoSlice = createSlice({
   },
   reducers: {
     setUserData: (state, action) => {
+      console.log("set userData", action?.payload)
       state.userData = action?.payload;
     },
     submitReqData: (state, action) => {
@@ -427,7 +428,53 @@ export const todoSlice = createSlice({
       state["userProfileData"] = action?.payload;
     },
     selectTemplate: (state, action) => {
-      state["templateData"] = action?.payload || {name: 'default'}
+      let userData = state?.userData;
+      console.log('selectTemplate ', userData, action?.payload);
+      userData["templateName"] = action?.payload?.name || 'default'
+    },
+    handleRemovePolicyItem: (state, action) => {
+      let { policyType = null, deleteIndex = null } = action?.payload;
+      console.log("policy edit remove ", policyType, deleteIndex)
+      if(!policyType || isNaN(deleteIndex)) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || [];
+      if(deleteIndex > currArr.length) return;
+      let newArr = [ ...currArr ];
+      if(newArr.length > 0) newArr.splice(deleteIndex, 1);
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    handleAddPolicyItem: (state, action) => {
+      let { policyType = null } = action?.payload;
+      console.log("policy edit remove ", policyType)
+      if(!policyType ) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || null;
+      if(!currArr) currArr = [{ "text": "" }];
+      let newArr = [ ...currArr ];
+      newArr.push({text: ""});
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    updatePolicyText: (state, action) => {
+      let { policyType = null, val = '', textIndex = null } = action.payload;
+      console.log("policy edit ", policyType, val, textIndex)
+      if(!policyType || isNaN(textIndex)) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || [];
+      let newArr = [ ...currArr ];
+      newArr[textIndex] = {"text": val};
+      console.log("policy edit 2 ", policyType, val, textIndex, newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    setArrFlightsData: (state, action) => {
+      if(!action?.payload) return;
+      let { flightType = '', flightText = '' } = action?.payload;
+      if(!flightType || !flightText) return;
+      let flightsData = state["arrFlightsText"] || {};
+      let newData = {...flightsData};
+      newData[flightType] = flightText;
+      state["arrFlightsText"] = newData;
     }
   }
 });
@@ -460,7 +507,11 @@ export const {
   setTotalTransferPrice,
   setProfileData,
   setUserData,
-  selectTemplate
+  selectTemplate,
+  handleRemovePolicyItem,
+  handleAddPolicyItem,
+  updatePolicyText,
+  setArrFlightsData
 } = todoSlice.actions;
 
 // this is for configureStore

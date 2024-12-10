@@ -117,17 +117,16 @@ const HtmlPdfView = ({
             <View style={styles.hr} />
           </View>
         </View>
-      </Page>
-      <Page style={[styles.page, styles.page2]}>
+      
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection}>
-            <View style={styles.dayHeader}>
+            {/* <View style={styles.dayHeader}>
               <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-            </View>
+            </View> */}
             <View style={styles.sectionHeaderContainer}>
-              <Image style={styles.sectionIcon} src="/hotelTitle.png" />
+              {/* <Image style={styles.sectionIcon} src="/hotelTitle.png" /> */}
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Hotels</Text>
+                <Text style={styles.sectionTitle}>Day {currDayIndex + 1}</Text>
               </View>
             </View>
 
@@ -135,13 +134,13 @@ const HtmlPdfView = ({
               const { location, hotelName, selectedRooms = [] } = hotel;
               console.log("pdf html hotel data", location, selectedRooms)
               return (
-                <View>
+                <View style={styles.dayContainer}>
 
                   <View key={hotelIndex}  style={styles.hotelContainer}>
                     <View style={styles.hotelDetailsOuter}>
                         
                       <View  style={styles.hotelDetails}>
-                        <Text style={styles.hotelName}>{hotelName}</Text>
+                        <Text style={styles.hotelName}>Stay at {hotelName}</Text>
                         {selectedRooms.map((currRoom, roomIndex) => {
                           const {
                             roomName,
@@ -169,7 +168,7 @@ const HtmlPdfView = ({
                               {childAges.some((child) => child.extraBed === 'true') && (
                                 <Text style={styles.extraBedText}>With Extra Bed</Text>
                               )}
-                              <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                              <Text style={styles.mealPlan}>{mealPlan}</Text>
                             </View>
                           );
                         })}
@@ -183,12 +182,13 @@ const HtmlPdfView = ({
                         resizeMode="cover"
                       />
                     </View>
+                    
                   </View>
                   {itiDesc[currDayIndex]?.text && (
                     <View wrap={false} style={styles.itiDescContainer}>
-                      <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex + 1}</Text>
+                      {/* <Text style={styles.itiDescTitle}>Itinerary Description for Day-{currDayIndex + 1}</Text> */}
                       {itiDesc[currDayIndex].text.map((point, pointIndex) => (
-                        <Text key={pointIndex} style={styles.itiDescText}>{`${pointIndex + 1}. ${point}`}</Text>
+                        <Text key={pointIndex} style={styles.itiDescText}>{`.${point}`}</Text>
                       ))}
                     </View>
                   )}
@@ -260,10 +260,11 @@ const getThemedStyles = ({themeData = {}}) => {
         page: {
             fontFamily: 'Roboto',
             fontSize: 12,
-            backgroundColor: '#ffffff',  //'#f5f5f5',
+            backgroundColor: '#5baed1',  //'#f5f5f5',
         },
         page2: {
             padding: '8px',
+            backgroundColor: '#5baed1'
         },
         headerImage: {
             width: '100%',
@@ -285,14 +286,14 @@ const getThemedStyles = ({themeData = {}}) => {
     body: {
         paddingBottom: 65,
         paddingHorizontal: 20,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#5baed1',
         paddingTop: 15,
     },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#333333',
+        color: '#ffffff',
         marginBottom: 20,
         marginTop: 5,
     },
@@ -306,7 +307,7 @@ const getThemedStyles = ({themeData = {}}) => {
         marginVertical: 10,
         padding: 15,
         width: '100%',
-        backgroundColor: secondaryColor,  //'#0D3B66',
+        backgroundColor: '#e0ebf0',  //secondaryColor,  //'#0D3B66',
         color: '#ffffff',
         borderRadius: 5,
         marginBottom: 30,
@@ -319,11 +320,11 @@ const getThemedStyles = ({themeData = {}}) => {
         fontSize: 15,
         fontWeight: 'bold',
         marginRight: 5,
-        color: '#ffffff',
+        color: '#000000',
     },
     value: {
         fontSize: 15,
-        color: '#ffffff',
+        color: '#000000',
         flex: 1,
     },
     hr: {
@@ -335,7 +336,7 @@ const getThemedStyles = ({themeData = {}}) => {
     sectionHeaderContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 30,
+        marginBottom: 10,
         marginTop: 20,
     },
     sectionHeader: {
@@ -356,6 +357,7 @@ const getThemedStyles = ({themeData = {}}) => {
     },
     daySection: {
         marginBottom: 20,
+        paddingHorizontal: 20,
         pageBreakInside: 'avoid',
     },
     dayHeader: {
@@ -381,13 +383,18 @@ const getThemedStyles = ({themeData = {}}) => {
         color: '#333333',
         lineHeight: 1.5,
     },
+    dayContainer: {
+      backgroundColor: '#e0ebf0',
+      borderRadius: 5,
+    },
     hotelContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: 15,
+        marginBottom: 1,
         padding: 10,
         borderRadius: 5,
-        borderWidth: 1,
+        // borderWidth: 1,
+        backgroundColor: '#e0ebf0'
     },
     hotelImage: {
         width: 80,
@@ -413,9 +420,9 @@ const getThemedStyles = ({themeData = {}}) => {
         color: '#0D3B66',
     },
     roomDetails: {
-        marginVertical: 5,
+        marginVertical: 2,
         padding: 8,
-        backgroundColor: '#f9f9f9',
+        // backgroundColor: '#f9f9f9',
         borderRadius: 3,
         pageBreakInside: 'avoid',
     },
@@ -480,9 +487,9 @@ const getThemedStyles = ({themeData = {}}) => {
         marginTop: 10,
     },
     itiDescContainer: {
-        marginVertical: 10,
+        marginVertical: 1,
         padding: 10,
-        backgroundColor: 'white',
+        // backgroundColor: '#e0ebf0',
         borderRadius: 5,
     },
     itiDescTitle: {

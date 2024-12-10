@@ -45,12 +45,16 @@ const HtmlPdfView = ({
   userProfileData: {
     themeData = {},
     headerImage,
+    cancellationData = [],
+    paymentPolicy = [],
+    inclusions = [],
+    exclusions = []
   },
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
-  console.log("HEADERimg_check:", headerImage);
+  console.log("HEADERimg_check default:", headerImage, cancellationData);
   const styles = getThemedStyles(themeData) || null;
 
   if(!styles) return null;
@@ -210,7 +214,7 @@ const HtmlPdfView = ({
           </Text>
         </View>
         <View style={styles.hr} />
-        <View style={styles.sectionHeaderContainer}>
+        {/* <View style={styles.sectionHeaderContainer}>
           <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Exclusions</Text>
@@ -221,9 +225,81 @@ const HtmlPdfView = ({
           <Text style={styles.bullet}>• Anything not mentioned under Package Inclusions</Text>
           <Text style={styles.bullet}>• Cost incidental to any change in the itinerary/stay due to flight cancellation due to bad weather, ill health, and roadblocks, and/or any factors beyond control.</Text>
           <Text style={styles.bullet}>• Return flight/train fare</Text>
-          {/* <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text> */}
+          <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text>
           <Text style={styles.bullet}>• Domestic/International hotel check-in is at 1400 hrs and checkout is at 1200 hrs. Early check-in and late checkout are subject to availability and consent of the hotel.</Text>
-        </View>
+        </View> */}
+
+        {
+          inclusions && inclusions.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Inclusions</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                inclusions.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+
+        {
+          exclusions && exclusions.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Exclusions</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                exclusions.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+        
+        {
+          cancellationData && cancellationData.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Cancellation Policy</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                cancellationData.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+
+        {
+          paymentPolicy && paymentPolicy.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Payment Policy</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                paymentPolicy.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
 
         <View style={styles.priceSection}>
           <Text style={styles.priceTitle}>Total Package Price</Text>

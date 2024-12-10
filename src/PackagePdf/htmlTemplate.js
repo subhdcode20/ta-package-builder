@@ -3,8 +3,9 @@ import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
+import { templatesMap } from "../PdfTemplates/templateList.js";
 import DefaultTemplate from '../PdfTemplates/default/index.js';
-
+import KeralaTemplate from '../PdfTemplates/kerala/index.js';
 
 Font.register({
   family: 'Roboto',
@@ -528,19 +529,20 @@ const styles = StyleSheet.create({
   },
 });
 
-const templateMap = {
-  'default': DefaultTemplate
-}
+// const templatesMap = {
+//   'default': DefaultTemplate,
+//   'kerala': KeralaTemplate
+// }
 
 const RenderPreview = (props) => {
   console.log("RenderPreview ", props);
   const {
-    userProfileData: {
+    userData: {
       templateName = 'default'  
     } = {}
   } = props;
-
-  const TemplateView = templateMap[templateName];
+  console.log("user template ", templateName, props);
+  const TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
 
   return (<div style={{ width: '100%', height: 'auto' }}>
     <PDFViewer width={'100%'} height={'800'}>

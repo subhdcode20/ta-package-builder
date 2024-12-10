@@ -47,14 +47,16 @@ const AppLayout = ({ children, showNavBar = true }) => {
 							/* forceRefresh */ true,
 						);
 						console.log("signedInIdToken ", userData?.phone, signedInIdToken, typeof signedInIdToken);
-						localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
+						// localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
+            localStorage.setItem('afFirebaseIdToken', signedInIdToken);
             // userData['firebaseIdToken'] = signedInIdToken;
-            dispatch(setUserData({ ...userData, firebaseIdToken: signedInIdToken }));
 					}
 				});
 			} catch (e) {
 				console.log("signedInIdToken error ", e);
 			}
+
+      dispatch(setUserData({ ...userData }));
 		};
 
 		fetchUserIdToken();

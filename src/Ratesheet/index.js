@@ -41,6 +41,7 @@ const UploadRatesheet = () => {
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
     const { userData={} } = useContext(MainContext);
+    const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
@@ -74,7 +75,7 @@ const UploadRatesheet = () => {
             method: 'POST',
             headers: { 
                 // 'content-type': 'application/x-www-form-urlencoded',
-                'Authorization': userData?.firebaseIdToken 
+                'Authorization': firebaseIdToken 
             },
             data: {
                 validFrom: ratesheet.startDate,
@@ -83,7 +84,7 @@ const UploadRatesheet = () => {
             },
             url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
         };
-        console.log("Ratesheet ->", userData, userData?.firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
+        console.log("Ratesheet ->", userData, firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
 
         let response = await axios(axiosOptions);
         console.log('response axios ', response);
