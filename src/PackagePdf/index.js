@@ -10,8 +10,9 @@ import axios from 'axios';
 import { db } from '../firebaseConfig';
 import { MainContext } from '../Utility.js';
 // import PdfView from './pdfView';
+import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
-import { setProfileData } from '../PackageBuilder/packBuilderSlice.js';
+import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
 
 // Temporary defined HERE:
 const destinationImages = {
@@ -41,7 +42,8 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 
 	useEffect(() => {
 		console.log("CHECK_IMGheader:",destinationImages[reqData?.destination.toLowerCase()] );
-		setHeaderImage(destinationImages[reqData?.destination.toLowerCase()])
+		setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
+		getAboutDest();
 	},[reqData?.destination])
 
 	const getLogoB64encoded = async () => {
@@ -81,11 +83,39 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
         // setCancellationData(cData);
 	}
 
+	const getAboutDest = async () => {
+		// console.log(reqData, 'gemRes -- ');
+        if(!reqData?.destination) return;
+        setLoading(true);
+		let finalAboutDestText = await aiAboutDest(reqData?.destination);
+        console.log("Get about destination", finalAboutDestText, userData.phone, reqData?.destination);
+		if(finalAboutDestText) dispatch(setProfileData({ ...userProfileData, "aboutDestText": finalAboutDestText}));
+
+		// setUserPdfData((prev) => {
+		// 	return { ...prev, aboutDestText: docSnapPdfData.data() };
+		// })
+		
+		// let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
+        // if (docSnapPdfData.exists()) {
+        //     console.log("Profile Date", docSnapPdfData.data());
+        //     // dispatch(setProfileData(docSnapPdfData.data()));
+		// 	setUserPdfData((prev) => {
+		// 		return { ...prev, aboutDestText: docSnapPdfData.data() };
+		// 	})
+        // }
+        setLoading(false);
+        // setCancellationData(cData);
+	}
+
     useEffect(() => {
-		console.log("ger profile package builder ", userProfileData);
+		const getData = async () => {
+			console.log("ger profile package builder ", userProfileData);
+			await getProfileData();
+		}
         // if(!userProfileData) {
 		// }
-		getProfileData();
+
+		getData();
     }, [])
 
     // useEffect(() => {

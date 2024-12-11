@@ -83,13 +83,14 @@ const ReqCardView = ({ reqData = {} }) => {
             </Box>
             <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>
                 {/* <KingBedIcon /> */}
-                <Typography variant="caption">Flights:</Typography>
+                <Typography variant="caption">Arrival Flights:</Typography>
                 &nbsp;
                 <TextField
                     sx={{ width: "100%" }}
                     id="flihtsArr"
                     value={arrFlightsText?.arrival || ''}
                     variant="standard"
+                    placeholder='6E-804 at 09:00 AM'
                     size="small"
                     onChange={(e) => dispatch(setArrFlightsData({"flightType": "arrival", "flightText": e.target.value}))}
                 />

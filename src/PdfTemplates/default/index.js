@@ -33,6 +33,7 @@ const HtmlPdfView = ({
     req = {},
   },
   dayWiseData: {
+    flights = {},
     hotels = [],
     itiDesc = []
   },
@@ -202,6 +203,19 @@ const HtmlPdfView = ({
 
           </View>
         ))}
+
+        <View style={styles.sectionHeaderContainer}>
+          <Image style={styles.sectionIcon} src="/transferTitle.png" />
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Flights</Text>
+          </View>
+        </View>
+        <View style={styles.transferContainer}>
+          <Text style={styles.transferText}>
+            {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
+          </Text>
+        </View>
+
         <View style={styles.sectionHeaderContainer}>
           <Image style={styles.sectionIcon} src="/transferTitle.png" />
           <View style={styles.sectionHeader}>

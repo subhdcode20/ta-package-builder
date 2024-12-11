@@ -22,3 +22,6 @@ export const templatesMap = {
         width: '30%'
     }
 }
+
+// how to run react-pdf in a web worker(separate thread)
+// https://dev.to/simonhessel/creating-pdf-files-without-slowing-down-your-app-a42

@@ -33,6 +33,7 @@ const HtmlPdfView = ({
     req = {},
   },
   dayWiseData: {
+    flights = {},
     hotels = [],
     itiDesc = []
   },
@@ -40,27 +41,161 @@ const HtmlPdfView = ({
     phone,
     logoB64Str,
     email,
-    name,
+    name
   },
   userProfileData: {
     themeData = {},
     headerImage,
+    cancellationData = [],
+    paymentPolicy = [],
+    inclusions = [],
+    exclusions = [],
+    aboutDestText = ''
   },
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
-  console.log("HEADERimg_check:", headerImage);
+  console.log("HEADERimg_check:", headerImage, inclusions);
   const styles = getThemedStyles(themeData) || null;
 
   if(!styles) return null;
+
+  return(
+    <Document>
+      <Page size={'A4'} style={styles.page} debug={false}>
+        <View style={styles.bannerContainer}>
+          <Image
+            style={[styles.pageBackground, styles.headerImage]}
+            src={"/kerala-template-bannerlow.png"}
+            resizeMode="cover"
+          />
+        </View>
+        <View style={styles.bannerBody}>
+          {/* {
+            logoB64Str && (<Image
+              style={[styles.logo]}
+              src={logoB64Str}
+              resizeMode="contain"
+            />)
+          } */}
+          <Text style={[styles.title, { letterSpacing: 1.5 }]}>{req?.noOfNights} Nights Serene {req?.destination || 'N/A'} Itinerary for - {req?.trackingId}</Text>
+        </View>
+        <View style={styles.body}>
+          {
+            logoB64Str && (<Image
+              style={[styles.logo]}
+              src={logoB64Str}
+              resizeMode="contain"
+            />)
+          }
+          <View style={{ margin: "auto" }}>
+            <Text style={styles.footerText}>{req?.address}</Text>
+            <Text style={styles.footerText}>Email: {email}</Text>
+            <Text style={styles.footerText}>Phone: {phone}</Text>
+          </View>
+        </View>
+        
+        <View style={styles.infoBox}>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Passengers: </Text>
+            <Text style={styles.value}>{req?.trackingId || 'N/A'}{req?.totalAdultPax > 1 ? ` + ${req?.totalAdultPax} Person. ${req?.totalChildPax > 0 ? `${req?.totalChildPax} Children` : ''}` : ''}</Text>
+          </View>
+          // <View style={styles.infoRow}>
+          //   <Text style={styles.label}>Destination: </Text>
+          //   <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+          // </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Trip Starting on: </Text>
+            <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.label}>Trip Duration: </Text>
+            <Text style={styles.value}>{Number(req?.noOfNights) + 1 || 'N/A'} Days</Text>
+          </View>
+          // <View style={styles.infoRow}>
+          //   <Text style={styles.label}>Guest: </Text>
+          //   <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
+          // </View>
+        </View>
+        
+        <View style={{ alignSelf: 'center', textAlign: 'center', padding: 30, display: 'flex', height: '100%' }}>
+          <Text style={[styles.label, { lineHeight: 2, fontSize: 30, margin: 'auto', letterSpacing: 3 }]}>About {req?.destination}</Text>
+          <Text style={[styles.label, { lineHeight: 1.2, fontSize: 15, margin: 'auto', letterSpacing: 1.2 }]}>{aboutDestText}</Text>
+        </View>
+        {
+          (itiDesc || []).map((day, index) => {
+            return (<View wrap={false} style={styles.dayItiContainer}>
+              <Text style={styles.dayItiTitle}>Day {index}</Text>
+              <View style={styles.dayItiTextContainer}>
+                {
+                  (day?.text || []).map((item) => {
+                    return (<Text style={styles.dayItiText}>• {item}</Text>)
+                  })
+                }
+              </View>
+            </View>)
+          })
+        }
+        {
+          (inclusions || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
+            <Text break style={styles.dayItiTitle}>Inclusions</Text>
+            {
+              inclusions.map((inc) => {
+                if(inc?.text) return (<View style={styles.dayItiTextContainer}>
+                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                </View>)
+              })
+            }
+          </View>)
+        }
+        {
+          (exclusions || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
+            <Text break style={styles.dayItiTitle}>Exclusions</Text>
+            {
+              exclusions.map((inc) => {
+                if(inc?.text) return (<View style={styles.dayItiTextContainer}>
+                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                </View>)
+              })
+            }
+          </View>)
+        }
+        {
+          (cancellationData || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
+            <Text style={styles.dayItiTitle}>Cancellation Policy</Text>
+            {
+              cancellationData.map((inc) => {
+                if(inc?.text) return (<View style={styles.dayItiTextContainer}>
+                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                </View>)
+              })
+            }
+          </View>)
+        }
+        {
+          (paymentPolicy || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
+            <Text style={styles.dayItiTitle}>Payment Policy</Text>
+            {
+              paymentPolicy.map((inc) => {
+                if(inc?.text) return (<View style={styles.dayItiTextContainer}>
+                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                </View>)
+              })
+            }
+          </View>)
+        }
+      </Page>
+    </Document>
+  )
+
   return (
     <Document>
-      <Page style={styles.page} wrap={false}>
+      <Page size={'A4'} style={styles.page} >
         <View>
-        {headerImage && (
+          {headerImage && (
             <Image
-              style={styles.headerImage}
+              style={[styles.pageBackground, styles.headerImage]}
               src={headerImage}
               resizeMode="cover"
             />
@@ -198,6 +333,19 @@ const HtmlPdfView = ({
 
           </View>
         ))}
+
+        <View style={styles.sectionHeaderContainer}>
+          <Image style={styles.sectionIcon} src="/transferTitle.png" />
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Flights</Text>
+          </View>
+        </View>
+        <View style={styles.transferContainer}>
+          <Text style={styles.transferText}>
+            {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
+          </Text>
+        </View>
+
         <View style={styles.sectionHeaderContainer}>
           <Image style={styles.sectionIcon} src="/transferTitle.png" />
           <View style={styles.sectionHeader}>
@@ -210,7 +358,7 @@ const HtmlPdfView = ({
           </Text>
         </View>
         <View style={styles.hr} />
-        <View style={styles.sectionHeaderContainer}>
+        {/* <View style={styles.sectionHeaderContainer}>
           <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Exclusions</Text>
@@ -221,9 +369,81 @@ const HtmlPdfView = ({
           <Text style={styles.bullet}>• Anything not mentioned under Package Inclusions</Text>
           <Text style={styles.bullet}>• Cost incidental to any change in the itinerary/stay due to flight cancellation due to bad weather, ill health, and roadblocks, and/or any factors beyond control.</Text>
           <Text style={styles.bullet}>• Return flight/train fare</Text>
-          {/* <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text> */}
+          <Text style={styles.bullet}>• AC will work from 9 pm to 6 am on the houseboat and houseboat check-out time is 9 am. If needed to use AC service at other times, INR 2000 to be paid directly at the Houseboat (For Deluxe Houseboat)</Text>
           <Text style={styles.bullet}>• Domestic/International hotel check-in is at 1400 hrs and checkout is at 1200 hrs. Early check-in and late checkout are subject to availability and consent of the hotel.</Text>
-        </View>
+        </View> */}
+
+        {
+          inclusions && inclusions.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Inclusions</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                inclusions.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+
+        {
+          exclusions && exclusions.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Exclusions</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                exclusions.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+        
+        {
+          cancellationData && cancellationData.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Cancellation Policy</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                cancellationData.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
+
+        {
+          paymentPolicy && paymentPolicy.length > 0 && (<>
+            <View style={styles.sectionHeaderContainer}>
+              <Image style={styles.sectionIcon} src="/exclusionTitle.png" />
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Payment Policy</Text>
+              </View>
+            </View>
+            <View style={styles.exclusionContainer}>
+              {
+                paymentPolicy.map((item, index) => {
+                  return (<Text style={styles.bullet}>• {item?.text}</Text>)
+                })
+              }
+            </View>
+          </>)
+        }
 
         <View style={styles.priceSection}>
           <Text style={styles.priceTitle}>Total Package Price</Text>
@@ -255,12 +475,126 @@ const getThemedStyles = ({themeData = {}}) => {
         textPrimary = "#212121",
         textSecondary = "#000000"
     } = themeData;
+    const bannerHeight = 500;
 
+    return StyleSheet.create({
+      page: {
+          fontFamily: 'Roboto',
+          fontSize: 12,
+          backgroundColor: '#2b9fbd1f'  //'#5baed1',  //'#f5f5f5',
+      },
+      pageBackground: {
+        position: 'absolute',
+        top: '0px',
+        right: '0px',
+        // minWidth: '100%',
+        // minHeight: '100%',
+        // display: 'block',
+        height: '100%',
+        width: '100%',
+      },
+      headerImage: {
+        width: '100%',
+        height: bannerHeight,
+        objectFit: 'cover',
+        marginBottom: 1,
+        borderRadius: 10,
+        borderBottom: '10px solid #ffffff'
+      },
+      logo: {
+          width: 150,
+          height: 'auto',
+          alignSelf: "left",
+      },
+      image: {
+          marginVertical: 15,
+          marginHorizontal: 100,
+          width: 100,
+          alignSelf: 'center',
+      },
+      bannerBody: {
+        paddingVertical: 20,
+        paddingHorizontal: 30,
+        // backgroundColor: '#5baed1',
+        paddingTop: 25,
+      },
+      body: {
+        marginTop: 300,
+        paddingVertical: 20,
+        paddingHorizontal: 30,
+        // backgroundColor: '#5baed1',
+        paddingTop: 15,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+      },
+      title: {
+        fontSize: 35,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#000000',
+        marginBottom: 20,
+        marginTop: 5,
+        // backgroundColor: '#ffffff'
+      },  
+      footerText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#333333',
+        marginBottom: 4,
+      },
+      infoBox: {
+        marginVertical: 10,
+        marginHorizontal: 30,
+        padding: 15,
+        paddingHorizontal: 30,
+        width: '100%',
+        backgroundColor: '#80c2d0',  //secondaryColor,  //'#0D3B66',
+        color: '#000000',
+        alignSelf: 'center',
+        textAlign: 'center',
+        borderRadius: 10,
+        border: '5px solid #ffffff'
+      },
+      infoRow: {
+        flexDirection: 'row',
+        marginVertical: 3,
+      },
+      label: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        marginRight: 5,
+        color: '#000000',
+      },
+      value: {
+        fontSize: 15,
+        color: '#000000',
+        flex: 1,
+      },
+      bannerContainer: {
+      },
+      dayItiContainer: {
+        margin: 30,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-evenly'
+      },
+      dayItiTitle: {
+        fontSize: 25,
+        lineHeight: 2,
+        alignSelf: 'center'
+      }
+    });
+
+    
+    
+    
+    
     return StyleSheet.create({
         page: {
             fontFamily: 'Roboto',
             fontSize: 12,
-            backgroundColor: '#5baed1',  //'#f5f5f5',
+            backgroundColor: '#2b9fbd1f'  //'#5baed1',  //'#f5f5f5',
         },
         page2: {
             padding: '8px',
@@ -268,12 +602,13 @@ const getThemedStyles = ({themeData = {}}) => {
         },
         headerImage: {
             width: '100%',
-            height: 200,
+            height: '500',
             objectFit: 'cover',
             marginBottom: 1,
+            borderBottom: '5px solid black'
         },
         logo: {
-            width: 100,
+            width: 150,
             height: 'auto',
             alignSelf: "center",
         },
@@ -284,18 +619,19 @@ const getThemedStyles = ({themeData = {}}) => {
         alignSelf: 'center',
     },
     body: {
-        paddingBottom: 65,
-        paddingHorizontal: 20,
-        backgroundColor: '#5baed1',
+        paddingVertical: 20,
+        paddingHorizontal: 30,
+        // backgroundColor: '#5baed1',
         paddingTop: 15,
     },
     title: {
-        fontSize: 25,
+        fontSize: 35,
         fontWeight: 'bold',
         textAlign: 'center',
-        color: '#ffffff',
+        color: '#000000',
         marginBottom: 20,
         marginTop: 5,
+        // backgroundColor: '#ffffff'
     },
     itiTextContainer: {
         marginVertical: 5,
@@ -537,6 +873,19 @@ const getThemedStyles = ({themeData = {}}) => {
         textAlign: 'center',
         color: 'grey',
     },
+    pageBackground: {
+      position: 'absolute',
+      top: '0px',
+      right: '0px',
+      // minWidth: '100%',
+      // minHeight: '100%',
+      // display: 'block',
+      height: '100%',
+      width: '100%',
+    },  
+    bannerContainer: {
+      // height: '1000px'
+    }
 });
 }
 

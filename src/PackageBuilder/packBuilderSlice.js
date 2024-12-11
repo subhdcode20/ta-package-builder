@@ -475,6 +475,10 @@ export const todoSlice = createSlice({
       let newData = {...flightsData};
       newData[flightType] = flightText;
       state["arrFlightsText"] = newData;
+    },
+    setAboutDest: (state, action) => {
+      if(!action?.payload) return;
+      state["aboutDestText"] = action?.payload;
     }
   }
 });
@@ -511,7 +515,8 @@ export const {
   handleRemovePolicyItem,
   handleAddPolicyItem,
   updatePolicyText,
-  setArrFlightsData
+  setArrFlightsData,
+  setAboutDest
 } = todoSlice.actions;
 
 // this is for configureStore

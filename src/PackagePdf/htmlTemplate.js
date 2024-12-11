@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
+import Button from '@mui/material/Button';
 import { tr } from 'date-fns/locale';
 
 import { templatesMap } from "../PdfTemplates/templateList.js";
@@ -535,6 +536,7 @@ const styles = StyleSheet.create({
 // }
 
 const RenderPreview = (props) => {
+  const [reloadPdfView, setReloadPdfView] = useState(true);
   console.log("RenderPreview ", props);
   const {
     userData: {
@@ -542,13 +544,23 @@ const RenderPreview = (props) => {
     } = {}
   } = props;
   console.log("user template ", templateName, props);
-  const TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
+  let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
+  // if(process.env.NODE_ENV == 'development' && !reloadPdfView) TemplateView = null;
+
+  const handleRefresh = () => {
+    setReloadPdfView(false);
+    setTimeout(() => setReloadPdfView(true), 1000);
+  }
 
   return (<div style={{ width: '100%', height: 'auto' }}>
-    <PDFViewer width={'100%'} height={'800'}>
-      {/* <HtmlPdfView {...props} /> */}
-      <TemplateView {...props} />
-    </PDFViewer>
+    {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}>Refresh PDF</Button>}
+    
+    {
+      reloadPdfView && (<PDFViewer width={'100%'} height={'800'}>
+        {/* <HtmlPdfView {...props} /> */}
+        <TemplateView {...props} />
+      </PDFViewer>)
+    }
   </div>)
 };
 
