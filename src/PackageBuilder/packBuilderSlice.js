@@ -43,6 +43,10 @@ export const todoSlice = createSlice({
     finalTransferPrice: ''
   },
   reducers: {
+    setUserData: (state, action) => {
+      console.log("set userData", action?.payload)
+      state.userData = action?.payload;
+    },
     submitReqData: (state, action) => {
       // if(!action.reqData || isEmptyObject(action.reqData)) return;
       console.log("submitReqData reducer ", state, action.payload);
@@ -289,8 +293,8 @@ export const todoSlice = createSlice({
         Object.keys(copyDetailsToDays).forEach(dayNo => {
           // if(dayNo <= 0) continue;
           let copyDayPrice = state.totalDayPrices[Number(dayNo) - 1] || {};
+          copyDayPrice["totalPrice"] = totalHotelPriceForCurrDay;
           console.log("save day daya copy", dayNo, copyDayPrice);
-          state.totalDayPrices[Number(dayNo) - 1]["totalPrice"] = totalHotelPriceForCurrDay;
 
           let copyDaySelectedHotels = state.selectedHotels[Number(dayNo) - 1];
           // let newDayData = state.selectedHotels[state.currDayIndex].map((h) => {
@@ -385,8 +389,8 @@ export const todoSlice = createSlice({
     },
     setTotalPackagePrice: (state, action) => {
       let { totalPackPrice = '' } = action?.payload;
-      console.log("finalPackPrice", totalPackPrice);
-      if(!totalPackPrice) return;
+      console.log("finalPackPrice", totalPackPrice, isNaN(totalPackPrice));
+      if(isNaN(totalPackPrice)) return;
       state["finalPackPrice"] = totalPackPrice;
     },
     handleRemoveItiItem: (state, action) => {
@@ -418,6 +422,63 @@ export const todoSlice = createSlice({
         return acc + Number(p?.totalPrice || 0);
       }, 0);
       state.finalPackPrice = Number(state["finalTransferPrice"]) + Number(totalPackCalc);
+    },
+    setProfileData: (state, action) => {
+      console.log("setProfileData ", action?.payload);
+      state["userProfileData"] = action?.payload;
+    },
+    selectTemplate: (state, action) => {
+      let userData = state?.userData;
+      console.log('selectTemplate ', userData, action?.payload);
+      userData["templateName"] = action?.payload?.name || 'default'
+    },
+    handleRemovePolicyItem: (state, action) => {
+      let { policyType = null, deleteIndex = null } = action?.payload;
+      console.log("policy edit remove ", policyType, deleteIndex)
+      if(!policyType || isNaN(deleteIndex)) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || [];
+      if(deleteIndex > currArr.length) return;
+      let newArr = [ ...currArr ];
+      if(newArr.length > 0) newArr.splice(deleteIndex, 1);
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    handleAddPolicyItem: (state, action) => {
+      let { policyType = null } = action?.payload;
+      console.log("policy edit remove ", policyType)
+      if(!policyType ) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || null;
+      if(!currArr) currArr = [{ "text": "" }];
+      let newArr = [ ...currArr ];
+      newArr.push({text: ""});
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    updatePolicyText: (state, action) => {
+      let { policyType = null, val = '', textIndex = null } = action.payload;
+      console.log("policy edit ", policyType, val, textIndex)
+      if(!policyType || isNaN(textIndex)) return;
+      let newProfileData = state?.userProfileData || {};
+      let currArr = newProfileData[policyType] || [];
+      let newArr = [ ...currArr ];
+      newArr[textIndex] = {"text": val};
+      console.log("policy edit 2 ", policyType, val, textIndex, newArr, currArr);
+      newProfileData[policyType] = newArr;
+    },
+    setArrFlightsData: (state, action) => {
+      if(!action?.payload) return;
+      let { flightType = '', flightText = '' } = action?.payload;
+      if(!flightType || !flightText) return;
+      let flightsData = state["arrFlightsText"] || {};
+      let newData = {...flightsData};
+      newData[flightType] = flightText;
+      state["arrFlightsText"] = newData;
+    },
+    setAboutDest: (state, action) => {
+      if(!action?.payload) return;
+      state["aboutDestText"] = action?.payload;
     }
   }
 });
@@ -447,7 +508,15 @@ export const {
   setHotelLocation,
   setTotalPackagePrice,
   handleRemoveItiItem,
-  setTotalTransferPrice
+  setTotalTransferPrice,
+  setProfileData,
+  setUserData,
+  selectTemplate,
+  handleRemovePolicyItem,
+  handleAddPolicyItem,
+  updatePolicyText,
+  setArrFlightsData,
+  setAboutDest
 } = todoSlice.actions;
 
 // this is for configureStore

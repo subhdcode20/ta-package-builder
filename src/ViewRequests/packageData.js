@@ -8,8 +8,12 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import { useNavigate } from "react-router-dom";
+
 const PackageData = ({ packageDetails = [], reqData = {} }) => {
   const { pickUp, cabType, dropLoc } = reqData || {};
+  const navigate = useNavigate();
+  
   console.log('PackageData render ', reqData)
   return (
     <Box
@@ -233,11 +237,11 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
             </Accordion>
           );
         })
-      ) : (
-        <Typography variant="body1" sx={{ color: '#777', paddingTop: 2 }}>
-          No packages created for this Request!
-        </Typography>
-      )}
+      ) : (<Box sx={{ m: 2, display: 'flex', width: 'max-content', justifyContent: 'space-evenly' }}>
+        <Typography variant='body2' sx={{ margin: 'auto' }}>No packages created for this Request! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
+        &nbsp;
+        <Button size="small" variant='contained' onClick={() => navigate('/itinerary/' + reqData?.reqId)}>Now!</Button>
+      </Box>)}
     </Box>
   );
 };

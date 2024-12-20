@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
+import Button from '@mui/material/Button';
 import { tr } from 'date-fns/locale';
 
+import { templatesMap } from "../PdfTemplates/templateList.js";
+import DefaultTemplate from '../PdfTemplates/default/index.js';
+import KeralaTemplate from '../PdfTemplates/kerala/index.js';
 
 Font.register({
   family: 'Roboto',
@@ -31,7 +35,6 @@ const formatDate = (timestamp) => {
 const HtmlPdfView = ({
   reqData: {
     req = {},
-    headerImage,
   },
   dayWiseData: {
     hotels = [],
@@ -43,10 +46,19 @@ const HtmlPdfView = ({
     email,
     name,
   },
+  userProfileData: {
+    themeData: {
+      primaryColor = "#b352d1",
+      secondaryColor = "#000000bf",
+      textPrimary = "#212121",
+      textSecondary = "#000000"
+    } = {},
+    headerImage,
+  },
   totalPackPrice = ''
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
-  console.log("pdf template render ", logoB64Str, hotels);
+  console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check:", headerImage);
   return (
     <Document>
@@ -91,7 +103,7 @@ const HtmlPdfView = ({
               </View>
               <View style={styles.infoRow}>
                 <Text style={styles.label}>Guest: </Text>
-                <Text style={styles.value}>{req?.adultPax} Adult {req?.childPax ? `| ${req?.childPax} Child` : ''}</Text>
+                <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
               </View>
             </View>
 
@@ -158,7 +170,7 @@ const HtmlPdfView = ({
                             <View wrap={false} key={roomIndex} style={styles.roomDetails}>
                               <Text style={styles.roomType}>{roomName}</Text>
                               <Text style={styles.roomOccupancy}>
-                                {adults} Adults, {child} Child
+                                {adults} Adult{adults > 1 && 's'} {child ? `, ${child} Children` : ''}
                               </Text>
                               {childAges.some((child) => child.extraBed === 'true') && (
                                 <Text style={styles.extraBedText}>With Extra Bed</Text>
@@ -376,8 +388,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   hotelImage: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     marginLeft: 30,
     marginRight:15,
     marginTop: 20,
@@ -518,12 +530,37 @@ const styles = StyleSheet.create({
   },
 });
 
+// const templatesMap = {
+//   'default': DefaultTemplate,
+//   'kerala': KeralaTemplate
+// }
+
 const RenderPreview = (props) => {
+  const [reloadPdfView, setReloadPdfView] = useState(true);
   console.log("RenderPreview ", props);
+  const {
+    userData: {
+      templateName = 'default'  
+    } = {}
+  } = props;
+  console.log("user template ", templateName, props);
+  let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
+  // if(process.env.NODE_ENV == 'development' && !reloadPdfView) TemplateView = null;
+
+  const handleRefresh = () => {
+    setReloadPdfView(false);
+    setTimeout(() => setReloadPdfView(true), 1000);
+  }
+
   return (<div style={{ width: '100%', height: 'auto' }}>
-    <PDFViewer width={'100%'} height={'800'}>
-      <HtmlPdfView {...props} />
-    </PDFViewer>
+    {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}>Refresh PDF</Button>}
+    
+    {
+      reloadPdfView && (<PDFViewer width={'100%'} height={'800'}>
+        {/* <HtmlPdfView {...props} /> */}
+        <TemplateView {...props} />
+      </PDFViewer>)
+    }
   </div>)
 };
 

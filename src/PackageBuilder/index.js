@@ -62,8 +62,19 @@ const DayWisePackageBuilder = () => {
 
 	useEffect(() => {
 		if (!storeReqData || isEmptyObject(storeReqData)) return;
-		console.log("reqtest- set from store", storeReqData, reqData && reqData?.destination);
-		setReqData(storeReqData);
+		let { roomOcc = [] } = storeReqData;
+		console.log("reqtest- set from store", storeReqData, roomOcc, reqData && reqData?.destination);
+		let totalPaxCount = roomOcc.reduce((acc, i) => {
+			console.log('totalPaxCount loop ', acc, i);
+			acc.adultPax += Number(i.adultPax || 0);
+			acc.childPax += Number(i.childPax || 0);
+			return acc;
+		}, { adultPax: 0, childPax: 0 });
+		setReqData({
+			...storeReqData,
+			totalAdultPax: totalPaxCount?.adultPax || 0,
+			totalChildPax: totalPaxCount?.childPax || 0
+		});
 	}, storeReqData);
 	
 	// useEffect(() => {

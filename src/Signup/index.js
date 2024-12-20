@@ -61,9 +61,9 @@ const SignUp = () => {
     const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);
     // ->  userDocs/phone/fileName
     await uploadBytes(fileRef, file);
-    if(fileName == "companyLogo") {
-      await handleSavePdfData(file);
-    }
+    // if(fileName == "companyLogo") {
+    //   await handleSavePdfData(file);
+    // }
     return await getDownloadURL(fileRef);
   };
 
@@ -119,16 +119,16 @@ const SignUp = () => {
     }
   };
 
-  const handleSavePdfData = async (companyLogo) => {
-    console.log("fileB64 initial", personalInfo.phone, companyLogo, typeof companyLogo);
-    // setCompanyInfo({ ...companyInfo, companyLogo });
-    let fileB64 = await fileToBase64(companyLogo);
-    console.log("fileB64 ", fileB64, companyLogo);
-    let docRef = doc(db, "userPdfData", `+91${personalInfo.phone}`)
-    await setDoc(docRef, {
-      logoB64Str: fileB64
-    }, { merge: true });
-  }
+    // const handleSavePdfData = async (companyLogo) => {
+    //   console.log("fileB64 initial", personalInfo.phone, companyLogo, typeof companyLogo);
+    //   // setCompanyInfo({ ...companyInfo, companyLogo });
+    //   let fileB64 = await fileToBase64(companyLogo);
+    //   console.log("fileB64 ", fileB64, companyLogo);
+    //   let docRef = doc(db, "userPdfData", `+91${personalInfo.phone}`)
+    //   await setDoc(docRef, {
+    //     logoB64Str: fileB64
+    //   }, { merge: true });
+    // }
 
   return (
     <Container maxWidth="sm">

@@ -14,19 +14,46 @@ import Typography from "@mui/material/Typography";
 import Visibility from "@mui/icons-material/Visibility";
 import Edit from "@mui/icons-material/Edit";
 import Close from "@mui/icons-material/Close";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useSelector, useDispatch } from 'react-redux';
+
 import { db, storage } from "../firebaseConfig";
+// import templatesMap from "../PdfTemplates/templateList.js";
+import EditCancellationView from "../PackageBuilder/editCancellationPolicy.js";
+import EditExclusions from "./editExclusions.js";
+import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
+import SelectTemplate from "./selectTemplate.js";
+// import EditCancellationPolicy from "../PackageBuilder/editCancellationPolicy.js";
+import { isEmptyObject } from "../Utility.js";
 
 const Profile = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userPhone = user.phone;
-  const [userData, setUserData] = useState(null);
-  const [editedData, setEditedData] = useState(null);
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const userDataStore = useSelector((state) => state.packBuilderData.userData) || null;
+  const [editedData, setEditedData] = useState({});
+  // const [brandData, setBrandData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
+  const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
+  const userData = JSON.parse(localStorage.getItem('user'));
+  const userPhone = userData.phone;
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const dispatch = useDispatch();
+
+  const {
+    companyInfo= {},
+    companyName = '',
+    name = '',
+    phone = '',
+    email = '',
+    address = '',
+  } = editedData;
+
+  const { companyLogo = '' } = companyInfo;
+  console.log("profile logo", userData, companyLogo, editedData);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,13 +62,16 @@ const Profile = () => {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setUserData(data);
+        // setUserData(data);
         setEditedData(data);
+        console.log("get user ", data)
+        dispatch(setUserData({ ...data }));
         setDestinations(data.destinations || []); 
       } else {
         alert("No user data found!");
       }
     };
+
     fetchData();
   }, [userPhone]);
 
@@ -62,11 +92,14 @@ const Profile = () => {
     if (file) {
       const filePath = `/userDocs/${userPhone}/companyLogo`;
       const downloadURL = await uploadFileToStorage(file, filePath);
-      setEditedData({
+      const finalData = {
         ...editedData,
-        comapnyInfo: { ...editedData.comapnyInfo, companyLogo: downloadURL },
-      });
+        companyInfo: { ...editedData.companyInfo, companyLogo: downloadURL },
+      }
+      setEditedData(finalData);
       setIsEdited(true);
+      console.log("user logo local update", finalData);
+      localStorage.setItem("user", JSON.stringify({ ...userData, companyInfo: { ...editedData.companyInfo, companyLogo: downloadURL } }));
     }
   };
 
@@ -77,7 +110,7 @@ const Profile = () => {
       const downloadURL = await uploadFileToStorage(file, filePath);
       setEditedData({
         ...editedData,
-        comapnyInfo: { ...editedData.comapnyInfo, [key]: downloadURL },
+        companyInfo: { ...editedData.companyInfo, [key]: downloadURL },
       });
       setIsEdited(true);
     }
@@ -92,11 +125,33 @@ const Profile = () => {
     const userDocRef = doc(db, "userDetails", userPhone);
     try {
       await updateDoc(userDocRef, { ...editedData, destinations });
+      localStorage.setItem("user", JSON.stringify({ ...editedData, destinations }));
       alert("Profile updated successfully!");
       window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
+    }
+  };
+
+  const handleBrandUpdate = async () => {
+    console.log("update BrandUpdate", userProfileData, userDataStore?.templateName);
+    if(!userDataStore || isEmptyObject(userDataStore)) return;
+    const userProfileDocRef = doc(db, "userProfileData", userPhone);
+    const userDocRef = doc(db, "userDetails", userPhone);
+    try {
+      if(userProfileData || !isEmptyObject(userProfileData)) await setDoc(userProfileDocRef, userProfileData, { merge: true });
+      await setDoc(userDocRef, {
+        ...editedData,
+        templateName: userDataStore?.templateName
+      },
+      { merge: true });
+      localStorage.setItem("user", JSON.stringify({ ...editedData, templateName: userDataStore?.templateName }));
+      alert("Brand data updated successfully!");
+      window.location.reload();
+    } catch (error) {
+      console.log("Error updating Brand data:", error);
+      alert("Failed to update Brand data.");
     }
   };
 
@@ -116,17 +171,17 @@ const Profile = () => {
 
   if (!userData) return <Typography>Loading...</Typography>;
 
-  return (
-    <Container maxWidth="md" sx={{ marginTop: 4 }}>
-      <Paper elevation={0} sx={{ padding: 4, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 4 }}>
+  return (<Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
+    <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 4 }}>
+      <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
+        <Typography variant="h4" sx={{ marginBottom: 2 }}>
           Profile Details
         </Typography>
 
         <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
           <Box sx={{ position: "relative", marginRight: 3 }}>
             <Avatar
-              src={editedData.comapnyInfo.companyLogo}
+              src={companyLogo}
               alt="Company Logo"
               sx={{ width: 120, height: 120 }}
             />
@@ -144,7 +199,7 @@ const Profile = () => {
               fullWidth
               label="Company Name"
               name="companyName"
-              value={editedData.companyName}
+              value={companyName}
               onChange={handleInputChange}
               variant="outlined"
               sx={{ marginBottom: 2 }}
@@ -153,7 +208,7 @@ const Profile = () => {
               fullWidth
               label="Name"
               name="name"
-              value={editedData.name}
+              value={name}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -166,7 +221,7 @@ const Profile = () => {
               fullWidth
               label="Email"
               name="email"
-              value={editedData.email}
+              value={email}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -176,7 +231,7 @@ const Profile = () => {
               fullWidth
               label="Phone"
               name="phone"
-              value={editedData.phone}
+              value={phone}
               variant="outlined"
               disabled
             />
@@ -186,7 +241,7 @@ const Profile = () => {
               fullWidth
               label="Address"
               name="address"
-              value={editedData.address}
+              value={address}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -245,14 +300,14 @@ const Profile = () => {
                 </Typography>
                 <Box
                   component="img"
-                  src={editedData.comapnyInfo[key]}
+                  src={companyInfo[key]}
                   alt={key}
                   sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
                 />
                 <Box display="flex" gap={1} mt={1}>
                   <IconButton
                     color="primary"
-                    onClick={() => setViewFile(editedData.comapnyInfo[key])}
+                    onClick={() => setViewFile(companyInfo[key])}
                   >
                     <Visibility />
                   </IconButton>
@@ -285,7 +340,6 @@ const Profile = () => {
           </Button>
         </Box>
       </Paper>
-
       <Dialog open={!!viewFile} onClose={() => setViewFile(null)} maxWidth="md">
         <DialogTitle>View File</DialogTitle>
         <DialogContent>
@@ -300,7 +354,199 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
     </Container>
-  );
+    <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 4 }}>
+      <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
+        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+          Brand Details
+        </Typography>
+
+        {/* <Box display="flex" flex={1} alignItems="center" sx={{ marginBottom: 4 }}>
+          {
+            Object.keys(templatesMap).map((t, ti) => {
+              return (<Box sx={{ position: "relative", marginRight: 3 }}>
+                <Box
+                  component="img"
+                  src={"/Kerala2.png"}
+                  alt={"kerala template"}
+                  sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
+                />
+              </Box>)
+            })
+          }
+        </Box> */}
+        <SelectTemplate />
+        
+        {/* <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
+        </Box> */}
+        <EditCancellationView />
+
+        <EditExclusions />
+          
+
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+          <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleBrandUpdate}
+            // disabled={!isEdited}
+          >
+            Update
+          </Button>
+        </Box>
+
+
+        {/* <Box>
+          <Box flex={1}>
+            <TextField
+              fullWidth
+              label="Company Name"
+              name="companyName"
+              value={companyName}
+              onChange={handleInputChange}
+              variant="outlined"
+              sx={{ marginBottom: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={name}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Box>
+        </Box>
+
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              value={email}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Phone"
+              name="phone"
+              value={phone}
+              variant="outlined"
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              value={address}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Grid>
+        </Grid>
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Destinations
+        </Typography>
+        <Box display="flex" gap={2} sx={{ marginTop: 2, marginBottom: 2 }}>
+          <TextField
+            fullWidth
+            label="Add Destination"
+            value={destinationInput}
+            onChange={(e) => setDestinationInput(e.target.value)}
+            variant="outlined"
+          />
+          <Button variant="contained" color="primary" onClick={handleDestinationAdd}>
+            Add
+          </Button>
+        </Box>
+        <Box display="flex" flexWrap="wrap" gap={2}>
+          {destinations.map((destination, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px 16px",
+                background: "#f5f5f5",
+                borderRadius: 2,
+                border: "1px solid #ddd",
+              }}
+            >
+              <Typography>{destination}</Typography>
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleDestinationRemove(index)}
+              >
+                <Close fontSize="small" />
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Company Information
+        </Typography>
+        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+          {["businessDocs", "gst", "panCard"].map((key) => (
+            <Grid item xs={12} sm={6} md={4} key={key}>
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                  {key.replace(/([A-Z])/g, " $1").toUpperCase()}
+                </Typography>
+                <Box
+                  component="img"
+                  src={companyInfo[key]}
+                  alt={key}
+                  sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
+                />
+                <Box display="flex" gap={1} mt={1}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => setViewFile(companyInfo[key])}
+                  >
+                    <Visibility />
+                  </IconButton>
+                  <IconButton color="secondary" component="label">
+                    <Edit />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*,application/pdf"
+                      onChange={(e) => handleFileChange(key, e)}
+                    />
+                  </IconButton>
+                </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
+
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+          <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpdate}
+            disabled={!isEdited}
+          >
+            Update
+          </Button>
+        </Box> */}
+      </Paper>
+    </Container>
+  </Box>);
 };
 
 export default Profile;

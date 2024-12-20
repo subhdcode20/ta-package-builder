@@ -567,7 +567,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					}
 					
 					<Grid item xs={4} md={4}>
-						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>PickUp*</InputLabel>
+						<InputLabel id="trackingId" error={formErrors["noOfRooms"]} sx={{ fontSize: 12 }}>Pick Up Location*</InputLabel>
 						<TextField
 							error={formErrors["pickUp"]}
 							sx={{ width: "100%" }}

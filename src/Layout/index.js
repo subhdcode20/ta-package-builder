@@ -4,11 +4,13 @@ import Container from "@mui/material/Container";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHref, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useDispatch } from 'react-redux';
 
 import { db, auth } from "../firebaseConfig";
 import Navbar from '../Navbar/index.js';
 import PublicNavbar from '../Navbar/publicNavbar.js';
 import { MainContext } from "../Utility";
+import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
 
 const RedirectComponent = () => {
   useEffect(() => {
@@ -26,10 +28,12 @@ function PrivateRoute({ children, authed = false, props }) {
 }
 
 const AppLayout = ({ children, showNavBar = true }) => {
-  let userData = JSON.parse(localStorage.getItem("user") || null);
-  console.log("layout userData ", userData, userData.phone)
+  let userData = JSON.parse(localStorage.getItem("user"));
+  console.log("layout userData ", userData, userData?.phone)
   const isLoggedIn = Boolean(userData);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+
+  const dispatch = useDispatch();
 
 	useEffect(() => {
 		const fetchUserIdToken = async () => {
@@ -42,14 +46,17 @@ const AppLayout = ({ children, showNavBar = true }) => {
 						let signedInIdToken = await auth.currentUser.getIdToken(
 							/* forceRefresh */ true,
 						);
-						console.log("signedInIdToken ", userData.phone, signedInIdToken, typeof signedInIdToken);
-						localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
-            userData['firebaseIdToken'] = signedInIdToken;
+						console.log("signedInIdToken ", userData?.phone, signedInIdToken, typeof signedInIdToken);
+						// localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
+            localStorage.setItem('afFirebaseIdToken', signedInIdToken);
+            // userData['firebaseIdToken'] = signedInIdToken;
 					}
 				});
 			} catch (e) {
 				console.log("signedInIdToken error ", e);
 			}
+
+      dispatch(setUserData({ ...userData }));
 		};
 
 		fetchUserIdToken();
