@@ -81,9 +81,9 @@ const HtmlPdfView = ({
             />)
           }
           <View style={styles.body}>
-            <View style={styles.headerText}>
-              <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
-            </View>
+            {/* <View style={styles.headerText}> */}
+            <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+            {/* </View> */}
 
             <View style={styles.infoBox}>
               <View style={styles.infoRow}>
@@ -116,11 +116,11 @@ const HtmlPdfView = ({
             />
           </View>
 
-          <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text style={{ fontSize: 30, fontWeight: 'bold', letterSpacing: 3, marginBottom: 10, textAlign: 'center' }}>
+          <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor:'#30746c' }}>
+            <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color:'#84bfb9' }}>
               About {req?.destination}
             </Text>
-            <Text style={{ fontSize: 15, textAlign: 'center' }}>
+            <Text style={{ fontSize: 15, textAlign: 'left',lineHeight:1.2, letterSpacing:1,fontWeight:'extralight', color:'white' }}>
               {aboutDestText}
             </Text>
           </View>
@@ -141,10 +141,11 @@ const HtmlPdfView = ({
               <View style={styles.upperBox}>
                 <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
                 {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
-                  const { hotelName, selectedRooms = [] } = hotel;
+                  const { hotelName,location, selectedRooms = [] } = hotel;
                   return (
                     <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                      <Text style={styles.hotelName}>Hotel : {hotelName}  Bali</Text>
+                      <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
+                      <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
                       {selectedRooms.map((currRoom, roomIndex) => {
                         const {
                           roomName,
@@ -165,10 +166,9 @@ const HtmlPdfView = ({
 
                         return (
                           <View key={roomIndex} style={styles.roomDetails}>
-                            <Text style={styles.roomInfo}>Room: {roomName} RoomNameType</Text>
-                            <Text style={styles.roomOccupancy}>
-                              {adults} Adult{adults > 1 && 's'} {child ? `, ${child} Children` : ''}
-                            </Text>
+                            <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}Family Suite</Text> <Text style={styles.roomOccupancy}>
+                              ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
+                            </Text></Text>
                             <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
                           </View>
                         );
@@ -196,19 +196,14 @@ const HtmlPdfView = ({
           </View>
         ))}
 
-        {flights && <View style={styles.boxContainer2} wrap={false}>
+        <View style={styles.boxContainer2} wrap={false} break>
           <Text style={styles.InfoTitle}>Flights</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
               {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
+            Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
             </Text>
           </View>
-          {logoB64Str && (
-            <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-          )}
-        </View>}
-
-        <View style={styles.boxContainer2} wrap={false}>
           <Text style={styles.InfoTitle}>Transfer</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
@@ -220,9 +215,21 @@ const HtmlPdfView = ({
           )}
         </View>
 
+        {/* <View style={styles.boxContainer2} wrap={false}>
+          <Text style={styles.InfoTitle}>Transfer</Text>
+          <View style={styles.transferContainer}>
+            <Text style={styles.transferText}>
+              {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
+            </Text>
+          </View>
+          {logoB64Str && (
+            <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+          )}
+        </View> */}
+
         {
           inclusions && inclusions.length > 0 && (<>
-            <View style={styles.boxContainer2} wrap={false}>
+            <View style={styles.boxContainer3} wrap={false} break>
               <Text style={styles.InfoTitle}>Inclusions</Text>
               <View style={styles.exclusionContainer}>
                 {
@@ -240,7 +247,7 @@ const HtmlPdfView = ({
 
         {
           exclusions && exclusions.length > 0 && (<>
-            <View style={styles.boxContainer2} wrap={false}>
+            <View style={styles.boxContainer3} wrap={false} break>
               <Text style={styles.InfoTitle}>Exclusions</Text>
               <View style={styles.exclusionContainer}>
                 {
@@ -258,7 +265,7 @@ const HtmlPdfView = ({
 
         {
           cancellationData && cancellationData.length > 0 && (<>
-            <View style={styles.boxContainer2} wrap={false}>
+            <View style={styles.boxContainer3} wrap={false}>
               <Text style={styles.InfoTitle}>Cancellation Policy</Text>
               <View style={styles.exclusionContainer}>
                 {
@@ -276,7 +283,7 @@ const HtmlPdfView = ({
 
         {
           paymentPolicy && paymentPolicy.length > 0 && (<>
-            <View style={styles.boxContainer2} wrap={false}>
+            <View style={styles.boxContainer3} wrap={false} break>
               <Text style={styles.InfoTitle}>Payment Policy</Text>
               <View style={styles.exclusionContainer}>
                 {
@@ -291,32 +298,30 @@ const HtmlPdfView = ({
             </View>
           </>)
         }
-        <View wrap={false}>
+        <View wrap={false} break>
 
-        <View style={styles.priceSection} wrap={false}>
-          <Text style={styles.priceTitle}>Total Package Price</Text>
-          <Text style={styles.totalPrice}>{`INR ${totalPackPrice || 'N/A'}`}</Text>
-        </View>
-
-        <View style={styles.footerContainer} wrap={false}>
-          <Text style={styles.footerTitle}>Bank Account Details</Text>
-          <Text style={styles.footerDetailsText}>
-            lorem ipsum bank account details 293728941293 dhsadja DKJHASKJD ICI Bank
-          </Text>
-          {logoB64Str && (
-            <Image
-              style={styles.footerLogo}
-              src={logoB64Str}
-              resizeMode="contain"
-            />
-          )}
-          <View style={styles.footerContact}>
-            <Text style={styles.footerLabel}>Email:</Text>
-            <Text style={styles.footerText}>{email}</Text>
-            <Text style={styles.footerLabel}>Phone:</Text>
-            <Text style={styles.footerText}>{phone}</Text>
+          <View style={styles.priceSection} wrap={false}>
+            <Text style={styles.priceTitle}>Total Package Price</Text>
+            <Text style={styles.totalPrice}>{`INR ${totalPackPrice || 'N/A'}`}</Text>
           </View>
-        </View>
+
+          <View style={styles.footerContainer} wrap={false}>
+            <Text style={styles.footerTitle}>Bank Account Details</Text>
+            <Text style={styles.footerDetailsText}>
+              lorem ipsum bank account details 293728941293 dhsadja DKJHASKJD ICI Bank
+            </Text>
+            {logoB64Str && (
+              <Image
+                style={styles.footerLogo}
+                src={logoB64Str}
+                resizeMode="contain"
+              />
+            )}
+            <View style={styles.footerContact}>
+              <Text style={styles.footerText}>Email : {email}</Text>
+              <Text style={styles.footerText}>Phone : {phone}</Text>
+            </View>
+          </View>
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
@@ -383,20 +388,23 @@ const getThemedStyles = ({ themeData = {} }) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: 20,
+      padding: 30,
     },
-    headerText: {
-      width: "30%", // Restricts width
-      flexWrap: "wrap", // Ensures text wraps to the next line
-      overflow: "hidden", // Ensures no overflowing text
-    },
+    // headerText: {
+    //   flexWrap: "wrap", 
+    //   overflow: "hidden",
+    //   textAlign: "center",
+    // },
     title: {
-      flex: 1,
-      fontSize: 20,
+      width: "30%",
+      flexWrap: "wrap",
+      fontSize: 23,
       fontWeight: 'bold',
       color: '#000',
       marginRight: 20,
+      opacity: 0.8,
       textAlign: "left", // Ensures proper alignment
+      marginBottom: 30,
     },
     infoBox: {
       width: '60%',
@@ -406,9 +414,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       alignSelf: 'flex-end', // Ensures alignment to the right
       position: 'absolute',
       bottom: 40,
-      right: 30
-    },
-    infoRow: {
+      right: 30,
       flexDirection: 'column',
       marginBottom: 10,
     },
@@ -416,12 +422,14 @@ const getThemedStyles = ({ themeData = {} }) => {
       flex: 1,
       color: 'white',
       opacity: 0.8,
-      fontSize: 14,
+      fontSize: 16,
+      marginBottom: 5,
     },
     value: {
       flex: 2,
       color: 'white',
       fontSize: 18,
+      marginBottom: 15,
     },
     hr: {
       borderBottomWidth: 1,
@@ -462,6 +470,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       padding: 20,
     },
     boxContainer: {
+      marginTop: 20,
       zIndex: 1,
       borderWidth: 1,
       borderColor: '#ccc',
@@ -480,6 +489,24 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderColor: '#ccc',
       overflow: 'hidden',
       width: "80%",
+      height:'60%',
+      alignSelf: "center",
+      shadowColor: "#000",
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+      backgroundColor: "#fff",
+      marginBottom: 20,
+      padding: 20,
+      paddingBottom: 50,
+      marginTop: 20,
+    },
+    boxContainer3: {
+      borderWidth: 1,
+      borderColor: '#ccc',
+      overflow: 'hidden',
+      width: "80%",
+      height:'80%',
       alignSelf: "center",
       shadowColor: "#000",
       shadowOpacity: 0.25,
@@ -497,42 +524,64 @@ const getThemedStyles = ({ themeData = {} }) => {
       width: '100%',
     },
     dayTitle: {
-      fontSize: 24, // Increased font size for emphasis
-      fontWeight: 'bold', // Bold text
-      color: '#fff',
-      marginBottom: 20,
+      fontSize: 25,
+      fontWeight: 'extrabold',
+      color: '#84bfb9',
+      marginBottom: 15,
     },
     InfoTitle: {
-      fontSize: 24, // Increased font size for emphasis
-      fontWeight: 'bold', // Bold text
+      fontSize: 30, // Increased font size for emphasis
+      fontWeight: 'extrabold', // Bold text
       color: '#30746c',
-      marginBottom: 20,
-      marginLeft: 5,
+      marginBottom: 30,
+      marginLeft: 7,
+      marginTop:10,
     },
     hotelDetailsContainer: {
       marginBottom: 15,
     },
     hotelName: {
       fontSize: 18, // Larger font size for hotel name
-      fontWeight: 'bold',
       color: '#fff',
-      marginBottom: 10,
+      opacity: 0.8,
+      marginBottom: 5,
+      textAlign: 'left',
+    },
+    destinationName: {
+      fontSize: 16,
+      color: '#fff',
+      opacity: 0.8,
+      marginBottom: 20,
+    },
+    destinationName1: {
+      fontSize: 16,
+      color: '#fff',
+      opacity: 0.8,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    hotelName1: {
+      fontSize: 18,
+      opacity: 1,
+      fontWeight: 'bold',
     },
     roomDetails: {
-      marginBottom: 15,
+      marginBottom: 20,
     },
     roomInfo: {
       fontSize: 16,
-      fontWeight: 'bold',
-      textAlign: 'center', // Center the text
       color: '#fff',
-      marginBottom: 10,
+      marginBottom: 5,
+    },
+    roomInfo1: {
+      fontWeight: "bold",
     },
     roomOccupancy: {
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center', // Center the text
       color: '#fff',
+      opacity: '0.8',
       marginBottom: 10,
     },
     destination: {
@@ -544,14 +593,13 @@ const getThemedStyles = ({ themeData = {} }) => {
     mealPlan: {
       fontSize: 14,
       color: '#fff',
-      textAlign: 'center', // Centered
     },
 
     itiDescTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#000',
-      marginBottom: 10,
+      fontSize: 25,
+      fontWeight: 'extrabold',
+      color: '#30746c',
+      marginBottom: 13,
     },
     lowerBox: {
       backgroundColor: '#fff',
@@ -559,9 +607,12 @@ const getThemedStyles = ({ themeData = {} }) => {
       width: '100%',
     },
     itiDescText: {
-      fontSize: 14,
+      fontSize: 16,
+      // fontWeight: 'ultralight',
       color: '#000',
-      marginBottom: 5,
+      lineHeight: 1.5,
+      opacity:0.6,
+      marginBottom: 8,
     },
 
     dayHeader: {
@@ -617,10 +668,12 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginLeft: 10,
     },
     bullet: {
-      fontSize: 12,
+      fontSize: 16,
       marginVertical: 1,
-      lineHeight: 2,
+      lineHeight: 1.5,
       color: '#555555',
+      fontWeight:'extralight',
+      marginBottom:8,
     },
     priceSection: {
       display: 'flex',
@@ -632,7 +685,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       backgroundColor: primaryColor, // Set background color
       borderWidth: 1,
       borderRadius: 5,
-      marginBottom:20,
+      marginBottom: 30,
     },
     priceTitle: {
       fontSize: 16,
@@ -654,7 +707,8 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderRadius: 5,
     },
     transferText: {
-      fontSize: 12,
+      fontSize: 18,
+      opacity:0.8,
       color: '#333333',
       lineHeight: 1.5,
     },
@@ -674,6 +728,8 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderColor: '#CCCCCC',
       alignItems: 'center',
       justifyContent: 'center',
+      alignSelf: "center",
+      width: "80%",
     },
     footerTitle: {
       fontSize: 16,
@@ -687,6 +743,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#333333',
       textAlign: 'center',
       marginBottom: 15,
+      width: "60%"
     },
     footerLogo: {
       height: 70,
@@ -697,15 +754,10 @@ const getThemedStyles = ({ themeData = {} }) => {
       alignItems: 'center',
       marginTop: 10,
     },
-    footerLabel: {
-      fontSize: 12,
-      fontWeight: 'bold',
-      color: '#555555',
-      marginBottom: 2,
-    },
     footerText: {
       fontSize: 12,
       color: '#333333',
+      fontWeight: 'bold',
       marginBottom: 5,
     },
     pageNumber: {
@@ -717,6 +769,11 @@ const getThemedStyles = ({ themeData = {} }) => {
       textAlign: 'center',
       color: 'grey',
     },
+    pageContainer: {
+      margin: 20,
+      padding: 10,
+    }
+
   });
 }
 
