@@ -1,5 +1,6 @@
 import DefaultTemplate from '../PdfTemplates/default/index.js';
 import KeralaTemplate from './kerala/index.js';
+import GreenPdfView from "../PdfTemplates/green/index.js"
 
 export const defaultTemplate = {
     name: "Default",
@@ -18,6 +19,12 @@ export const templatesMap = {
     "kerala": {
         name: "Kerala",
         viewComponent: KeralaTemplate,
+        thumbnail: "/Kerala2.png",
+        width: '30%'
+    },
+    "green": {
+        name: "Green",
+        viewComponent: GreenPdfView,
         thumbnail: "/Kerala2.png",
         width: '30%'
     }
