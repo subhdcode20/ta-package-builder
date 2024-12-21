@@ -17,7 +17,7 @@ const axios = require('axios');
 const cors = require('cors');
 const concat = require('concat-stream');
 // const { nanoid } = require("nanoid"); //needs esm import systax only
-const { v4: uuidv4 } = require('uuid')
+const { v4: uuidv4 } = require('uuid');
 // const { arrayUnion } = require("firebase-admin/firestore");
 
 admin.initializeApp();

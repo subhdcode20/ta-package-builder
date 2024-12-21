@@ -8,6 +8,7 @@ const Logout = () => {
   const logout = () => {
 		auth.signOut();
 		localStorage.removeItem('user');
+    localStorage.removeItem('afFirebaseIdToken');
 		// return redirect('/en/login');
 		navigate("/login");
 	}
