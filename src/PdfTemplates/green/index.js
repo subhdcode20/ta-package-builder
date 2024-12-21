@@ -28,7 +28,7 @@ const formatDate = (timestamp) => {
 
 };
 
-let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+// let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -46,7 +46,7 @@ const HtmlPdfView = ({
   },
   userProfileData: {
     themeData = {},
-    // headerImage,
+    headerImage,
     cancellationData = [],
     paymentPolicy = [],
     inclusions = [],
@@ -58,20 +58,25 @@ const HtmlPdfView = ({
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check default:", headerImage, cancellationData);
-  console.log("CHECK_ABOUT:", aboutDestText);
+  console.log("CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
   if (!styles) return null;
   return (
     <Document>
       <Page style={styles.page} wrap={false}>
         <View>
-          {headerImage && (
+          {/* {headerImage && (
             <Image
               style={styles.headerImage}
               src={headerImage}
               resizeMode="cover"
             />
-          )}
+          )} */}
+          <Image
+            style={styles.headerImage}
+            src={headerImage}
+            resizeMode="cover"
+          />
 
           {
             logoB64Str && (<Image
