@@ -123,6 +123,7 @@ const HtmlPdfView = ({
           </View>
         </View>
       </Page>
+      {/* Start from here */}
       <Page style={[styles.page, styles.page2]}>
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection}>
