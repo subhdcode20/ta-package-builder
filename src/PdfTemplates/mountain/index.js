@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Stop, Svg, Defs, LinearGradient, Rect } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
@@ -28,7 +28,7 @@ const formatDate = (timestamp) => {
 
 };
 
-let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+let headerImage = 'https://plus.unsplash.com/premium_photo-1661885251699-b242dd1e6e20?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bW91bnRhaW4lMjByb2FkfGVufDB8fDB8fHww'
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -64,7 +64,8 @@ const HtmlPdfView = ({
   return (
     <Document>
       <Page style={styles.page} wrap={false}>
-        <View>
+        <View style={styles.headerImagecontainer}>
+
           {headerImage && (
             <Image
               style={styles.headerImage}
@@ -72,63 +73,80 @@ const HtmlPdfView = ({
               resizeMode="cover"
             />
           )}
+          {Array.from({ length: 40 }, (_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.overlaySection,
+                {
+                  top: `${index * 0.5}%`,
+                  height: `.5%`,
+                  opacity: 1 - index * 0.025,
+                },
+              ]}
+            />
+          ))}
+        </View>
+        {/* <View style={styles.headerText}> */}
+        <Text style={styles.title}>Travel Itinerary for Mountain {req?.destination || 'N/A'}</Text>
+        {/* </View> */}
 
-          {
-            logoB64Str && (<Image
-              style={[styles.logo]}
-              src={logoB64Str}
-              resizeMode="contain"
-            />)
-          }
-          <View style={styles.body}>
-            {/* <View style={styles.headerText}> */}
-            <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
-            {/* </View> */}
+        {
+          logoB64Str && (<Image
+            style={[styles.logo]}
+            src={logoB64Str}
+            resizeMode="contain"
+          />)
+        }
+        <View style={styles.body}>
 
-            <View style={styles.infoBox}>
-              <View style={styles.infoRow}>
-                <Text style={styles.label}>Lead Pax: </Text>
-                <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.label}>Destination: </Text>
-                <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.label}>Travel Date: </Text>
-                <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.label}>Guest: </Text>
-                <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
-              </View>
+          <View style={styles.infoBox}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Lead Pax: </Text>
+              <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Destination: </Text>
+              <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Travel Date: </Text>
+              <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Guest: </Text>
+              <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
             </View>
           </View>
         </View>
       </Page>
       <Page style={styles.page} wrap={false}>
-        <View style={{ height: '100%' }}>
+        <View style={{ flexDirection: 'row', height: '100%' }}>
           {/* Left Column - Image */}
-          {/* <Image
-              source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
-              style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            /> */}
-          <Image
-            style={styles.backgroundImage}
-            src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-            fixed
-          />
+          <View style={{ flex: 4 }}>
+            <View style={styles.headerImagecontainer}>
 
-          <View style={{
-            position: 'absolute',
-            right: 0, 
-            width: '60%',
-            height: '100%', 
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            padding: 20,
-            backgroundColor: '#30746c',
-          }}>
+              <Image
+                source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
+                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+              />
+              {Array.from({ length: 40 }, (_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.overlaySection,
+                    {
+                      bottom: `${index * 0.5}%`,
+                      height: `.5%`,
+                      opacity: 1 - index * 0.025,
+                    },
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+
+          <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#30746c' }}>
             <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9' }}>
               About {req?.destination}
             </Text>
@@ -141,71 +159,110 @@ const HtmlPdfView = ({
       </Page>
 
       <Page style={[styles.page, styles.page2]} >
-        <Image
-          style={styles.backgroundImage}
-          src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-          fixed
-        />
+        <View style={styles.headerImagecontainer1}>
+
+          <Image
+            style={styles.backgroundImage}
+            src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+            fixed
+          />
+          {Array.from({ length: 40 }, (_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.overlaySection,
+                {
+                  bottom: `${index * 0.5}%`,
+                  height: `.5%`,
+                  opacity: 1 - index * 0.025,
+                },
+              ]}
+            />
+          ))}
+        </View>
+
         {hotels.map((hotelsCurrDay, currDayIndex) => (
-          <View key={currDayIndex} style={styles.daySection} wrap={false}>
-            <View style={styles.boxContainer}>
-              {/* Upper Half */}
-              <View style={styles.upperBox}>
-                <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-                {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
-                  const { hotelName, location, selectedRooms = [] } = hotel;
-                  return (
-                    <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                      <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
-                      <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
-                      {selectedRooms.map((currRoom, roomIndex) => {
-                        const {
-                          roomName,
-                          selectedOccupancy: { adults = 0, child = 0 } = {},
-                          mp,
-                        } = currRoom;
+          <>
+            <View style={styles.headerImagecontainer1}>
 
-                        let mealPlan = '';
-                        if (mp === 'mapai') {
-                          mealPlan = 'Breakfast and (Lunch or Dinner)';
-                        } else if (mp === 'cpai') {
-                          mealPlan = 'Breakfast ONLY';
-                        } else if (mp === 'apai') {
-                          mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
-                        } else {
-                          mealPlan = 'No meal plan specified';
-                        }
-
-                        return (
-                          <View key={roomIndex} style={styles.roomDetails}>
-                            <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}Family Suite</Text> <Text style={styles.roomOccupancy}>
-                              ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
-                            </Text></Text>
-                            <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  );
-                })}
-              </View>
-
-              {/* Lower Half */}
-              {itiDesc[currDayIndex]?.text && (
-                <View style={styles.lowerBox}>
-                  <Text style={styles.itiDescTitle}>Itinerary Description for Day {currDayIndex + 1}</Text>
-                  {itiDesc[currDayIndex].text.map((point, pointIndex) => (
-                    <Text key={pointIndex} style={styles.itiDescText}>
-                      {`${pointIndex + 1}. ${point}`}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              {logoB64Str && (
-                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-              )}
+              <Image
+                style={styles.backgroundImage}
+                src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+                fixed
+              />
+              {Array.from({ length: 40 }, (_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.overlaySection,
+                    {
+                      bottom: `${index * 0.5}%`,
+                      height: `.5%`,
+                      opacity: 1 - index * 0.025,
+                    },
+                  ]}
+                />
+              ))}
             </View>
-          </View>
+            <View key={currDayIndex} style={styles.daySection} wrap={false}>
+
+              <View style={styles.boxContainer} wrap={true}>
+                {/* Upper Half */}
+                <View style={styles.upperBox} >
+                  <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
+                  {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
+                    const { hotelName, location, selectedRooms = [] } = hotel;
+                    return (
+                      <View key={hotelIndex} style={styles.hotelDetailsContainer}>
+                        <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
+                        <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
+                        {selectedRooms.map((currRoom, roomIndex) => {
+                          const {
+                            roomName,
+                            selectedOccupancy: { adults = 0, child = 0 } = {},
+                            mp,
+                          } = currRoom;
+
+                          let mealPlan = '';
+                          if (mp === 'mapai') {
+                            mealPlan = 'Breakfast and (Lunch or Dinner)';
+                          } else if (mp === 'cpai') {
+                            mealPlan = 'Breakfast ONLY';
+                          } else if (mp === 'apai') {
+                            mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
+                          } else {
+                            mealPlan = 'No meal plan specified';
+                          }
+
+                          return (
+                            <View key={roomIndex} style={styles.roomDetails}>
+                              <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}Family Suite</Text> <Text style={styles.roomOccupancy}>
+                                ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
+                              </Text></Text>
+                              <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    );
+                  })}
+                </View>
+
+                {/* Lower Half */}
+                {itiDesc[currDayIndex]?.text && (
+                  <View style={styles.lowerBox} wrap={true}>
+                    <Text style={styles.itiDescTitle}>Itinerary Description for Day {currDayIndex + 1}</Text>
+                    {itiDesc[currDayIndex].text.map((point, pointIndex) => (
+                      <Text key={pointIndex} style={styles.itiDescText}>
+                        {`${pointIndex + 1}. ${point}`}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+
+              </View>
+            </View>
+          </>
         ))}
 
         <View style={styles.boxContainer2} wrap={false} break>
@@ -369,11 +426,27 @@ const getThemedStyles = ({ themeData = {} }) => {
     page2: {
       position: 'relative',
     },
+    headerImagecontainer1: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      zIndex: -1,
+    },
+    headerImagecontainer: {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+    },
     headerImage: {
       width: '100%',
-      height: "80%",
+      height: "100%",
       objectFit: 'cover',
-      marginBottom: 1,
+      opacity: 0.8
+    },
+    overlaySection: {
+      position: 'absolute',
+      width: '100%',
+      backgroundColor: 'white',
     },
     logo: {
       width: 100,
@@ -402,21 +475,15 @@ const getThemedStyles = ({ themeData = {} }) => {
       justifyContent: 'space-between',
       padding: 30,
     },
-    // headerText: {
-    //   flexWrap: "wrap", 
-    //   overflow: "hidden",
-    //   textAlign: "center",
-    // },
     title: {
-      width: "30%",
-      flexWrap: "wrap",
-      fontSize: 23,
-      fontWeight: 'bold',
-      color: '#000',
-      marginRight: 20,
-      opacity: 0.8,
-      textAlign: "left", // Ensures proper alignment
-      marginBottom: 30,
+      position: 'absolute',
+      width: "70%",
+      top: '5%',
+      left: '5%',
+      color: 'brown',
+      fontSize: 40,
+      fontWeight: 'extralight',
+      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)',
     },
     infoBox: {
       width: '60%',
@@ -488,12 +555,11 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderColor: '#ccc',
       overflow: 'hidden',
       width: "80%",
-      alignSelf: "center",
+      alignSelf: "left",
       shadowColor: "#000",
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      backgroundColor: "#fff",
       marginBottom: 20,
     },
     boxContainer2: {
@@ -531,14 +597,13 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginTop: 20,
     },
     upperBox: {
-      backgroundColor: '#30746c',
       padding: 20,
       width: '100%',
     },
     dayTitle: {
       fontSize: 25,
       fontWeight: 'extrabold',
-      color: '#84bfb9',
+      color: 'brown',
       marginBottom: 15,
     },
     InfoTitle: {
@@ -554,20 +619,17 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     hotelName: {
       fontSize: 18, // Larger font size for hotel name
-      color: '#fff',
       opacity: 0.8,
       marginBottom: 5,
       textAlign: 'left',
     },
     destinationName: {
       fontSize: 16,
-      color: '#fff',
       opacity: 0.8,
       marginBottom: 20,
     },
     destinationName1: {
       fontSize: 16,
-      color: '#fff',
       opacity: 0.8,
       fontWeight: 'bold',
       marginBottom: 20,
@@ -582,7 +644,6 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     roomInfo: {
       fontSize: 16,
-      color: '#fff',
       marginBottom: 5,
     },
     roomInfo1: {
@@ -592,19 +653,16 @@ const getThemedStyles = ({ themeData = {} }) => {
       fontSize: 16,
       fontWeight: 'bold',
       textAlign: 'center', // Center the text
-      color: '#fff',
       opacity: '0.8',
       marginBottom: 10,
     },
     destination: {
       fontSize: 14,
-      color: '#fff',
       textAlign: 'center', // Centered below Adults/Children
       marginBottom: 10,
     },
     mealPlan: {
       fontSize: 14,
-      color: '#fff',
     },
 
     itiDescTitle: {
