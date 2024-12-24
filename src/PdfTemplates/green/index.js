@@ -2,6 +2,7 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { isEmptyObject } from '../../Utility';
 
 
 Font.register({
@@ -119,8 +120,14 @@ const HtmlPdfView = ({
               <Image
                 source={{ uri: headerImage || _defaultHeaderImage }}
                 // 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-                style={styles.backgroundImage}
-                fixed
+                style={[{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }]}
               />
             )
           }
@@ -217,13 +224,19 @@ const HtmlPdfView = ({
         ))}
 
         <View style={styles.boxContainer2} wrap={false} break>
-          <Text style={styles.InfoTitle}>Flights</Text>
-          <View style={styles.transferContainer}>
-            <Text style={styles.transferText}>
-              {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
-              Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
-            </Text>
-          </View>
+          {
+            !isEmptyObject(flights) && (<>
+              <Text style={styles.InfoTitle}>Flights</Text>
+              <View style={styles.transferContainer}>
+                <Text style={styles.transferText}>
+                  {`${flights?.arrival ? `Arrival Flight: ${flights?.arrival}.` : ''}`}
+                </Text>
+                <Text style={styles.transferText}>
+                  {`${flights?.departure ? `Departure Flight: ${flights?.departure}.` : ''}`}
+                </Text>
+              </View>
+            </>)
+          }
           <Text style={styles.InfoTitle}>Transfer</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>

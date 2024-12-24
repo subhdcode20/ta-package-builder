@@ -1,11 +1,10 @@
 export default {
     'kerala': [
-        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fandaman%2Ftato-andaman-png.png?alt=media&token=76986b19-1ac5-4f4e-88d8-a9056175cf18",
+        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fandaman%2Ftato-andaman-png.png?alt=media&token=76986b19-1ac5-4f4e-88d8-a9056175cf18",
 
-        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fkerala-334556.png?alt=media&token=dcff4bf3-3e11-4bca-9c29-6e01a808f60c",
-        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2F154232673-kerala.png?alt=media&token=85b3f872-5b16-4a40-9148-7def30e85123",
-        
-        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fvineeth-kerala-png.png?alt=media&token=7f48b085-6e5c-449f-8cd1-ed76cf7c142a",
+        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fswastikw-kerala-png-2.png?alt=media&token=b658d19b-e901-405c-b16b-0ed652215829",
+        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fajin-kerala-png.png?alt=media&token=496d4641-e220-4712-937a-5d14ea05de46",
     ],
     "karnataka": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkarnataka%2Falka-karnataka-png.png?alt=media&token=3a92046d-455b-417e-9040-3d7bcf69eda7",
@@ -39,7 +38,7 @@ export default {
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fthailand%2Fhumphrey-thailand-png.png?alt=media&token=8d8b1fbf-a06b-4729-abdd-a31ef1a5d8a6",
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fthailand%2Fjoshua-thailand-jpg.png?alt=media&token=dfb8f590-991f-4179-900e-65fe38b9d6d4",
     ],
-    "bai": [
+    "bali": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fbali%2Fbali-banner-png.png?alt=media&token=e619c393-a48e-446f-9328-28dabcaa518d",
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fbali%2Fresa-bali-png.png?alt=media&token=0de3c55d-09ff-422d-a840-cd0a4fb8279a",
     ],

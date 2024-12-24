@@ -26,7 +26,7 @@ const destinationImages = {
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
     // // const [packageData, setPackageData] = useState([]);
-	const arrFlightsText = useSelector((state) => state.packBuilderData.arrFlightsText) || null;
+	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || null;
 	const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
 	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
 	const [userPdfData, setUserPdfData] = useState(userData || {});
@@ -46,7 +46,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		const getDestImgB64 = async () => {
 			if(!reqData?.destination) return;
 			let dest = reqData?.destination.toLowerCase();
-			console.log("CHECK_IMGheader:", destinationImages[reqData?.destination.toLowerCase()] );
+			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest]);
 			// setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
 			let randomDestImgIndex = 0
 			if(destImagesMap[dest].length > 0) {
@@ -170,8 +170,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			}))
 		}
 
-		// TODO
-		// getLogoB64();
+		getLogoB64();
 	}, [logoUrl]);
 
     if (loading) {
@@ -185,7 +184,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
 				<HtmlTemplate 
-					dayWiseData={{"flights": arrFlightsText, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
+					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={finalPackPrice}

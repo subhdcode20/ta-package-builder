@@ -26,7 +26,7 @@ const ReqCardView = ({ reqData = {} }) => {
         trackingId = '',
         pickUp = ''
     } = reqData;
-    const arrFlightsText = useSelector((state) => state.packBuilderData.arrFlightsText) || null;
+    const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || null;
 
     let dispatch = useDispatch();
 
@@ -88,7 +88,7 @@ const ReqCardView = ({ reqData = {} }) => {
                 <TextField
                     sx={{ width: "100%" }}
                     id="flihtsArr"
-                    value={arrFlightsText?.arrival || ''}
+                    value={itiFlightsData?.arrival || ''}
                     variant="standard"
                     placeholder='6E-804 at 09:00 AM'
                     size="small"

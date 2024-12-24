@@ -103,6 +103,18 @@ const DayWiseTabs = ({reqDatass = {}}) => {
 				</Box>
 				<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
 					<InputLabel htmlFor="total-pack-price-input" sx={{fontSize: 12}}>
+						Sightseeing Cost:
+					</InputLabel>
+					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+						InputProps={{
+							startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
+						}}
+						onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))} 
+						value={finalTransferPrice || ''} sx={{margin: "auto"}}
+					/>
+				</Box>
+				<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
+					<InputLabel htmlFor="total-pack-price-input" sx={{fontSize: 12}}>
 						Total Package Price:
 					</InputLabel>
 					<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
