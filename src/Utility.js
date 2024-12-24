@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 // import {Base64Encode} from 'base64-stream';
 // import concatStream from 'concat-stream';
 
@@ -102,3 +103,27 @@ export const fileToBase64 = file => new Promise((resolve, reject) => {
   reader.onload = () => resolve(reader.result);
   reader.onerror = reject;
 });
+
+export const getB64Img = async (data) => {
+  if(!data?.logoUrl) return;
+  try {
+    const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+    const axiosOptions = {
+		  method: 'POST',
+		  headers: { 
+			  // 'content-type': 'application/x-www-form-urlencoded',
+			  'Authorization': firebaseIdToken 
+		  },
+		  data: data,
+		  url: `${process.env.REACT_APP_API_DOMAIN}/api/get-logo-b64`,
+		};
+		console.log('request axios ', axiosOptions);
+	
+		let response = await axios(axiosOptions);
+		console.log('getB64Img response axios ', response);
+		return {data: response.data?.data};
+  } catch (error) {
+    console.error("getB64Img error ", error);
+    return {err: error}
+  }  
+}

@@ -138,48 +138,48 @@ const HtmlPdfView = ({
           })
         }
         {
-          (inclusions || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
-            <Text break style={styles.dayItiTitle}>Inclusions</Text>
+          (inclusions || []).length > 0 && (<View wrap={false} style={styles.policyContainer}>
+            <Text break style={styles.policyTitle}>Inclusions</Text>
             {
               inclusions.map((inc) => {
-                if(inc?.text) return (<View style={styles.dayItiTextContainer}>
-                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                if(inc?.text) return (<View style={styles.policyTextContainer}>
+                  <Text style={styles.policyText}>• {inc?.text}</Text>
                 </View>)
               })
             }
           </View>)
         }
         {
-          (exclusions || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
-            <Text break style={styles.dayItiTitle}>Exclusions</Text>
+          (exclusions || []).length > 0 && (<View wrap={false} style={styles.policyContainer}>
+            <Text break style={styles.policyTitle}>Exclusions</Text>
             {
               exclusions.map((inc) => {
                 if(inc?.text) return (<View style={styles.dayItiTextContainer}>
-                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                  <Text style={styles.policyText}>• {inc?.text}</Text>
                 </View>)
               })
             }
           </View>)
         }
         {
-          (cancellationData || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
-            <Text style={styles.dayItiTitle}>Cancellation Policy</Text>
+          (cancellationData || []).length > 0 && (<View wrap={false} style={styles.policyContainer}>
+            <Text style={styles.policyTitle}>Cancellation Policy</Text>
             {
               cancellationData.map((inc) => {
                 if(inc?.text) return (<View style={styles.dayItiTextContainer}>
-                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                  <Text style={styles.policyText}>• {inc?.text}</Text>
                 </View>)
               })
             }
           </View>)
         }
         {
-          (paymentPolicy || []).length > 0 && (<View wrap={false} style={styles.dayItiContainer}>
-            <Text style={styles.dayItiTitle}>Payment Policy</Text>
+          (paymentPolicy || []).length > 0 && (<View wrap={false} style={styles.policyContainer}>
+            <Text style={styles.policyTitle}>Payment Policy</Text>
             {
               paymentPolicy.map((inc) => {
                 if(inc?.text) return (<View style={styles.dayItiTextContainer}>
-                  <Text style={styles.dayItiText}>• {inc?.text}</Text>
+                  <Text style={styles.policyText}>• {inc?.text}</Text>
                 </View>)
               })
             }
@@ -583,6 +583,15 @@ const getThemedStyles = ({themeData = {}}) => {
         fontSize: 25,
         lineHeight: 2,
         alignSelf: 'center'
+      },
+      policyContainer: {
+
+      },
+      policyTitle: {
+
+      },
+      policyText: {
+
       }
     });
 
