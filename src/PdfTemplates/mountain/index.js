@@ -2,20 +2,26 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Stop, Svg, Defs, LinearGradient, Rect } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import BackgroundImageGradient from './imageGradient';
 
 
 Font.register({
-  family: 'Roboto',
+  family: 'Edu QLD Beginner',
   fonts: [
     {
-      src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxP.ttf',
-    },
-    {
-      src: 'https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc9.ttf',
-      fontWeight: 'bold',
+      src: '/fonts/AMOHz5iUuHLEMNXyohhc_Y56PR3A8dNLF_w3Ka4HKE4E3recgao.ttf',
     },
   ],
 });
+Font.register({
+  family: 'Edu QLD Beginner Medium',
+  fonts: [
+    {
+      src: '/fonts/AMOHz5iUuHLEMNXyohhc_Y56PR3A8dNLF_w3Ka4HKE423recgao.ttf',
+    },
+  ],
+});
+
 
 const formatDate = (timestamp) => {
   try {
@@ -27,6 +33,7 @@ const formatDate = (timestamp) => {
   }
 
 };
+
 
 let headerImage = 'https://plus.unsplash.com/premium_photo-1661885251699-b242dd1e6e20?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bW91bnRhaW4lMjByb2FkfGVufDB8fDB8fHww'
 const HtmlPdfView = ({
@@ -88,7 +95,7 @@ const HtmlPdfView = ({
           ))}
         </View>
         {/* <View style={styles.headerText}> */}
-        <Text style={styles.title}>Travel Itinerary for Mountain {req?.destination || 'N/A'}</Text>
+        <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
         {/* </View> */}
 
         {
@@ -98,124 +105,80 @@ const HtmlPdfView = ({
             resizeMode="contain"
           />)
         }
-        <View style={styles.body}>
-
-          <View style={styles.infoBox}>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Lead Pax: </Text>
-              <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Destination: </Text>
-              <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Travel Date: </Text>
-              <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Guest: </Text>
-              <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
-            </View>
-          </View>
-        </View>
       </Page>
       <Page style={styles.page} wrap={false}>
-        <View style={{ flexDirection: 'row', height: '100%' }}>
-          {/* Left Column - Image */}
-          <View style={{ flex: 4 }}>
-            <View style={styles.headerImagecontainer}>
-
-              <Image
-                source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
-                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-              />
-              {Array.from({ length: 40 }, (_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.overlaySection,
-                    {
-                      bottom: `${index * 0.5}%`,
-                      height: `.5%`,
-                      opacity: 1 - index * 0.025,
-                    },
-                  ]}
-                />
-              ))}
-            </View>
-          </View>
-
-          <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#30746c' }}>
-            <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9' }}>
+        <View style={{ height: '100%', position: 'relative' }}>
+          <View style={{ flex: 6, justifyContent: 'left', alignItems: 'left', paddingLeft: 30, paddingRight: 30, paddingTop: 100, paddingBottom: 40, }}>
+            {/* <View style={styles.infoBox}> */}
+            <Text style={styles.label}>Lead Pax: </Text>
+            <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
+            <Text style={styles.label}>Travel Date: </Text>
+            <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
+            <Text style={styles.label}>Guest: </Text>
+            <Text style={styles.value}>
+              {req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}
+            </Text>
+            <Text style={styles.label}>Destination: </Text>
+            <Text style={styles.value}>{req?.destination || 'N/A'}</Text>
+            {/* </View> */}
+            <Text
+              style={{
+                fontSize: 30,
+                fontWeight: 'extrabold',
+                letterSpacing: 3,
+                marginBottom: 30,
+                textAlign: 'left',
+                color: 'darkred',
+                marginTop: 10,
+              }}
+            >
               About {req?.destination}
             </Text>
-            <Text style={{ fontSize: 15, textAlign: 'left', lineHeight: 1.2, letterSpacing: 1, fontWeight: 'extralight', color: 'white' }}>
+            <Text
+              style={{
+                fontSize: 15,
+                textAlign: 'left',
+                lineHeight: 1,
+                fontWeight: 'extralight',
+              }}
+            >
               {aboutDestText}
             </Text>
           </View>
         </View>
-
+        {logoB64Str && (
+          <Image style={styles.logoInContainer1} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient
+          imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0="
+        />
       </Page>
 
       <Page style={[styles.page, styles.page2]} >
-        <View style={styles.headerImagecontainer1}>
-
-          <Image
-            style={styles.backgroundImage}
-            src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-            fixed
-          />
-          {Array.from({ length: 40 }, (_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.overlaySection,
-                {
-                  bottom: `${index * 0.5}%`,
-                  height: `.5%`,
-                  opacity: 1 - index * 0.025,
-                },
-              ]}
-            />
-          ))}
-        </View>
 
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <>
-            <View style={styles.headerImagecontainer1}>
-
-              <Image
-                style={styles.backgroundImage}
-                src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-                fixed
-              />
-              {Array.from({ length: 40 }, (_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.overlaySection,
-                    {
-                      bottom: `${index * 0.5}%`,
-                      height: `.5%`,
-                      opacity: 1 - index * 0.025,
-                    },
-                  ]}
-                />
-              ))}
-            </View>
             <View key={currDayIndex} style={styles.daySection} wrap={false}>
 
               <View style={styles.boxContainer} wrap={true}>
                 {/* Upper Half */}
-                <View style={styles.upperBox} >
+                <View style={styles.upperBox}>
                   <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
                   {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
                     const { hotelName, location, selectedRooms = [] } = hotel;
                     return (
                       <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                        <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
-                        <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
+                        <View style={styles.headerSection}>
+                          <View style={styles.headerSectionInner1}>
+                            <Text style={styles.hotelName}>Hotel:</Text>
+                            <Text style={styles.hotelName1}>{hotelName} Royal Premium Hotels</Text>
+                          </View>
+                          <View style={styles.headerSectionInner1}>
+                            <Text style={styles.destinationName}>Location:</Text>
+                            <Text style={styles.destinationName1}>{location}</Text>
+                          </View>
+                        </View>
+
                         {selectedRooms.map((currRoom, roomIndex) => {
                           const {
                             roomName,
@@ -236,14 +199,27 @@ const HtmlPdfView = ({
 
                           return (
                             <View key={roomIndex} style={styles.roomDetails}>
-                              <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}Family Suite</Text> <Text style={styles.roomOccupancy}>
-                                ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
-                              </Text></Text>
-                              <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                              <View style={styles.roomSection}>
+                                <View style={styles.roomSection1}>
+                                  <Text style={styles.roomInfo}>Room:</Text>
+                                  <Text style={styles.roomInfo1}>{roomName}Family Suite ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})</Text>
+                                </View>
+                                {/* <View style={styles.roomSection1}>
+                                  <Text style={styles.roomInfo}>Guest:</Text>
+                                  <Text style={styles.roomOccupancy}>
+                                    
+                                  </Text>
+                                </View> */}
+                                <View style={styles.roomSection1}>
+                                  <Text style={styles.mealPlan}>Meal Plan:</Text>
+                                  <Text style={styles.mealPlan}>{mealPlan}</Text>
+                                </View>
+                              </View>
                             </View>
                           );
                         })}
                       </View>
+
                     );
                   })}
                 </View>
@@ -251,7 +227,9 @@ const HtmlPdfView = ({
                 {/* Lower Half */}
                 {itiDesc[currDayIndex]?.text && (
                   <View style={styles.lowerBox} wrap={true}>
-                    <Text style={styles.itiDescTitle}>Itinerary Description for Day {currDayIndex + 1}</Text>
+                    <Text style={styles.itiDescTitle}>
+                      Itinerary Description for Day {currDayIndex + 1}
+                    </Text>
                     {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                       <Text key={pointIndex} style={styles.itiDescText}>
                         {`${pointIndex + 1}. ${point}`}
@@ -259,11 +237,17 @@ const HtmlPdfView = ({
                     ))}
                   </View>
                 )}
-
               </View>
             </View>
+            {logoB64Str && (
+              <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+            )}
+            <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
           </>
         ))}
+
+
+
 
         <View style={styles.boxContainer2} wrap={false} break>
           <Text style={styles.InfoTitle}>Flights</Text>
@@ -279,10 +263,12 @@ const HtmlPdfView = ({
               {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
             </Text>
           </View>
-          {logoB64Str && (
-            <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-          )}
         </View>
+        {logoB64Str && (
+          <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+
 
         {/* <View style={styles.boxContainer2} wrap={false}>
           <Text style={styles.InfoTitle}>Transfer</Text>
@@ -307,12 +293,13 @@ const HtmlPdfView = ({
                   })
                 }
               </View>
-              {logoB64Str && (
-                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-              )}
             </View>
           </>)
         }
+        {logoB64Str && (
+          <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
 
         {
           exclusions && exclusions.length > 0 && (<>
@@ -325,12 +312,14 @@ const HtmlPdfView = ({
                   })
                 }
               </View>
-              {logoB64Str && (
-                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-              )}
             </View>
           </>)
         }
+        {logoB64Str && (
+          <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+
 
         {
           cancellationData && cancellationData.length > 0 && (<>
@@ -343,12 +332,14 @@ const HtmlPdfView = ({
                   })
                 }
               </View>
-              {logoB64Str && (
-                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-              )}
             </View>
           </>)
         }
+        {logoB64Str && (
+          <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+
 
         {
           paymentPolicy && paymentPolicy.length > 0 && (<>
@@ -361,13 +352,15 @@ const HtmlPdfView = ({
                   })
                 }
               </View>
-              {logoB64Str && (
-                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-              )}
             </View>
           </>)
         }
-        <View wrap={false} break>
+        {logoB64Str && (
+          <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+
+        <View wrap={false} break style={{paddingLeft:30}}>
 
           <View style={styles.priceSection} wrap={false}>
             <Text style={styles.priceTitle}>Total Package Price</Text>
@@ -379,6 +372,10 @@ const HtmlPdfView = ({
             <Text style={styles.footerDetailsText}>
               lorem ipsum bank account details 293728941293 dhsadja DKJHASKJD ICI Bank
             </Text>
+            <View style={styles.footerContact}>
+              <Text style={styles.footerText}>Email : {email}</Text>
+              <Text style={styles.footerText}>Phone : {phone}</Text>
+            </View>
             {logoB64Str && (
               <Image
                 style={styles.footerLogo}
@@ -386,16 +383,14 @@ const HtmlPdfView = ({
                 resizeMode="contain"
               />
             )}
-            <View style={styles.footerContact}>
-              <Text style={styles.footerText}>Email : {email}</Text>
-              <Text style={styles.footerText}>Phone : {phone}</Text>
-            </View>
           </View>
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
+        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+
       </Page>
-    </Document>
+    </Document >
   )
 };
 
@@ -409,7 +404,7 @@ const getThemedStyles = ({ themeData = {} }) => {
 
   return StyleSheet.create({
     page: {
-      fontFamily: 'Roboto',
+      fontFamily: 'Edu QLD Beginner',
       fontSize: 12,
       position: 'relative',
     },
@@ -426,11 +421,14 @@ const getThemedStyles = ({ themeData = {} }) => {
     page2: {
       position: 'relative',
     },
-    headerImagecontainer1: {
+    backgroundImagecontainer1: {
       position: 'absolute',
       width: '100%',
       height: '100%',
       zIndex: -1,
+      objectFit: 'cover',
+      top: 0,
+      left: 0,
     },
     headerImagecontainer: {
       position: 'relative',
@@ -441,12 +439,16 @@ const getThemedStyles = ({ themeData = {} }) => {
       width: '100%',
       height: "100%",
       objectFit: 'cover',
-      opacity: 0.8
+      opacity: 0.9
     },
     overlaySection: {
       position: 'absolute',
       width: '100%',
       backgroundColor: 'white',
+    },
+    contentContainer: {
+      position: 'relative',
+      width: '100%',
     },
     logo: {
       width: 100,
@@ -457,10 +459,25 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     logoInContainer: {
       position: "absolute",
+      top: 0,
+      right: 1,
+      height: 50,
+      marginTop: 10,
+    },
+    logoInContainer1: {
+      position: "absolute",
       bottom: 0,
       right: 1,
-      height: 40,
+      height: 50,
       marginTop: 50,
+    },
+    logoInContainer3: {
+      position: "absolute",
+      top: 0,
+      left: 1,
+      height: 50,
+      marginTop: 10,
+      marginLeft:10,
     },
     image: {
       marginVertical: 15,
@@ -477,38 +494,29 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     title: {
       position: 'absolute',
-      width: "70%",
+      width: "60%",
       top: '5%',
       left: '5%',
-      color: 'brown',
-      fontSize: 40,
-      fontWeight: 'extralight',
-      textShadow: '1px 1px 3px rgba(0, 0, 0, 0.7)',
+      color: 'black',
+      fontSize: 45,
+      fontWeight: 'bold',
     },
     infoBox: {
-      width: '60%',
-      backgroundColor: '#30746c',
       padding: 20,
-      borderRadius: 0, // Removes curved edges
-      alignSelf: 'flex-end', // Ensures alignment to the right
-      position: 'absolute',
-      bottom: 40,
-      right: 30,
       flexDirection: 'column',
       marginBottom: 10,
     },
     label: {
-      flex: 1,
-      color: 'white',
-      opacity: 0.8,
+      color: 'black',
+      opacity: 0.7,
       fontSize: 16,
-      marginBottom: 5,
+      marginBottom: 4,
     },
     value: {
-      flex: 2,
-      color: 'white',
+      color: 'black',
       fontSize: 18,
-      marginBottom: 15,
+      fontWeight: 'extralight',
+      marginBottom: 8,
     },
     hr: {
       borderBottomWidth: 1,
@@ -551,138 +559,140 @@ const getThemedStyles = ({ themeData = {} }) => {
     boxContainer: {
       marginTop: 20,
       zIndex: 1,
-      borderWidth: 1,
-      borderColor: '#ccc',
       overflow: 'hidden',
-      width: "80%",
+      width: "100%",
       alignSelf: "left",
-      shadowColor: "#000",
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
+      paddingLeft: 10,
+      paddingRight: 10,
       marginBottom: 20,
     },
     boxContainer2: {
-      borderWidth: 1,
-      borderColor: '#ccc',
       overflow: 'hidden',
-      width: "80%",
-      height: '60%',
-      alignSelf: "center",
-      shadowColor: "#000",
-      shadowOpacity: 0.25,
+      alignSelf: "flex-start",
       shadowRadius: 4,
       elevation: 5,
-      backgroundColor: "#fff",
       marginBottom: 20,
       padding: 20,
       paddingBottom: 50,
       marginTop: 20,
+      paddingLeft: 30,
     },
     boxContainer3: {
-      borderWidth: 1,
-      borderColor: '#ccc',
       overflow: 'hidden',
       width: "80%",
       height: '80%',
-      alignSelf: "center",
-      shadowColor: "#000",
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-      backgroundColor: "#fff",
+      alignSelf: "flex-start",
       marginBottom: 20,
       padding: 20,
       paddingBottom: 50,
-      marginTop: 20,
+      marginTop: 30,
+      paddingLeft: 30,
+      paddingTop:50,
     },
     upperBox: {
       padding: 20,
       width: '100%',
     },
     dayTitle: {
-      fontSize: 25,
-      fontWeight: 'extrabold',
-      color: 'brown',
+      fontSize: 30,
+      fontFamily: 'Edu QLD Beginner Medium',
+      fontWeight: 'bold',
+      color: '#A52A2A',
       marginBottom: 15,
     },
     InfoTitle: {
-      fontSize: 30, // Increased font size for emphasis
-      fontWeight: 'extrabold', // Bold text
-      color: '#30746c',
+      fontSize: 30,
+      fontWeight: 'extralight',
+      color: 'darkred',
       marginBottom: 30,
       marginLeft: 7,
-      marginTop: 10,
+      marginTop: 60,
     },
+
     hotelDetailsContainer: {
-      marginBottom: 15,
+      marginBottom: 10,
+    },
+    headerSection: {
+      marginBottom: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignSelf: 'flex-start',
+    },
+    headerSectionInner1: {
+      width: '50%',
+      marginRight: 3,
     },
     hotelName: {
-      fontSize: 18, // Larger font size for hotel name
+      fontSize: 16,
+      color: 'darkred',
+      fontWeight: 'ultralight',
+      opacity: 0.7,
+    },
+    hotelName1: {
+      fontWeight: 'light',
+      color: '#000',
+      fontSize: 16,
       opacity: 0.8,
-      marginBottom: 5,
-      textAlign: 'left',
     },
     destinationName: {
       fontSize: 16,
-      opacity: 0.8,
-      marginBottom: 20,
+      color: 'darkred',
+      fontWeight: 'ultralight',
+      opacity: 0.7,
     },
     destinationName1: {
       fontSize: 16,
       opacity: 0.8,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-    hotelName1: {
-      fontSize: 18,
-      opacity: 1,
-      fontWeight: 'bold',
+      fontWeight: 'light',
     },
     roomDetails: {
-      marginBottom: 20,
+      marginBottom: 10,
+    },
+    roomSection: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      alignSelf: 'flex-start',
+    },
+    roomSection1: {
+      flexDirection: 'column',
+      width: '50%',
+      marginRight: 3,
+      flexWrap: 'wrap',
     },
     roomInfo: {
-      fontSize: 16,
-      marginBottom: 5,
+      fontSize: 14,
+      color: 'darkred',
     },
     roomInfo1: {
-      fontWeight: "bold",
+      fontSize: 14,
+      color: '#000',
     },
     roomOccupancy: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      textAlign: 'center', // Center the text
-      opacity: '0.8',
-      marginBottom: 10,
-    },
-    destination: {
       fontSize: 14,
-      textAlign: 'center', // Centered below Adults/Children
-      marginBottom: 10,
+      color: '#000',
     },
     mealPlan: {
       fontSize: 14,
+      color: '#000',
+      flexWrap: 'wrap',
+      textAlign: 'left',
     },
 
+    lowerBox: {
+      paddingTop: 10,
+    },
     itiDescTitle: {
       fontSize: 25,
-      fontWeight: 'extrabold',
-      color: '#30746c',
-      marginBottom: 13,
-    },
-    lowerBox: {
-      backgroundColor: '#fff',
-      padding: 30,
-      width: '100%',
+      fontWeight: 'light',
+      color: 'darkred',
+      marginBottom: 15,
     },
     itiDescText: {
       fontSize: 16,
-      // fontWeight: 'ultralight',
-      color: '#000',
+      fontWeight: 'hairline',
+      marginBottom: 10,
+      letterSpacing: 1,
       lineHeight: 1.5,
-      opacity: 0.6,
-      marginBottom: 8,
     },
 
     dayHeader: {
@@ -738,7 +748,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginLeft: 10,
     },
     bullet: {
-      fontSize: 16,
+      fontSize: 20,
       marginVertical: 1,
       lineHeight: 1.5,
       color: '#555555',
@@ -747,29 +757,25 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     priceSection: {
       display: 'flex',
-      flexDirection: 'column', // Change to column to stack title and price
-      justifyContent: 'center', // Center content vertically
-      alignItems: 'center', // Center content horizontally
-      marginTop: 20,
+      flexDirection: 'column',
+      justifyContent: 'left', 
+      alignItems: 'left', 
+      marginTop: 100,
       padding: 15,
-      backgroundColor: primaryColor, // Set background color
-      borderWidth: 1,
-      borderRadius: 5,
       marginBottom: 30,
     },
     priceTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: 'white',
-      textAlign: 'center',
+      fontSize: 20,
+      color: 'black',
+      textAlign: 'left',
       opacity: 0.8,
-      marginBottom: 5, // Space between title and price
+      marginBottom: 5, 
     },
     totalPrice: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: 'white',
-      textAlign: 'center',
+      fontSize: 27,
+      fontFamily: 'Edu QLD Beginner Medium',
+      color: 'darkred',
+      textAlign: 'left',
     },
     transferContainer: {
       marginLeft: 10,
@@ -777,10 +783,10 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderRadius: 5,
     },
     transferText: {
-      fontSize: 18,
+      fontSize: 20,
       opacity: 0.8,
       color: '#333333',
-      lineHeight: 1.5,
+      lineHeight: 2,
     },
     exclusionSection: {
       marginTop: 10,
@@ -792,42 +798,41 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderRadius: 5,
     },
     footerContainer: {
-      backgroundColor: '#FFFFFF',
       padding: 20,
-      borderWidth: 1,
-      borderColor: '#CCCCCC',
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: "center",
-      width: "80%",
+      alignItems:'left',
+      justifyContent: 'flex-start',
+      alignSelf: "flex-start",
     },
     footerTitle: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#000000',
+      fontSize: 22,
+      fontWeight: 'light',
+      color: 'darkred',
       marginBottom: 10,
-      textAlign: 'center',
+      textAlign: 'left',
     },
     footerDetailsText: {
-      fontSize: 12,
-      color: '#333333',
-      textAlign: 'center',
+      fontSize: 14,
+      textAlign: 'left',
       marginBottom: 15,
       width: "60%"
     },
     footerLogo: {
-      height: 70,
+      height:70,
+      maxWidth:'auto',
+      objectFit: 'contain',
       marginBottom: 15,
+      alignSelf:"flex-start",
     },
     footerContact: {
       flexDirection: 'column',
-      alignItems: 'center',
+      alignItems: 'left',
       marginTop: 10,
+      marginBottom:10,
     },
     footerText: {
       fontSize: 12,
       color: '#333333',
-      fontWeight: 'bold',
+      fontWeight: 'light',
       marginBottom: 5,
     },
     pageNumber: {
