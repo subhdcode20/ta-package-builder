@@ -28,7 +28,7 @@ const formatDate = (timestamp) => {
 
 };
 
-// let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+let _defaultHeaderImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -57,7 +57,7 @@ const HtmlPdfView = ({
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
-  console.log("HEADERimg_check default:", headerImage, cancellationData);
+  console.log("HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
   console.log("CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
   if (!styles) return null;
@@ -74,7 +74,7 @@ const HtmlPdfView = ({
           )} */}
           <Image
             style={styles.headerImage}
-            src={headerImage}
+            src={headerImage || _defaultHeaderImage}
             resizeMode="cover"
           />
 
@@ -114,12 +114,15 @@ const HtmlPdfView = ({
       <Page style={styles.page} wrap={false}>
         <View style={{ flexDirection: 'row', height: '100%' }}>
           {/* Left Column - Image */}
-          <View style={{ flex: 4 }}>
-            <Image
-              source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
-              style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            />
-          </View>
+          {
+            headerImage && (<View style={{ flex: 4 }}>
+              <Image
+                source={{ uri: headerImage || _defaultHeaderImage }}
+                // 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+              />
+            </View>)
+          }
 
           <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor:'#30746c' }}>
             <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color:'#84bfb9' }}>
@@ -134,11 +137,13 @@ const HtmlPdfView = ({
       </Page>
 
       <Page style={[styles.page, styles.page2]} >
-        <Image
-          style={styles.backgroundImage}
-          src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-          fixed
-        />
+        {
+          headerImage && (<Image
+            style={styles.backgroundImage}
+            src={headerImage || _defaultHeaderImage}
+            fixed
+          />)
+        }
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection} wrap={false}>
             <View style={styles.boxContainer}>

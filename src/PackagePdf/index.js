@@ -52,7 +52,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			if(destImagesMap[dest].length > 0) {
 				randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
 				console.log("dest img select ", randomDestImgIndex, destImagesMap[dest][randomDestImgIndex])
-				destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
+				// destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
 				// 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] });
 				console.log("getB64Img headerImg ", data);
