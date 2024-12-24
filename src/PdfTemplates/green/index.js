@@ -28,7 +28,7 @@ const formatDate = (timestamp) => {
 
 };
 
-let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+// let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -46,7 +46,7 @@ const HtmlPdfView = ({
   },
   userProfileData: {
     themeData = {},
-    // headerImage,
+    headerImage,
     cancellationData = [],
     paymentPolicy = [],
     inclusions = [],
@@ -58,20 +58,25 @@ const HtmlPdfView = ({
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check default:", headerImage, cancellationData);
-  console.log("CHECK_ABOUT:", aboutDestText);
+  console.log("CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
   if (!styles) return null;
   return (
     <Document>
       <Page style={styles.page} wrap={false}>
         <View>
-          {headerImage && (
+          {/* {headerImage && (
             <Image
               style={styles.headerImage}
               src={headerImage}
               resizeMode="cover"
             />
-          )}
+          )} */}
+          <Image
+            style={styles.headerImage}
+            src={headerImage}
+            resizeMode="cover"
+          />
 
           {
             logoB64Str && (<Image
@@ -107,20 +112,32 @@ const HtmlPdfView = ({
         </View>
       </Page>
       <Page style={styles.page} wrap={false}>
-        <View style={{ flexDirection: 'row', height: '100%' }}>
+        <View style={{ height: '100%' }}>
           {/* Left Column - Image */}
-          <View style={{ flex: 4 }}>
-            <Image
+          {/* <Image
               source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
               style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            />
-          </View>
+            /> */}
+          <Image
+            style={styles.backgroundImage}
+            src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+            fixed
+          />
 
-          <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor:'#30746c' }}>
-            <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color:'#84bfb9' }}>
+          <View style={{
+            position: 'absolute',
+            right: 0, 
+            width: '60%',
+            height: '100%', 
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            padding: 20,
+            backgroundColor: '#30746c',
+          }}>
+            <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9' }}>
               About {req?.destination}
             </Text>
-            <Text style={{ fontSize: 15, textAlign: 'left',lineHeight:1.2, letterSpacing:1,fontWeight:'extralight', color:'white' }}>
+            <Text style={{ fontSize: 15, textAlign: 'left', lineHeight: 1.2, letterSpacing: 1, fontWeight: 'extralight', color: 'white' }}>
               {aboutDestText}
             </Text>
           </View>
@@ -141,7 +158,7 @@ const HtmlPdfView = ({
               <View style={styles.upperBox}>
                 <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
                 {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
-                  const { hotelName,location, selectedRooms = [] } = hotel;
+                  const { hotelName, location, selectedRooms = [] } = hotel;
                   return (
                     <View key={hotelIndex} style={styles.hotelDetailsContainer}>
                       <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
@@ -201,7 +218,7 @@ const HtmlPdfView = ({
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
               {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
-            Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
+              Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
             </Text>
           </View>
           <Text style={styles.InfoTitle}>Transfer</Text>
@@ -489,7 +506,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderColor: '#ccc',
       overflow: 'hidden',
       width: "80%",
-      height:'60%',
+      height: '60%',
       alignSelf: "center",
       shadowColor: "#000",
       shadowOpacity: 0.25,
@@ -506,7 +523,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       borderColor: '#ccc',
       overflow: 'hidden',
       width: "80%",
-      height:'80%',
+      height: '80%',
       alignSelf: "center",
       shadowColor: "#000",
       shadowOpacity: 0.25,
@@ -535,7 +552,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#30746c',
       marginBottom: 30,
       marginLeft: 7,
-      marginTop:10,
+      marginTop: 10,
     },
     hotelDetailsContainer: {
       marginBottom: 15,
@@ -611,7 +628,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       // fontWeight: 'ultralight',
       color: '#000',
       lineHeight: 1.5,
-      opacity:0.6,
+      opacity: 0.6,
       marginBottom: 8,
     },
 
@@ -672,8 +689,8 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginVertical: 1,
       lineHeight: 1.5,
       color: '#555555',
-      fontWeight:'extralight',
-      marginBottom:8,
+      fontWeight: 'extralight',
+      marginBottom: 8,
     },
     priceSection: {
       display: 'flex',
@@ -708,7 +725,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     transferText: {
       fontSize: 18,
-      opacity:0.8,
+      opacity: 0.8,
       color: '#333333',
       lineHeight: 1.5,
     },

@@ -58,7 +58,7 @@ const SignUp = () => {
   };
 
   const handleFileUpload = async (file, fileName) => {
-    const fileRef = ref(storage, `userDocs/${personalInfo.phone}/${fileName}`);
+    const fileRef = ref(storage, `userDocs/+91${personalInfo.phone}/${fileName}`);
     // ->  userDocs/phone/fileName
     await uploadBytes(fileRef, file);
     // if(fileName == "companyLogo") {

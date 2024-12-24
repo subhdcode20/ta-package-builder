@@ -8,11 +8,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import { db } from '../firebaseConfig';
-import { MainContext } from '../Utility.js';
+import { MainContext, getB64Img } from '../Utility.js';
 // import PdfView from './pdfView';
 import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
 import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
+import destImagesMap from './destPdfImagesMap.js';
 
 // Temporary defined HERE:
 const destinationImages = {
@@ -36,13 +37,30 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	let { companyInfo: { companyLogo: logoUrl } = {} } = userData || {};
 	const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+	// const [templateData, setTemplateData] = useState(null)
 	const [headerImage, setHeaderImage] = useState("");
 
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		console.log("CHECK_IMGheader:",destinationImages[reqData?.destination.toLowerCase()] );
-		setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
+		const getDestImgB64 = async () => {
+			if(!reqData?.destination) return;
+			let dest = reqData?.destination.toLowerCase();
+			console.log("CHECK_IMGheader:", destinationImages[reqData?.destination.toLowerCase()] );
+			// setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
+			let randomDestImgIndex = 0
+			if(destImagesMap[dest].length > 0) {
+				randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
+				console.log("dest img select ", randomDestImgIndex, destImagesMap[dest][randomDestImgIndex])
+				destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
+				// 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] });
+				console.log("getB64Img headerImg ", data);
+				setHeaderImage(data);
+			}
+		}
+
+		getDestImgB64();
 		getAboutDest();
 	},[reqData?.destination])
 
@@ -62,10 +80,12 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	
 		let response = await axios(axiosOptions);
 		console.log('response axios ', response, userData);
-		setUserPdfData(prev => ({ 
-			...userData, 
-			logoB64Str: response.data?.data
-		}))
+		return response.data?.data;
+		// setUserPdfData(prev => ({ 
+		// 	...userData, 
+		// 	logoB64Str: response.data?.data
+		// }))
+
 		// setNewUserData(prev => ({ ...prev, logoB64Str: response.data?.data }));
 	}
 
@@ -137,17 +157,28 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 
 	useEffect(() => {
 		console.log("CHECKBIDDATAINSIDE axios LOGO - ", logoUrl)
-		if(logoUrl) {
-		  //fetch logo base64
-		  getLogoB64encoded();
+		// if(logoUrl) {
+		//   //fetch logo base64
+		//   getLogoB64encoded();
+		// }
+		const getLogoB64 = async () => {
+			let { data = null, err = null } = await getB64Img({ logoUrl });
+			console.log("getB64Img final ", data);
+			setUserPdfData(prev => ({ 
+				...userData, 
+				logoB64Str: data
+			}))
 		}
+
+		// TODO
+		// getLogoB64();
 	}, [logoUrl]);
 
     if (loading) {
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("packagePdf render => ", finalPackPrice, pkgSelectedHotels, userPdfData);
+    console.log("packagePdf render => ", headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
 
     return (<>
         {
