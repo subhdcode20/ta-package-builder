@@ -78,10 +78,11 @@ export const todoSlice = createSlice({
       state.packageData = packageData
       state.selectedHotels = packageData.hotels  //newSelectedHotels;
       // state.selectedRooms = newSelectedRooms;
-      state.totalDayPrices = packageData?.totalDayPrices || []
+      if(packageData?.totalDayPrices && packageData?.totalDayPrices.length > 0) state.totalDayPrices = packageData?.totalDayPrices || []
       state.itineraryDesc = packageData?.itiTexts || []
-      state.finalTransferPrice = packageData?.finalTransferPrice || '';
-      state.finalPackPrice = packageData?.finalPackPrice || '';
+      state.finalTransferPrice = isNaN(packageData?.finalTransferPrice) ? '' : packageData?.finalTransferPrice;
+      state.finalPackPrice = isNaN(packageData?.finalPackPrice) ? '' : packageData?.finalPackPrice;
+      state.itiFlightsData = packageData?.flights || {}
       
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
@@ -407,6 +408,7 @@ export const todoSlice = createSlice({
     },
     setTotalTransferPrice: (state, action) => {
       let { transferPrice = 0 } = action?.payload;
+      console.log('set total transfer price slice ', transferPrice);
       if(isNaN(transferPrice)) return;
       state["finalTransferPrice"] = transferPrice;
       
@@ -471,14 +473,24 @@ export const todoSlice = createSlice({
       if(!action?.payload) return;
       let { flightType = '', flightText = '' } = action?.payload;
       if(!flightType || !flightText) return;
-      let flightsData = state["arrFlightsText"] || {};
+      let flightsData = state["itiFlightsData"] || {};
       let newData = {...flightsData};
       newData[flightType] = flightText;
-      state["arrFlightsText"] = newData;
+      state["itiFlightsData"] = newData;
     },
     setAboutDest: (state, action) => {
       if(!action?.payload) return;
       state["aboutDestText"] = action?.payload;
+    },
+    addDayItiText: (state, action) => {
+      let itiData = state?.itineraryDesc || {};
+      let currArr = itiData[state?.currDayIndex]?.text || null;
+      if(!currArr) currArr = [""];
+      let newArr = [ ...currArr ];
+      newArr.push("");
+      console.log("addDayItiText text final", newArr, currArr);
+      itiData[state?.currDayIndex].text = newArr;
+      // state?.itineraryDesc = newArr;
     }
   }
 });
@@ -516,7 +528,8 @@ export const {
   handleAddPolicyItem,
   updatePolicyText,
   setArrFlightsData,
-  setAboutDest
+  setAboutDest,
+  addDayItiText,
 } = todoSlice.actions;
 
 // this is for configureStore

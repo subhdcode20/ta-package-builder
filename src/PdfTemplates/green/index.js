@@ -2,6 +2,7 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
+import { isEmptyObject } from '../../Utility';
 
 
 Font.register({
@@ -28,7 +29,7 @@ const formatDate = (timestamp) => {
 
 };
 
-// let headerImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+let _defaultHeaderImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -57,7 +58,7 @@ const HtmlPdfView = ({
 }) => {
   console.log("HOTELS_DETAILS", JSON.stringify(hotels));
   console.log("pdf template render ", req, logoB64Str, hotels);
-  console.log("HEADERimg_check default:", headerImage, cancellationData);
+  console.log("HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
   console.log("CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
   if (!styles) return null;
@@ -74,7 +75,7 @@ const HtmlPdfView = ({
           )} */}
           <Image
             style={styles.headerImage}
-            src={headerImage}
+            src={headerImage || _defaultHeaderImage}
             resizeMode="cover"
           />
 
@@ -112,17 +113,24 @@ const HtmlPdfView = ({
         </View>
       </Page>
       <Page style={styles.page} wrap={false}>
-        <View style={{ height: '100%' }}>
+        <View style={{height: '100%'}}>
           {/* Left Column - Image */}
-          {/* <Image
-              source={{ uri: 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=' }}
-              style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            /> */}
-          <Image
-            style={styles.backgroundImage}
-            src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-            fixed
-          />
+          {
+            headerImage && (
+              <Image
+                source={{ uri: headerImage || _defaultHeaderImage }}
+                // 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
+                style={[{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }]}
+              />
+            )
+          }
 
           <View style={{
             position: 'absolute',
@@ -134,10 +142,10 @@ const HtmlPdfView = ({
             padding: 20,
             backgroundColor: '#30746c',
           }}>
-            <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9' }}>
+            <Text style={{fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9'}}>
               About {req?.destination}
             </Text>
-            <Text style={{ fontSize: 15, textAlign: 'left', lineHeight: 1.2, letterSpacing: 1, fontWeight: 'extralight', color: 'white' }}>
+            <Text style={{fontSize: 15, textAlign: 'left', lineHeight: 1.2, letterSpacing: 1, fontWeight: 'extralight', color: 'white'}}>
               {aboutDestText}
             </Text>
           </View>
@@ -146,11 +154,13 @@ const HtmlPdfView = ({
       </Page>
 
       <Page style={[styles.page, styles.page2]} >
-        <Image
-          style={styles.backgroundImage}
-          src='https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-          fixed
-        />
+        {
+          headerImage && (<Image
+            style={styles.backgroundImage}
+            src={headerImage || _defaultHeaderImage}
+            fixed
+          />)
+        }
         {hotels.map((hotelsCurrDay, currDayIndex) => (
           <View key={currDayIndex} style={styles.daySection} wrap={false}>
             <View style={styles.boxContainer}>
@@ -214,14 +224,20 @@ const HtmlPdfView = ({
         ))}
 
         <View style={styles.boxContainer2} wrap={false} break>
-          <Text style={styles.InfoTitle}>Flights</Text>
-          <View style={styles.transferContainer}>
-            <Text style={styles.transferText}>
-              {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
-              Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
-            </Text>
-          </View>
-          <Text style={styles.InfoTitle}>Transfer</Text>
+          {
+            !isEmptyObject(flights) && (<>
+              <Text style={styles.InfoTitle1}>Flights</Text>
+              <View style={styles.transferContainer}>
+                <Text style={styles.transferText}>
+                  {`${flights?.arrival ? `Arrival Flight: ${flights?.arrival}.` : ''}`}
+                </Text>
+                <Text style={styles.transferText}>
+                  {`${flights?.departure ? `Departure Flight: ${flights?.departure}.` : ''}`}
+                </Text>
+              </View>
+            </>)
+          }
+          <Text style={styles.InfoTitle1}>Transfer</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
               {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
@@ -420,15 +436,15 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#000',
       marginRight: 20,
       opacity: 0.8,
-      textAlign: "left", // Ensures proper alignment
+      textAlign: "left", 
       marginBottom: 30,
     },
     infoBox: {
       width: '60%',
       backgroundColor: '#30746c',
       padding: 20,
-      borderRadius: 0, // Removes curved edges
-      alignSelf: 'flex-end', // Ensures alignment to the right
+      borderRadius: 0,
+      alignSelf: 'flex-end',
       position: 'absolute',
       bottom: 40,
       right: 30,
@@ -467,7 +483,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     sectionHeader: {
       flex: 1,
-      backgroundColor: primaryColor,  //'#b352d1',
+      backgroundColor: primaryColor, 
       padding: 10,
       borderRadius: 5,
       marginLeft: 10,
@@ -547,18 +563,26 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginBottom: 15,
     },
     InfoTitle: {
-      fontSize: 30, // Increased font size for emphasis
-      fontWeight: 'extrabold', // Bold text
+      fontSize: 30, 
+      fontWeight: 'extrabold', 
       color: '#30746c',
       marginBottom: 30,
       marginLeft: 7,
       marginTop: 10,
     },
+    InfoTitle1: {
+      fontSize: 30, 
+      fontWeight: 'extrabold',
+      color: '#30746c',
+      marginBottom: 10,
+      marginLeft: 7,
+      marginTop:20,
+    },
     hotelDetailsContainer: {
       marginBottom: 15,
     },
     hotelName: {
-      fontSize: 18, // Larger font size for hotel name
+      fontSize: 18, 
       color: '#fff',
       opacity: 0.8,
       marginBottom: 5,
@@ -596,7 +620,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     roomOccupancy: {
       fontSize: 16,
       fontWeight: 'bold',
-      textAlign: 'center', // Center the text
+      textAlign: 'center',
       color: '#fff',
       opacity: '0.8',
       marginBottom: 10,
@@ -604,7 +628,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     destination: {
       fontSize: 14,
       color: '#fff',
-      textAlign: 'center', // Centered below Adults/Children
+      textAlign: 'center', 
       marginBottom: 10,
     },
     mealPlan: {
@@ -694,12 +718,12 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     priceSection: {
       display: 'flex',
-      flexDirection: 'column', // Change to column to stack title and price
-      justifyContent: 'center', // Center content vertically
-      alignItems: 'center', // Center content horizontally
+      flexDirection: 'column',
+      justifyContent: 'center', 
+      alignItems: 'center', 
       marginTop: 20,
       padding: 15,
-      backgroundColor: primaryColor, // Set background color
+      backgroundColor: primaryColor, 
       borderWidth: 1,
       borderRadius: 5,
       marginBottom: 30,
@@ -710,7 +734,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: 'white',
       textAlign: 'center',
       opacity: 0.8,
-      marginBottom: 5, // Space between title and price
+      marginBottom: 5, 
     },
     totalPrice: {
       fontSize: 18,
@@ -722,6 +746,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginLeft: 10,
       padding: 10,
       borderRadius: 5,
+      marginBottom:10,
     },
     transferText: {
       fontSize: 18,

@@ -8,9 +8,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import { gemini } from '../firebaseConfig.js';
-import { setItineraryDesc, updateItineraryDesc, handleRemoveItiItem, setAboutDest } from './packBuilderSlice.js';
+import { setItineraryDesc, updateItineraryDesc, handleRemoveItiItem, setAboutDest, addDayItiText } from './packBuilderSlice.js';
 
 // Gemini Prompt for itinerary text for 1 day
 const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1}) => {
@@ -117,6 +118,13 @@ const GenerateItineraryBtn = ({  }) => {
                         </Box>)
                     })
                 }
+                <Box sx={{ display: 'flex', px: 1, position: 'relative' }}>
+                    <IconButton aria-label="delete" size="small" color="primary" 
+                        onClick={() => dispatch(addDayItiText())}
+                    >
+                        <AddCircleOutlineIcon fontSize='small'/>
+                    </IconButton>
+                </Box>
             </Box>)
         }
     </Grid>)
@@ -133,7 +141,8 @@ const aiAboutDest = async (destination) => {
     // Provide a prompt that contains text
     const prompt = `Write a summarized travel Destination Introduction text for **${destination}**.
     Language should be as a Travel Agency.
-    Limit to 1000 characters. If the mentioned destination is a city, Also mention about the area or state that the destination city lies in.`
+    Limit to 1000 characters. If the mentioned destination is a city, Also mention about the area or state that the destination city lies in.
+    Dont mention a title, only write the main content.`
     
     // itinerary for the 1st day of the Trip with following details: 
     //  Welcome and Pick up: ${pickUp || "Airport"}. Destination for the Day: ${location}. Stay tonight at: Hotel ${hotelName}.

@@ -172,9 +172,9 @@ const Profile = () => {
   if (!userData) return <Typography>Loading...</Typography>;
 
   return (<Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
-    <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 4 }}>
+    <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 2 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        <Typography variant="h4" sx={{ marginBottom: 1 }}>
           Profile Details
         </Typography>
 
@@ -248,10 +248,17 @@ const Profile = () => {
           </Grid>
         </Grid>
 
-        <Typography variant="h6" sx={{ marginTop: 4 }}>
-          Destinations
+        {/* <Typography variant="h6" sx={{ marginTop: 2 }}>
+          Payment Details:
         </Typography>
-        <Box display="flex" gap={2} sx={{ marginTop: 2, marginBottom: 2 }}>
+        <Grid container spacing={2} sx={{ marginTop: 0 }}>
+          
+        </Grid> */}
+
+        <Typography variant="h6" sx={{ marginTop: 2 }}>
+          Your Destinations
+        </Typography>
+        <Box display="flex" gap={2} sx={{ marginTop: 1, marginBottom: 2 }}>
           <TextField
             fullWidth
             label="Add Destination"
@@ -263,7 +270,7 @@ const Profile = () => {
             Add
           </Button>
         </Box>
-        <Box display="flex" flexWrap="wrap" gap={2}>
+        <Box display="flex" flexWrap="wrap" gap={1}>
           {destinations.map((destination, index) => (
             <Box
               key={index}
@@ -288,21 +295,21 @@ const Profile = () => {
           ))}
         </Box>
 
-        <Typography variant="h6" sx={{ marginTop: 4 }}>
+        <Typography variant="h6" sx={{ marginTop: 2 }}>
           Company Information
         </Typography>
-        <Grid container spacing={2} sx={{ marginTop: 2 }}>
+        <Grid container spacing={2} sx={{ marginTop: 0 }}>
           {["businessDocs", "gst", "panCard"].map((key) => (
             <Grid item xs={12} sm={6} md={4} key={key}>
               <Box display="flex" flexDirection="column" alignItems="center">
-                <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                <Typography variant="caption" sx={{ marginBottom: 1 }}>
                   {key.replace(/([A-Z])/g, " $1").toUpperCase()}
                 </Typography>
                 <Box
                   component="img"
                   src={companyInfo[key]}
                   alt={key}
-                  sx={{ width: 120, height: 120, objectFit: "cover", border: "1px solid #ddd" }}
+                  sx={{ width: 80, height: 80, objectFit: "cover", border: "1px solid #ddd" }}
                 />
                 <Box display="flex" gap={1} mt={1}>
                   <IconButton
@@ -326,7 +333,7 @@ const Profile = () => {
           ))}
         </Grid>
 
-        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
           <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
             Cancel
           </Button>
@@ -354,9 +361,9 @@ const Profile = () => {
         </DialogContent>
       </Dialog>
     </Container>
-    <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 4 }}>
+    <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 2 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+        <Typography variant="h4" sx={{ marginBottom: 1 }}>
           Brand Details
         </Typography>
 
@@ -383,7 +390,7 @@ const Profile = () => {
         <EditExclusions />
           
 
-        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 4 }}>
+        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
           <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
             Cancel
           </Button>

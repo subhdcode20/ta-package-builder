@@ -32,7 +32,7 @@ const ImageButton = styled(ButtonBase)(({ theme }) => ({
   '&:hover, &.Mui-focusVisible': {
     zIndex: 1,
     '& .MuiImageBackdrop-root': {
-      opacity: 0.15,
+      opacity: 0,
     },
     '& .MuiImageMarked-root': {
       opacity: 0,
@@ -72,7 +72,7 @@ const ImageBackdrop = styled('span')(({ theme }) => ({
   top: 0,
   bottom: 0,
   backgroundColor: theme.palette.common.black,
-  opacity: 0.4,
+  opacity: 0.1,
   transition: theme.transitions.create('opacity'),
 }));
 
