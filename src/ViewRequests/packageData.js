@@ -9,6 +9,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useNavigate } from "react-router-dom";
+import { isEmptyObject } from '../Utility';
 
 const PackageData = ({ packageDetails = [], reqData = {} }) => {
   const { pickUp, cabType, dropLoc } = reqData || {};
@@ -37,6 +38,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
             ? format(new Date(pkg.createdAt), 'dd-MM-yyyy')
             : 'N/A';
 
+          console.log('PackageData render 22 ', pkg);
           return (
             <Accordion key={pkgIndex} sx={{ marginBottom: 2 }}>
               <AccordionSummary
@@ -223,12 +225,16 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                   <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
                     Price Section
                   </Typography>
-                  <Typography sx={{ color: '#555', marginBottom: 1 }}>
-                    Hotel Price: ₹{pkg?.finalPackPrice - pkg?.finalTransferPrice || '0'}
-                  </Typography>
-                  <Typography sx={{ color: '#555', marginBottom: 1 }}>
-                    Transfer Price: ₹{pkg?.finalTransferPrice || '0'}
-                  </Typography>
+                  {
+                    (pkg?.finalTransferPrice && !isEmptyObject(pkg?.finalTransferPrice) && !isNaN(pkg?.finalTransferPrice)) && (<>
+                      <Typography sx={{ color: '#555', marginBottom: 1 }}>
+                        Hotel Price: ₹{Number(pkg?.finalPackPrice) - Number(pkg?.finalTransferPrice) || '0'}
+                      </Typography>
+                      <Typography sx={{ color: '#555', marginBottom: 1 }}>
+                        Transfer Price: ₹{pkg?.finalTransferPrice || '0'}
+                      </Typography>
+                    </>)
+                  }
                   <Typography sx={{ color: '#000', fontWeight: 'bold' }}>
                     Total Package Price: ₹{pkg?.finalPackPrice || '0'}
                   </Typography>

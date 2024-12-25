@@ -26,13 +26,13 @@ export const templatesMap = {
     "green": {
         name: "Green",
         viewComponent: GreenPdfView,
-        thumbnail: "/Kerala2.png",
+        thumbnail: "/green-thumbnail.jpg",
         width: '30%'
     },
     "mountain": {
         name: "Mountain",
         viewComponent: MountainPdfView,
-        thumbnail: "/Kerala2.png",
+        thumbnail: "/mountain-thumbnail.jpg",
         width: '30%'
     }
 }

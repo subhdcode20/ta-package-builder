@@ -3,6 +3,7 @@ import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Stop, S
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import BackgroundImageGradient from './imageGradient';
+import { isEmptyObject } from '../../Utility';
 
 
 Font.register({
@@ -35,7 +36,8 @@ const formatDate = (timestamp) => {
 };
 
 
-let headerImage = 'https://plus.unsplash.com/premium_photo-1661885251699-b242dd1e6e20?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bW91bnRhaW4lMjByb2FkfGVufDB8fDB8fHww'
+// let headerImage = 'https://plus.unsplash.com/premium_photo-1661885251699-b242dd1e6e20?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bW91bnRhaW4lMjByb2FkfGVufDB8fDB8fHww'
+let _defaultHeaderImage = 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 const HtmlPdfView = ({
   reqData: {
     req = {},
@@ -53,7 +55,7 @@ const HtmlPdfView = ({
   },
   userProfileData: {
     themeData = {},
-    // headerImage,
+    headerImage,
     cancellationData = [],
     paymentPolicy = [],
     inclusions = [],
@@ -62,7 +64,7 @@ const HtmlPdfView = ({
   },
   totalPackPrice = ''
 }) => {
-  console.log("HOTELS_DETAILS", JSON.stringify(hotels));
+  console.log("HOTELS_DETAILS", hotels);
   console.log("pdf template render ", req, logoB64Str, hotels);
   console.log("HEADERimg_check default:", headerImage, cancellationData);
   console.log("CHECK_ABOUT:", aboutDestText);
@@ -76,7 +78,7 @@ const HtmlPdfView = ({
           {headerImage && (
             <Image
               style={styles.headerImage}
-              src={headerImage}
+              src={headerImage || _defaultHeaderImage}
               resizeMode="cover"
             />
           )}
@@ -150,7 +152,7 @@ const HtmlPdfView = ({
           <Image style={styles.logoInContainer1} src={logoB64Str} resizeMode="contain" />
         )}
         <BackgroundImageGradient
-          imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0="
+          imageSrc={headerImage || _defaultHeaderImage}
         />
       </Page>
 
@@ -166,6 +168,7 @@ const HtmlPdfView = ({
                   <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
                   {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
                     const { hotelName, location, selectedRooms = [] } = hotel;
+                    console.log("hotel pdf index ", hotelIndex)
                     return (
                       <View key={hotelIndex} style={styles.hotelDetailsContainer}>
                         <View style={styles.headerSection}>
@@ -242,19 +245,22 @@ const HtmlPdfView = ({
             {logoB64Str && (
               <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
             )}
-            <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+            <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
           </>
         ))}
 
 
         <View style={styles.boxContainer2} wrap={false} break>
-          <Text style={styles.InfoTitle}>Flights</Text>
-          <View style={styles.transferContainer}>
-            <Text style={styles.transferText}>
-              {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
-              Arrival Flight for the trip: Delhi. Departure Flight for the trip: Mumbai
-            </Text>
-          </View>
+          {
+            !isEmptyObject(flights) && (<>
+              <Text style={styles.InfoTitle}>Flights</Text>
+              <View style={styles.transferContainer}>
+                <Text style={styles.transferText}>
+                  {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
+                </Text>
+              </View>
+            </>)
+          }
           <Text style={styles.InfoTitle}>Transfer</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
@@ -265,7 +271,7 @@ const HtmlPdfView = ({
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
         )}
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
 
         {/* <View style={styles.boxContainer2} wrap={false}>
@@ -297,7 +303,7 @@ const HtmlPdfView = ({
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
         )}
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
         {
           exclusions && exclusions.length > 0 && (<>
@@ -316,8 +322,7 @@ const HtmlPdfView = ({
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
         )}
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
-
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
         {
           cancellationData && cancellationData.length > 0 && (<>
@@ -336,7 +341,7 @@ const HtmlPdfView = ({
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
         )}
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
 
         {
@@ -356,7 +361,7 @@ const HtmlPdfView = ({
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
         )}
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
         <View wrap={false} break style={{paddingLeft:30}}>
 
@@ -385,7 +390,7 @@ const HtmlPdfView = ({
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
-        <BackgroundImageGradient imageSrc="https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0=" />
+        <BackgroundImageGradient imageSrc={headerImage || _defaultHeaderImage} />
 
       </Page>
     </Document >
@@ -666,6 +671,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     roomInfo1: {
       fontSize: 14,
       color: '#000',
+      width:'60%',
     },
     roomOccupancy: {
       fontSize: 14,
@@ -676,6 +682,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#000',
       flexWrap: 'wrap',
       textAlign: 'left',
+      width:'60%',
     },
 
     lowerBox: {

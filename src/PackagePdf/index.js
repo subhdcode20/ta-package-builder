@@ -26,7 +26,7 @@ const destinationImages = {
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
     // // const [packageData, setPackageData] = useState([]);
-	const arrFlightsText = useSelector((state) => state.packBuilderData.arrFlightsText) || null;
+	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || null;
 	const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
 	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
 	const [userPdfData, setUserPdfData] = useState(userData || {});
@@ -46,13 +46,13 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		const getDestImgB64 = async () => {
 			if(!reqData?.destination) return;
 			let dest = reqData?.destination.toLowerCase();
-			console.log("CHECK_IMGheader:", destinationImages[reqData?.destination.toLowerCase()] );
+			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest]);
 			// setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
 			let randomDestImgIndex = 0
 			if(destImagesMap[dest].length > 0) {
 				randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
 				console.log("dest img select ", randomDestImgIndex, destImagesMap[dest][randomDestImgIndex])
-				destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
+				// destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
 				// 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
 				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] });
 				console.log("getB64Img headerImg ", data);
@@ -170,8 +170,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			}))
 		}
 
-		// TODO
-		// getLogoB64();
+		getLogoB64();
 	}, [logoUrl]);
 
     if (loading) {
@@ -185,7 +184,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
 				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
 				<HtmlTemplate 
-					dayWiseData={{"flights": arrFlightsText, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
+					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={finalPackPrice}

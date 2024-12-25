@@ -106,6 +106,10 @@ export const fileToBase64 = file => new Promise((resolve, reject) => {
 
 export const getB64Img = async (data) => {
   if(!data?.logoUrl) return;
+
+  // "error": {
+  //       "code": "auth/id-token-expired"
+
   try {
     const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
     const axiosOptions = {
