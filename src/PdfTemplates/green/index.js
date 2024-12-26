@@ -2,7 +2,7 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { isEmptyObject } from '../../Utility';
+import { isEmptyObject } from '../../Utility.js';
 import { MEAL_PLAN_LABEL } from '../../Constants.js';
 
 Font.register({
