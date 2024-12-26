@@ -28,7 +28,7 @@ const ViewRequest = () => {
     const userData = JSON.parse(localStorage.getItem("user"));
     const urlParamsData = useUrlParams();
     // const reqList = useSelector((state) => state.packBuilderData.reqHistory);
-    console.log("USER_WHOLEDATA", userData.phone, urlParamsData.get('reqId'), typeof urlParamsData, urlParamsData?.reqId);
+    console.log("USER_WHOLEDATA", userReqList, userData.phone, urlParamsData.get('reqId'), typeof urlParamsData, urlParamsData?.reqId);
 
     useEffect(() => {
       const getReqs = async () => {

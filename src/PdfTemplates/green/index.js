@@ -2,8 +2,9 @@ import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { isEmptyObject } from '../../Utility';
 
+import { isEmptyObject } from '../../Utility.js';
+import { MEAL_PLAN_LABEL } from '../../Constants.js';
 
 Font.register({
   family: 'Roboto',
@@ -43,7 +44,10 @@ const HtmlPdfView = ({
     phone,
     logoB64Str,
     email,
-    name,
+    companyName,
+    address,
+    companyInfo = {},
+    paymentDetails = {},
   },
   userProfileData: {
     themeData = {},
@@ -161,13 +165,14 @@ const HtmlPdfView = ({
             fixed
           />)
         }
-        {hotels.map((hotelsCurrDay, currDayIndex) => (
-          <View key={currDayIndex} style={styles.daySection} wrap={false}>
+        {itiDesc.map((itiCurrDay, currDayIndex) => {
+          let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
+          return (<View key={currDayIndex} style={styles.daySection} wrap={false}>
             <View style={styles.boxContainer}>
               {/* Upper Half */}
               <View style={styles.upperBox}>
                 <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-                {hotelsCurrDay.hotels.map((hotel, hotelIndex) => {
+                {hotelsCurrDay.map((hotel, hotelIndex) => {
                   const { hotelName, location, selectedRooms = [] } = hotel;
                   return (
                     <View key={hotelIndex} style={styles.hotelDetailsContainer}>
@@ -180,16 +185,7 @@ const HtmlPdfView = ({
                           mp,
                         } = currRoom;
 
-                        let mealPlan = '';
-                        if (mp === 'mapai') {
-                          mealPlan = 'Breakfast and (Lunch or Dinner)';
-                        } else if (mp === 'cpai') {
-                          mealPlan = 'Breakfast ONLY';
-                        } else if (mp === 'apai') {
-                          mealPlan = 'All meals (Breakfast, Lunch, and Dinner)';
-                        } else {
-                          mealPlan = 'No meal plan specified';
-                        }
+                        let mealPlan = MEAL_PLAN_LABEL[mp] || 'No meal plan specified';
 
                         return (
                           <View key={roomIndex} style={styles.roomDetails}>
@@ -220,8 +216,9 @@ const HtmlPdfView = ({
                 <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
               )}
             </View>
-          </View>
-        ))}
+          </View>)
+        }
+        )}
 
         <View style={styles.boxContainer2} wrap={false} break>
           {
@@ -340,9 +337,26 @@ const HtmlPdfView = ({
 
           <View style={styles.footerContainer} wrap={false}>
             <Text style={styles.footerTitle}>Bank Account Details</Text>
-            <Text style={styles.footerDetailsText}>
-              lorem ipsum bank account details 293728941293 dhsadja DKJHASKJD ICI Bank
-            </Text>
+            {
+              paymentDetails?.accName && (<Text style={styles.footerDetailsText}>
+                Account Name: {paymentDetails?.accName}
+              </Text>)
+            }
+            {
+              paymentDetails?.accNo && (<Text style={styles.footerDetailsText}>
+                Account No: {paymentDetails?.accNo}
+              </Text>)
+            }
+            {
+              paymentDetails?.ifscCode && (<Text style={styles.footerDetailsText}>
+                IFSC: {paymentDetails?.ifscCode}
+              </Text>)
+            }
+            {
+              paymentDetails?.upiId && (<Text style={styles.footerDetailsText}>
+                UPI: {paymentDetails?.upiId}
+              </Text>)
+            }
             {logoB64Str && (
               <Image
                 style={styles.footerLogo}
@@ -351,8 +365,9 @@ const HtmlPdfView = ({
               />
             )}
             <View style={styles.footerContact}>
-              <Text style={styles.footerText}>Email : {email}</Text>
-              <Text style={styles.footerText}>Phone : {phone}</Text>
+              {email && (<Text style={styles.footerText}>Email : {email}</Text>)}
+              {phone && (<Text style={styles.footerText}>Phone : {phone}</Text>)}
+              {address && (<Text style={styles.footerText}>Address : {address}</Text>)}
             </View>
           </View>
         </View>
@@ -775,7 +790,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       fontSize: 12,
       color: '#333333',
       textAlign: 'center',
-      marginBottom: 15,
+      marginBottom: 5,
       width: "60%"
     },
     footerLogo: {
@@ -785,7 +800,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     footerContact: {
       flexDirection: 'column',
       alignItems: 'center',
-      marginTop: 10,
+      marginTop: 20,
     },
     footerText: {
       fontSize: 12,

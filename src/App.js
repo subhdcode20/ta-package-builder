@@ -8,14 +8,15 @@ import { Provider } from 'react-redux'
 
 import './App.css';
 import Routes from './Routes.js';
+import { AF_THEME_PRIMARY_COLOR, AF_THEME_SECONDARY_COLOR } from './Constants.js';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#b352d1", //'#428bfe'
+      main: AF_THEME_PRIMARY_COLOR, //'#428bfe'
     },
     secondary: {
-      main: "#000000bf",
+      main: AF_THEME_SECONDARY_COLOR,
     },  
     text: {
       primary: "#212121", //'#212121',  //'#7c3647',  //'rgba(124, 54, 71, 1)',

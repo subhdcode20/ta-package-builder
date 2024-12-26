@@ -3,6 +3,7 @@ import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 
+import { MEAL_PLAN_LABEL } from "../../Constants.js";
 
 Font.register({
   family: 'Roboto',

@@ -3,6 +3,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import { db } from "../firebaseConfig.js";
 import { isEmptyObject, itiRoomPriceFieldsMap } from '../Utility.js';
+import { DEFAULT_TEMPLATE_NAME } from '../Constants.js';
 import { store } from '../appStore/store.js';
 
 // selectedHotels
@@ -432,7 +433,7 @@ export const todoSlice = createSlice({
     selectTemplate: (state, action) => {
       let userData = state?.userData;
       console.log('selectTemplate ', userData, action?.payload);
-      userData["templateName"] = action?.payload?.name || 'default'
+      userData["templateName"] = action?.payload?.name || DEFAULT_TEMPLATE_NAME
     },
     handleRemovePolicyItem: (state, action) => {
       let { policyType = null, deleteIndex = null } = action?.payload;

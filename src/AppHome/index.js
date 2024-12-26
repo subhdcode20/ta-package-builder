@@ -155,7 +155,17 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		// TODO: handle data validation, show validation errors
 
 		let newReqId = nanoid();
-		let newReqData = { ...reqData, roomOcc };
+		const { totalAdults = 0, totalChild = 0 } = roomOcc.reduce((acc, item) => {
+			acc = {
+				"totalAdults": acc.totalAdults += Number(item.adultPax),
+				"totalChild": acc.totalChild += Number(item.childPax)
+			}
+			return acc;
+		}, {
+			"totalAdults": 0,
+			"totalChild": 0,        
+		})
+		let newReqData = { ...reqData, roomOcc, totalAdults, totalChild };
 		dispatch(submitReqData({ reqData: newReqData }));
 		let reqRef = await setDoc(doc(db, "requests", newReqId), {
 			...newReqData,
@@ -422,7 +432,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 									});
 								}}
 								sx={{ width: "100%" }}
-								value={reqData.startDate || ''}
+								value={reqData.startDate || null}
 								closeOnSelect
 								className={"date-picker-root"}
 								renderInput={(params) => (
@@ -634,7 +644,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 								variant="contained"
 								size="small"
 							>
-								Save Request&nbsp;
+								Create Package &nbsp;
 							</LoadingButton>
 						)}
 					</Grid>

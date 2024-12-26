@@ -34,6 +34,7 @@ const Profile = () => {
   const [editedData, setEditedData] = useState({});
   // const [brandData, setBrandData] = useState({});
   const [isEdited, setIsEdited] = useState(false);
+  const [isBrandEdited, setIsBrandEdited] = useState(false);
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
@@ -50,10 +51,11 @@ const Profile = () => {
     phone = '',
     email = '',
     address = '',
+    paymentDetails = {}
   } = editedData;
 
   const { companyLogo = '' } = companyInfo;
-  console.log("profile logo", userData, companyLogo, editedData);
+  console.log("profile logo", paymentDetails);  //, userData, companyLogo, editedData
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,14 +171,45 @@ const Profile = () => {
     setIsEdited(true);
   };
 
+  const handlePayDetailsChange = (type, value) => {
+    if(!type) return;
+    let payData = editedData?.paymentDetails;
+    if(!payData) payData = {};
+    else payData = { ...editedData?.paymentDetails }
+    payData[type] = value;
+    setEditedData({ 
+      ...editedData, 
+      "paymentDetails": payData
+    })
+    setIsEdited(true);
+  }
+
   if (!userData) return <Typography>Loading...</Typography>;
 
   return (<Box display={'flex'} flexDirection={isMobile ? 'column' : 'row'}>
     <Container maxWidth="md" sx={{ marginTop: isMobile ? 1 : 2 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 1 }}>
-          Profile Details
-        </Typography>
+        <Box display={'flex'} justifyContent={'space-between'}>
+          <Typography variant="h5" sx={{ marginBottom: 1 }}>
+            Profile Details
+          </Typography>
+          <Box display="flex" justifyContent="flex-end">
+            <Button size="small" color="error" onClick={handleCancel} sx={{ margin: 'auto' }}>
+              Cancel
+            </Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={handleUpdate}
+              disabled={!isEdited}
+              sx={{ margin: 'auto' }}
+            >
+              Update
+            </Button>
+        </Box>
+        </Box>
 
         <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
           <Box sx={{ position: "relative", marginRight: 3 }}>
@@ -248,12 +281,59 @@ const Profile = () => {
           </Grid>
         </Grid>
 
-        {/* <Typography variant="h6" sx={{ marginTop: 2 }}>
+        <Typography variant="h6" sx={{ marginTop: 2 }}>
           Payment Details:
         </Typography>
         <Grid container spacing={2} sx={{ marginTop: 0 }}>
-          
-        </Grid> */}
+          {
+            paymentDetails?.accName && (<Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Bank Account Name"
+                name="accName"
+                value={paymentDetails?.accName || ''}
+                onChange={(e) => handlePayDetailsChange("accName", e.target.value)}
+                variant="outlined"
+              />
+            </Grid>)
+          }
+          {
+            paymentDetails?.accNo && (<Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Bank Account No:"
+                name="accNo"
+                value={paymentDetails?.accNo}
+                onChange={(e) => handlePayDetailsChange("accNo", e.target.value)}
+                variant="outlined"
+              />
+            </Grid>)
+          }
+          {
+            paymentDetails?.ifscCode && (<Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Bank IFSC code:"
+                name="ifscCode"
+                value={paymentDetails?.ifscCode}
+                onChange={(e) => handlePayDetailsChange("ifscCode", e.target.value)}
+                variant="outlined"
+              />
+            </Grid>)
+          }
+          {
+            paymentDetails?.upiId && (<Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="UPI Id:"
+                name="upiId"
+                value={paymentDetails?.upiId}
+                onChange={(e) => handlePayDetailsChange("upiId", e.target.value)}
+                variant="outlined"
+              />
+            </Grid>)
+          }
+        </Grid>
 
         <Typography variant="h6" sx={{ marginTop: 2 }}>
           Your Destinations
@@ -283,7 +363,7 @@ const Profile = () => {
                 border: "1px solid #ddd",
               }}
             >
-              <Typography>{destination}</Typography>
+              <Typography variant="caption">{destination}</Typography>
               <IconButton
                 size="small"
                 color="error"
@@ -333,19 +413,6 @@ const Profile = () => {
           ))}
         </Grid>
 
-        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
-          <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpdate}
-            disabled={!isEdited}
-          >
-            Update
-          </Button>
-        </Box>
       </Paper>
       <Dialog open={!!viewFile} onClose={() => setViewFile(null)} maxWidth="md">
         <DialogTitle>View File</DialogTitle>
@@ -363,9 +430,27 @@ const Profile = () => {
     </Container>
     <Container maxWidth="lg" sx={{ marginTop: isMobile ? 1 : 2 }}>
       <Paper elevation={0} sx={{ padding: 2, border: "1px solid #ddd" }}>
-        <Typography variant="h4" sx={{ marginBottom: 1 }}>
-          Brand Details
-        </Typography>
+        <Box display={'flex'} justifyContent={'space-between'}>
+          <Typography variant="h5" sx={{ marginBottom: 1 }}>
+            Brand Details
+          </Typography>
+          <Box display="flex" justifyContent="flex-end" >
+            <Button size="small" variant="text" color="error" onClick={handleCancel} sx={{ margin: 'auto' }}>
+              Cancel
+            </Button>
+            &nbsp;&nbsp;&nbsp;
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={handleBrandUpdate}
+              sx={{ margin: 'auto' }}
+              disabled={!isBrandEdited}
+            >
+              Update
+            </Button>
+          </Box>
+        </Box>
 
         {/* <Box display="flex" flex={1} alignItems="center" sx={{ marginBottom: 4 }}>
           {
@@ -381,16 +466,16 @@ const Profile = () => {
             })
           }
         </Box> */}
-        <SelectTemplate />
+        <SelectTemplate setIsBrandEdited={setIsBrandEdited} />
         
         {/* <Box display="flex" alignItems="center" sx={{ marginBottom: 4 }}>
         </Box> */}
-        <EditCancellationView />
+        <EditCancellationView setIsBrandEdited={setIsBrandEdited} />
 
-        <EditExclusions />
+        <EditExclusions setIsBrandEdited={setIsBrandEdited} />
           
 
-        <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
+        {/* <Box display="flex" justifyContent="flex-end" sx={{ marginTop: 2 }}>
           <Button variant="contained" color="error" onClick={handleCancel} sx={{ marginRight: 2 }}>
             Cancel
           </Button>
@@ -402,7 +487,7 @@ const Profile = () => {
           >
             Update
           </Button>
-        </Box>
+        </Box> */}
 
 
         {/* <Box>
