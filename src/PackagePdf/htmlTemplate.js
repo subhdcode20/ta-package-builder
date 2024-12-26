@@ -7,6 +7,7 @@ import { tr } from 'date-fns/locale';
 import { templatesMap } from "../PdfTemplates/templateList.js";
 import DefaultTemplate from '../PdfTemplates/default/index.js';
 import KeralaTemplate from '../PdfTemplates/kerala/index.js';
+import { DEFAULT_TEMPLATE_NAME } from '../Constants.js';
 
 Font.register({
   family: 'Roboto',
@@ -540,7 +541,7 @@ const RenderPreview = (props) => {
   console.log("RenderPreview ", props);
   const {
     userData: {
-      templateName = 'default'  
+      templateName = DEFAULT_TEMPLATE_NAME  
     } = {}
   } = props;
   console.log("user template ", templateName, props);

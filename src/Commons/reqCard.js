@@ -33,7 +33,7 @@ const ReqCardView = ({ reqData = {} }) => {
     const { totalAdults = 0, totalChild = 0 } = roomOcc.reduce((acc, item) => {
         acc = {
             "totalAdults": acc.totalAdults += Number(item.adultPax),
-            "totalChild": acc.totalChild += Number(item.adultPax)
+            "totalChild": acc.totalChild += Number(item.childPax)
         }
         return acc;
     }, {
