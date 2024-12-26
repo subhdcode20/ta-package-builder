@@ -13,13 +13,17 @@ import { doc, getDoc } from 'firebase/firestore';
 
 import { db } from '../firebaseConfig';
 import { setProfileData, handleRemovePolicyItem, updatePolicyText, handleAddPolicyItem } from './packBuilderSlice.js';
+import { DEFAULT_POLICIES } from "../Constants.js";
 
-const EditCancellationPolicy = ({  }) => {
+const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     // const currentDayIndex = useSelector((state) => state.packBuilderData.currDayIndex);
     // const selectedHotels = useSelector((state) => state.packBuilderData.selectedHotels);
     // const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
     const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
-    const { cancellationData = [{ text: "" }], paymentPolicy = [{ text: "" }] } = userProfileData || {};
+    const { 
+        cancellationData = DEFAULT_POLICIES["cancellationPolicyDefault"], 
+        paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"] 
+    } = userProfileData || {};
     // const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
     const [loding, setLoading] = useState(false);
@@ -46,6 +50,16 @@ const EditCancellationPolicy = ({  }) => {
             getCancellationPolicy();
         }
     }, [])
+
+    const handlePolicyItemRemove = (data) => {
+        dispatch(handleRemovePolicyItem(data))
+        if(setIsBrandEdited) setIsBrandEdited(true);  
+    }
+
+    const handlePolicyItemUpdate = (data) => {
+        dispatch(updatePolicyText(data));
+        if(setIsBrandEdited) setIsBrandEdited(true);   
+    }
 
 	// const handleTextChange = (itiDesc, itiDescIndex) => {
 	// 	if(!itiDesc) return;
@@ -75,7 +89,7 @@ const EditCancellationPolicy = ({  }) => {
                                         sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
                                     >•</Box>  */}
                                     <IconButton aria-label="delete" size="small" color="primary" 
-                                        onClick={() => dispatch(handleRemovePolicyItem({policyType: "cancellationData", deleteIndex: itiTextIndex}))}
+                                        onClick={() => handlePolicyItemRemove({policyType: "cancellationData", deleteIndex: itiTextIndex})}
                                     >
                                         <DeleteIcon fontSize='small'/>
                                     </IconButton>
@@ -87,7 +101,7 @@ const EditCancellationPolicy = ({  }) => {
                                         variant="standard"
                                         multiline
                                         size="small"
-                                        onChange={(e) => dispatch(updatePolicyText({policyType: "cancellationData", val: e.target.value, textIndex: itiTextIndex}))}
+                                        onChange={(e) => handlePolicyItemUpdate({policyType: "cancellationData", val: e.target.value, textIndex: itiTextIndex})}
                                     />
                                     {/* {bull} <small>{parse(itiText)}</small> */}
                                 </Box>)
@@ -117,7 +131,7 @@ const EditCancellationPolicy = ({  }) => {
                                         sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
                                     >•</Box>  */}
                                     <IconButton aria-label="delete" size="small" color="primary" 
-                                        onClick={() => dispatch(handleRemovePolicyItem({policyType: "paymentPolicy", deleteIndex: itiTextIndex}))}
+                                        onClick={() => handlePolicyItemRemove({policyType: "paymentPolicy", deleteIndex: itiTextIndex})}
                                     >
                                         <DeleteIcon fontSize='small'/>
                                     </IconButton>
@@ -129,7 +143,7 @@ const EditCancellationPolicy = ({  }) => {
                                         variant="standard"
                                         multiline
                                         size="small"
-                                        onChange={(e) => dispatch(updatePolicyText({policyType: "paymentPolicy", val: e.target.value, textIndex: itiTextIndex}))}
+                                        onChange={(e) => handlePolicyItemUpdate({policyType: "paymentPolicy", val: e.target.value, textIndex: itiTextIndex})}
                                     />
                                     {/* {bull} <small>{parse(itiText)}</small> */}
                                 </Box>)

@@ -8,8 +8,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import { db } from '../firebaseConfig';
-import { MainContext, getB64Img } from '../Utility.js';
+import { MainContext, getB64Img, formattedAmountINR } from '../Utility.js';
 // import PdfView from './pdfView';
+import { DEFAULT_POLICIES } from '../Constants.js';
 import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
 import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
@@ -39,6 +40,12 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
 	// const [templateData, setTemplateData] = useState(null)
 	const [headerImage, setHeaderImage] = useState("");
+	const {
+		cancellationData = DEFAULT_POLICIES["cancellationPolicyDefault"], 
+		paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"],
+		inclusions = DEFAULT_POLICIES["inclusionsDefault"], 
+		exclusions = DEFAULT_POLICIES["exclusionsDefault"],
+	} = userProfileData || {};
 
 	const dispatch = useDispatch();
 
@@ -177,18 +184,18 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("packagePdf render => ", headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
+    console.log("packagePdf render => ", cancellationData, headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
 
     return (<>
         {
 			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
+				<Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>
 				<HtmlTemplate 
 					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
-					totalPackPrice={finalPackPrice}
-					userProfileData={{ ...userProfileData, headerImage}}
+					totalPackPrice={formattedAmountINR(finalPackPrice)}
+					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
 				/>
 			</Box>)
 		}

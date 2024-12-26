@@ -13,13 +13,18 @@ import { doc, getDoc } from 'firebase/firestore';
 
 import { db } from '../firebaseConfig';
 import { setProfileData, handleRemovePolicyItem, updatePolicyText, handleAddPolicyItem } from '../PackageBuilder/packBuilderSlice.js';
+import { DEFAULT_POLICIES } from "../Constants.js";
 
-const EditCancellationPolicy = ({  }) => {
+const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
-    const { inclusions = [{ text: "" }], exclusions = [{ text: "" }] } = userProfileData || {};
+    const { inclusions = DEFAULT_POLICIES["inclusionsDefault"], exclusions = DEFAULT_POLICIES["exclusionsDefault"] } = userProfileData || {};
     const [loding, setLoading] = useState(false);
 	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
 	const dispatch = useDispatch();
+    const { 
+        cancellationData = DEFAULT_POLICIES["cancellationPolicyDefault"], 
+        paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"] 
+    } = userProfileData || {};
 
 	const getProfileData = async () => {
 		// console.log(reqData, 'gemRes -- ');
@@ -41,6 +46,16 @@ const EditCancellationPolicy = ({  }) => {
             getProfileData();
         }
     }, [])
+    
+    const handlePolicyItemRemove = (data) => {
+        dispatch(handleRemovePolicyItem(data))
+        if(setIsBrandEdited) setIsBrandEdited(true);  
+    }
+
+    const handlePolicyItemUpdate = (data) => {
+        dispatch(updatePolicyText(data));
+        if(setIsBrandEdited) setIsBrandEdited(true);   
+    }
 
 	// const handleTextChange = (itiDesc, itiDescIndex) => {
 	// 	if(!itiDesc) return;
@@ -70,7 +85,7 @@ const EditCancellationPolicy = ({  }) => {
                                         sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
                                     >•</Box>  */}
                                     <IconButton aria-label="delete" size="small" color="primary" 
-                                        onClick={() => dispatch(handleRemovePolicyItem({policyType: "inclusions", deleteIndex: itiTextIndex}))}
+                                        onClick={() => handlePolicyItemRemove({policyType: "inclusions", deleteIndex: itiTextIndex})}
                                     >
                                         <DeleteIcon fontSize='small'/>
                                     </IconButton>
@@ -82,7 +97,7 @@ const EditCancellationPolicy = ({  }) => {
                                         variant="standard"
                                         multiline
                                         size="small"
-                                        onChange={(e) => dispatch(updatePolicyText({policyType: "inclusions", val: e.target.value, textIndex: itiTextIndex}))}
+                                        onChange={(e) => handlePolicyItemUpdate({policyType: "inclusions", val: e.target.value, textIndex: itiTextIndex})}
                                     />
                                     {/* {bull} <small>{parse(itiText)}</small> */}
                                 </Box>)
@@ -112,7 +127,7 @@ const EditCancellationPolicy = ({  }) => {
                                         sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
                                     >•</Box>  */}
                                     <IconButton aria-label="delete" size="small" color="primary" 
-                                        onClick={() => dispatch(handleRemovePolicyItem({policyType: "exclusions", deleteIndex: itiTextIndex}))}
+                                        onClick={() => handlePolicyItemRemove({policyType: "exclusions", deleteIndex: itiTextIndex})}
                                     >
                                         <DeleteIcon fontSize='small'/>
                                     </IconButton>
@@ -124,7 +139,7 @@ const EditCancellationPolicy = ({  }) => {
                                         variant="standard"
                                         multiline
                                         size="small"
-                                        onChange={(e) => dispatch(updatePolicyText({policyType: "exclusions", val: e.target.value, textIndex: itiTextIndex}))}
+                                        onChange={(e) => handlePolicyItemUpdate({policyType: "exclusions", val: e.target.value, textIndex: itiTextIndex})}
                                     />
                                     {/* {bull} <small>{parse(itiText)}</small> */}
                                 </Box>)

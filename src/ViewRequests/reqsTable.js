@@ -99,6 +99,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
               <TableCell><b>Adult</b></TableCell>
               <TableCell><b>Child</b></TableCell>
               <TableCell><b>Tracking ID</b></TableCell>
+              <TableCell><b>Package Created</b></TableCell>
               <TableCell><b>Actions</b></TableCell>
             </TableRow>
 
@@ -124,15 +125,17 @@ const ReqsListTable = ({ reqsList = [] }) => {
                 <TableCell>{row.noOfNights}</TableCell>
                 <TableCell>{row.pickUp}</TableCell>
                 <TableCell>{row.starCategory?.label}</TableCell>
-                <TableCell>{row.adultPax}</TableCell>
-                <TableCell>{row.childPax}</TableCell>
+                <TableCell>{row.totalAdults}</TableCell>
+                <TableCell>{row.totalChild}</TableCell>
                 <TableCell>{row.trackingId}</TableCell>
+                <TableCell>{(row.packages && row.packages.length > 0) ? `True (${row.packages.length})` : 'False' }</TableCell>
                 <TableCell>
                   <Button
                     size="small"
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     onClick={() => handleCopy(row.reqId)}
+                    sx={{ fontSize: '10px' }}
                   >
                     Edit
                   </Button>
@@ -140,9 +143,10 @@ const ReqsListTable = ({ reqsList = [] }) => {
                   {
                     (row?.packages || []).length > 0 && (<Button
                     size="small"
-                    variant="contained"
+                    variant="outlined"
                     color="secondary"
                     onClick={() => handleCopyNew(row.reqId)}
+                    sx={{ fontSize: '10px' }}
                   >
                     Copy to New Package
                   </Button>)}

@@ -35,7 +35,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
         packageDetails.map((pkg, pkgIndex) => {
           const reqId = pkg?.reqId || '';
           const createdAt = pkg?.createdAt
-            ? format(new Date(pkg.createdAt), 'dd-MM-yyyy')
+            ? format(new Date(pkg.createdAt), 'dd-MMM-yyyy')
             : 'N/A';
 
           console.log('PackageData render 22 ', pkg);
