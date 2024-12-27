@@ -622,7 +622,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       fontSize: 30,
       fontWeight: 'extralight',
       color: 'darkred',
-      marginBottom: 30,
+      marginBottom: 20,
       marginLeft: 7,
       marginTop: 60,
     },
@@ -651,6 +651,8 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#000',
       fontSize: 16,
       opacity: 0.8,
+      width:'60%',
+  
     },
     destinationName: {
       fontSize: 16,
@@ -684,6 +686,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     roomInfo1: {
       fontSize: 14,
       color: '#000',
+      width:'60%',
     },
     roomOccupancy: {
       fontSize: 14,
@@ -694,6 +697,7 @@ const getThemedStyles = ({ themeData = {} }) => {
       color: '#000',
       flexWrap: 'wrap',
       textAlign: 'left',
+      width:'60%',
     },
 
     lowerBox: {
@@ -802,7 +806,7 @@ const getThemedStyles = ({ themeData = {} }) => {
     },
     transferText: {
       fontSize: 20,
-      opacity: 0.8,
+      opacity: 0.8, 
       color: '#333333',
       lineHeight: 2,
     },
