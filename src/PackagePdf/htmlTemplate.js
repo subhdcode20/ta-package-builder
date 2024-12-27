@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { tr } from 'date-fns/locale';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { usePDF } from '@react-pdf/renderer';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { templatesMap } from "../PdfTemplates/templateList.js";
 import DefaultTemplate from '../PdfTemplates/default/index.js';
@@ -538,14 +543,18 @@ const styles = StyleSheet.create({
 
 const RenderPreview = (props) => {
   const [reloadPdfView, setReloadPdfView] = useState(true);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  
   console.log("RenderPreview ", props);
   const {
     userData: {
       templateName = DEFAULT_TEMPLATE_NAME  
     } = {}
   } = props;
-  console.log("user template ", templateName, props);
   let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
+  // const [instance, updateInstance] = usePDF({ document: TemplateView });
+  console.log("user template ", templateName, props);
+  // let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
   // if(process.env.NODE_ENV == 'development' && !reloadPdfView) TemplateView = null;
 
   const handleRefresh = () => {
@@ -554,8 +563,14 @@ const RenderPreview = (props) => {
   }
 
   return (<div style={{ width: '100%', height: 'auto' }}>
-    {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}>Refresh PDF</Button>}
-    
+    <Box display="flex" justifyContent="center">
+      <Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>&nbsp;
+      {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
+    </Box>
+    {/* &nbsp; */}
+    {/* <a href={instance.url} download="af-test.pdf">
+      Download
+    </a> */}
     {
       reloadPdfView && (<PDFViewer width={'100%'} height={'800'}>
         {/* <HtmlPdfView {...props} /> */}

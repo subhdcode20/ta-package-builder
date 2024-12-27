@@ -130,8 +130,8 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		// 		return { ...prev, aboutDestText: docSnapPdfData.data() };
 		// 	})
         // }
+
         setLoading(false);
-        // setCancellationData(cData);
 	}
 
     useEffect(() => {
@@ -181,15 +181,16 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	}, [logoUrl]);
 
     if (loading) {
-        return <Typography>Loading...</Typography>;
+        return (<Box display="flex" flexDirection='column' justifyContent={'center'} style={{ flex: 1, justifyContent: 'flex-start', minWidth: !isMobile ? '40%' : '100%' }}>
+			<Typography sx={{ marginTop: 2, marginX: 'auto' }}>Pdf Loading...</Typography>
+		</Box>);
     }
 
     console.log("packagePdf render => ", cancellationData, headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
 
     return (<>
         {
-			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-				<Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>
+			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, minWidth: !isMobile ? '40%' : '100%' }}>
 				<HtmlTemplate 
 					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
