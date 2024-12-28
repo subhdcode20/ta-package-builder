@@ -28,7 +28,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
       }}
     >
       <Typography variant="h5" fontWeight="bold" sx={{ fontWeight: 'bold', color: '#333', marginBottom: 3, textAlign:"center" }}>
-        Selected Package Details
+        Package Details for selected Request:
       </Typography>
 
       {packageDetails?.length > 0 ? (
@@ -48,7 +48,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                   <Typography sx={{ fontWeight: 'bold', color: '#333' }}>
-                    Package created on <b> {createdAt} </b>
+                    Package {pkgIndex > 0 ? 'updated' : 'created'} on <b> {createdAt} </b>
                   </Typography>
                   <Button
                     variant="contained"

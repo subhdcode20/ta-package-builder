@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { submitPackageData } from './packBuilderSlice.js';
 import { db, auth } from "../firebaseConfig";
+import SnackbarMsg from "../Commons/snackbarMsg";
 
 const SavePackagePdf = () => {
     const selectedPackHotels = useSelector((state) => state.packBuilderData.selectedHotels) || {};
@@ -18,6 +19,7 @@ const SavePackagePdf = () => {
 	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
     const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
+	const [showSnackbar, setShowSnackbar] = useState({open: false});
 	const {reqId} = useParams();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -86,7 +88,7 @@ const SavePackagePdf = () => {
 			);
 
 
-			// TODO: show success popup
+			setShowSnackbar({open: true, message: 'Package saved! You can edit anytime from "My Request" page...', severity: 'success', });
 			setLoading(false);
 		} catch (error) {
 			console.log("save Complete Package catch error ", error);
@@ -100,12 +102,23 @@ const SavePackagePdf = () => {
 		// setTimeout(() => navigate(`/my-reqs?reqId=${reqId}`));
     }
 
-    return (<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
-		Save Package Details
-		{/* {
-			loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} />
-		} */}
-	</Button>)
+    return (<>
+		<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
+			Save Package Details
+			{/* {
+				loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} />
+			} */}
+		</Button>
+		{showSnackbar && (
+			<SnackbarMsg
+				open={showSnackbar.open}
+				message={showSnackbar.message}
+				anchorOrigin={showSnackbar.anchorOrigin}
+				severity={showSnackbar.severity || "success"}
+				onClose={() => setShowSnackbar({ open: false })}
+			/>
+		)}
+	</>)
 }
 
 export default SavePackagePdf;

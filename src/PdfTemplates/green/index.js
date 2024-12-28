@@ -97,7 +97,7 @@ const HtmlPdfView = ({
 
             <View style={styles.infoBox}>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Lead Pax: </Text>
+                <Text style={styles.label}>Lead Passenger: </Text>
                 <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
               </View>
               <View style={styles.infoRow}>
@@ -109,7 +109,7 @@ const HtmlPdfView = ({
                 <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Guest: </Text>
+                <Text style={styles.label}>Guests: </Text>
                 <Text style={styles.value}>{req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}</Text>
               </View>
             </View>

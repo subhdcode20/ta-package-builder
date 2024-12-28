@@ -15,6 +15,7 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import Typography from '@mui/material/Typography';
 import { doc, getDoc } from 'firebase/firestore';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { db } from '../firebaseConfig';
 import PackageData from './packageData';
@@ -128,28 +129,65 @@ const ReqsListTable = ({ reqsList = [] }) => {
                 <TableCell>{row.totalAdults}</TableCell>
                 <TableCell>{row.totalChild}</TableCell>
                 <TableCell>{row.trackingId}</TableCell>
-                <TableCell>{(row.packages && row.packages.length > 0) ? `True (${row.packages.length})` : 'False' }</TableCell>
                 <TableCell>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => handleCopy(row.reqId)}
-                    sx={{ fontSize: '10px' }}
-                  >
-                    Edit
-                  </Button>
-                  &nbsp;
+                  {/* {(row.packages && row.packages.length > 0) ? `True (${row.packages.length})` : 'False' } */}
                   {
-                    (row?.packages || []).length > 0 && (<Button
-                    size="small"
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => handleCopyNew(row.reqId)}
-                    sx={{ fontSize: '10px' }}
-                  >
-                    Copy to New Package
-                  </Button>)}
+                    (row.packages && row.packages.length > 0) 
+                    ? (<Box display={'flex'} flexDirection={'row'}>
+                      <CheckCircleIcon sx={{ color: 'green', marginY: 'auto', fontSize: '15px' }} />
+                      {/* <Typography variant='caption' sx={{ marginY: 'auto' }}>{` (${row.packages.length})`}</Typography> */}
+                    </Box>)
+                    : null
+                  }
+                </TableCell>
+                <TableCell>
+                  <Box display={'flex'} flexDirection={'column'} justifyContent={'space-evenly'}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => handleCopy(row.reqId)}
+                      sx={{ fontSize: '10px' }}
+                    >
+                      Edit Request
+                    </Button>
+                    &nbsp;
+                    {
+                      (row?.packages || []).length == 0 && (<Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => navigate(`/itinerary/${row.reqId}`)}
+                        sx={{ fontSize: '10px' }}
+                      >
+                        Create Package Pdf
+                      </Button>)
+                    }
+                    &nbsp;
+                    {
+                      (row?.packages || []).length > 0 && (<Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => navigate(`/itinerary/${row.reqId}`)}
+                        sx={{ fontSize: '10px' }}
+                      >
+                        Update Package Pdf
+                      </Button>)
+                    }
+                    &nbsp;
+                    {
+                      (row?.packages || []).length > 0 && (<Button
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => handleCopyNew(row.reqId)}
+                        sx={{ fontSize: '10px' }}
+                      >
+                        Copy to New Package
+                      </Button>)
+                    }
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}

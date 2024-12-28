@@ -9,8 +9,8 @@ const SnackbarMsg = (props) => {
       open={open}
       onClose={onClose}
       key={nanoid(5)}
-      autoHideDuration={3500}
-      anchorOrigin={anchorOrigin || { vertical: "top", horizontal: "center" }}
+      autoHideDuration={5000}
+      anchorOrigin={{ "vertical": "top", "horizontal": "center" }}
     >
       <Alert onClose={onClose} severity={severity || "success"} sx={{ width: '100%' }}
       >

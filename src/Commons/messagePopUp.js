@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-
 const PopUp = (props) => {
     const [disableButton, setDisableButton] = useState(false);
 

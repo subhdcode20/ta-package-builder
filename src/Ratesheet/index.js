@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,9 +14,11 @@ import InputLabel from '@mui/material/InputLabel';
 import axios from 'axios';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector } from 'react-redux';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { storage } from '../firebaseConfig';
-import PopUp from '../Commons/messagePopUp';
+// import PopUp from '../Commons/messagePopUp';
+import MyDailog from '../Commons/myDailog.js';
 import LoadingButton from "../Commons/LoadingButton";
 import { MainContext } from "../Utility";
 import ViewRatesSheets from "./viewActiveRatesheets.js";
@@ -47,6 +49,7 @@ const UploadRatesheet = () => {
     const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
     const [showSnackbar, setShowSnackbar] = useState({open: false});
+    const navigate = useNavigate();
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
     const handleInputChange = (event) => {
@@ -236,13 +239,29 @@ const UploadRatesheet = () => {
                 <ViewRatesSheets />
             </Box>
 
-            <PopUp
+            {/* <PopUp
                 open={submitMsg}
                 onClose={handleSubmitMsg}
                 primaryText="Upload Successful"
-                secondaryText={`Create a package for ${ratesheet?.Bali || "this destination"} to auto calculate Prices!`}
+                secondaryText={`Create a package for ${ratesheet?.destination || "this destination"} to auto calculate Prices!`}
                 submitText="Close"
                 onClick={handleSubmitMsg}
+            /> */}
+            <MyDailog
+                showDailog={submitMsg}
+                title="Upload Successful"
+                body={(<Box display={'flex'} justifyContent={'center'} textAlign={'center'}>
+                    <CheckCircleIcon sx={{ color: 'green', margin: 'auto', fontSize: '10px' }} />
+                    <br>
+                    <Typography variant='body'>{`Create a package for ${ratesheet?.destination || "this destination"} to auto calculate Prices!`}</Typography>
+                    </br>
+                    <Box display={'flex'} justifyContent={'space-between'}>
+                        <Button size="small" variant='outlined' onClick={handleSubmitMsg}>Close</Button>
+                        <Button size="small" variant='contained' onClick={() => {
+                            navigate(`/home`)
+                        }}>Create New Request</Button>
+                    </Box>
+                </Box>)}
             />
             {showSnackbar && (
                 <SnackbarMsg

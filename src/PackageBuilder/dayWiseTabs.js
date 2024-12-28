@@ -138,11 +138,11 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 						/>
 					</Box>
 					
-					<FormControlLabel
+					{/* <FormControlLabel
 						control={<Checkbox size="small" checked={showComponentPrices} onChange={(e) => setShowComponentPrices(e.target.checked)} inputProps={{ 'aria-label': 'controlled' }} />}
 						label="Show Per Pax Price in Pdf"
-					/>
-					
+					/> */}
+
 					<SavePackagePdf />
 				</Box>)
 			}

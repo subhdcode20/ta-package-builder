@@ -310,6 +310,7 @@ export const todoSlice = createSlice({
           };
         })
       }
+      if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
     },
     setMealPlanFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;

@@ -199,39 +199,61 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setButtonLoading(true);
 		console.log("Updating Request: ", reqData, roomOcc);
 
-		let updatedFields = {};
+		let updatedFields = {
+			...reqData,
+			roomOcc
+		};
 
-		if (reqData.noOfNights !== requestData.noOfNights) {
-			updatedFields.noOfNights = reqData.noOfNights;
-		}
-		// if (reqData.adultPax !== requestData.adultPax) {
-		// 	updatedFields.adultPax = reqData.adultPax;
+		// if (reqData.noOfNights !== requestData.noOfNights) {
+		// 	updatedFields.noOfNights = reqData.noOfNights;
 		// }
-		// if (reqData.childPax !== requestData.childPax) {
-		// 	updatedFields.childPax = reqData.childPax;
+		// if (reqData.startDate !== requestData.startDate) {
+		// 	updatedFields.startDate = reqData.startDate;
+		// }
+		// if (reqData.startDate !== requestData.startDate) {
+		// 	updatedFields.startDate = reqData.startDate;
+		// }
+		// if (reqData.startDate !== requestData.startDate) {
+		// 	updatedFields.startDate = reqData.startDate;
 		// }
 
-		if (reqData.starCategory !== requestData.starCategory) {
-			updatedFields.starCategory = reqData.starCategory;
-		}
-		if (reqData.destination !== requestData.destination) {
-			updatedFields.destination = reqData.destination;
-		}
-		if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
-		if (reqData.noOfCabs !== requestData.noOfCabs) updatedFields.noOfCabs = reqData.noOfCabs;
-		if (reqData.pickUp !== requestData.pickUp) updatedFields.pickUp = reqData.pickUp;
-		// updatedFields.childAges = childAges;
-		updatedFields.roomOcc = roomOcc;
+		// if (reqData.starCategory !== requestData.starCategory) {
+		// 	updatedFields.starCategory = reqData.starCategory;
+		// }
+		// if (reqData.destination !== requestData.destination) {
+		// 	updatedFields.destination = reqData.destination;
+		// }
+		// if (reqData.cabType !== requestData.cabType) updatedFields.cabType = reqData.cabType;
+		// if (reqData.noOfCabs !== requestData.noOfCabs) updatedFields.noOfCabs = reqData.noOfCabs;
+		// if (reqData.pickUp !== requestData.pickUp) updatedFields.pickUp = reqData.pickUp;
+		// updatedFields.roomOcc = roomOcc;
+		
 
+		console.log("Updated fields req: ", Object.keys(updatedFields), roomOcc, Object.keys(updatedFields).length > 0 || roomOcc.length > 0);
 		if (Object.keys(updatedFields).length > 0 || roomOcc.length > 0) {
 			updatedFields.updatedAt = Date.now();
-			dispatch(submitReqData({ reqData }));
-			await updateDoc(doc(db, "requests", requestData.reqId), updatedFields);
-			console.log("Updated fields: ", updatedFields);
+			try {
+				dispatch(submitReqData({ reqData }));
+				let updateRef = await setDoc(doc(db, "requests", requestData.reqId), {
+					...updatedFields,
+					updatedAt: Date.now()
+				}, { merge: true });
+				// updateDoc(doc(db, "requests", requestData.reqId), updatedFields);
+				console.log("Updated fields: ", updatedFields, updateRef);
+				// let userReqRef = await setDoc(doc(db, "userRequests", userData?.phone), {
+				// 	// reqsList: arrayUnion(requestData.reqId),
+				// 	updatedAt: Date.now()
+				// }, { merge: true });
+				// console.log("Updated fields userReqRef: ", userReqRef);
+				setShowSnackbar({open: true, message: 'Request updated successfully. Redirecting to update Package pdf..', severity: 'success' });
+				setTimeout(() => navigate("/itinerary/" + requestData.reqId), 1000);
+			} catch (e) {
+				setShowSnackbar({open: true, message: 'Error in updating Request. Please refresh and try again.', severity: 'error', });	
+			}
 		} else {
 			console.log("No changes detected, nothing to update.");
+			setShowSnackbar({open: true, message: 'No changes detected, nothing to update.', severity: 'error', });
 		}
-		setTimeout(() => navigate("/itinerary/" + requestData.reqId));
 		setButtonLoading(false);
 	}
 

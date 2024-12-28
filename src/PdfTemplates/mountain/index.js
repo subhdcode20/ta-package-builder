@@ -116,11 +116,11 @@ const HtmlPdfView = ({
         <View style={{ height: '100%', position: 'relative' }}>
           <View style={{ flex: 6, justifyContent: 'left', alignItems: 'left', paddingLeft: 30, paddingRight: 30, paddingTop: 100, paddingBottom: 40, }}>
             {/* <View style={styles.infoBox}> */}
-            <Text style={styles.label}>Lead Pax: </Text>
+            <Text style={styles.label}>Lead Passenger: </Text>
             <Text style={styles.value}>{req?.trackingId || 'N/A'}</Text>
-            <Text style={styles.label}>Travel Date: </Text>
+            <Text style={styles.label}>Trip starting on: </Text>
             <Text style={styles.value}>{formatDate(req?.startDate) || 'N/A'}</Text>
-            <Text style={styles.label}>Guest: </Text>
+            <Text style={styles.label}>Guests: </Text>
             <Text style={styles.value}>
               {req?.totalAdultPax} Adults {req?.totalChildPax ? `| ${req?.totalChildPax} Children` : ''}
             </Text>
