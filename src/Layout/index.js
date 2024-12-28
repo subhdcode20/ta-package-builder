@@ -44,7 +44,7 @@ const AppLayout = ({ children, showNavBar = true }) => {
 						//   console.log(data)
 						// });
 						let signedInIdToken = await auth.currentUser.getIdToken(
-							/* forceRefresh */ true,
+							/* forceRefresh */ false,
 						);
 						console.log("signedInIdToken ", userData?.phone, signedInIdToken, typeof signedInIdToken);
 						// localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));

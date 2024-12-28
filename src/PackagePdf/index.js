@@ -15,6 +15,7 @@ import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
 import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
 import destImagesMap from './destPdfImagesMap.js';
+// import useRefreshFirebaseToken from '../Commons/useRefreshFirebaseToken.js';
 
 // Temporary defined HERE:
 const destinationImages = {

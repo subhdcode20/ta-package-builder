@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { todoSlice } from './PackageBuilder/packBuilderSlice';
 // import {Base64Encode} from 'base64-stream';
 // import concatStream from 'concat-stream';
 
@@ -134,6 +135,10 @@ export const getB64Img = async (data) => {
 		return {data: response.data?.data};
   } catch (error) {
     console.error("getB64Img error ", error);
+
+    if(error?.response?.data?.error?.code == "auth/id-token-expired") {
+      // todo: refresh the firebase token
+    }
     return {err: error}
   }  
 }

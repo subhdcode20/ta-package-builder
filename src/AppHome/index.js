@@ -27,6 +27,7 @@ import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 import LoadingButton from '../Commons/LoadingButton.jsx';
 import { isEmptyObject } from '../Utility.js';
 import { CabTypes } from "../Constants.js"
+import SnackbarMsg from "../Commons/snackbarMsg";
 
 const initialFormData = {
 	destination: "",
@@ -73,6 +74,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 			childAges: []
 		}
 	]);
+	const [showSnackbar, setShowSnackbar] = useState({open: false});
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
@@ -153,41 +155,44 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 		setButtonLoading(true);
 		console.log("new Req post: ", reqData, roomOcc);
 		// TODO: handle data validation, show validation errors
+		try {
+			let newReqId = nanoid();
+			const { totalAdults = 0, totalChild = 0 } = roomOcc.reduce((acc, item) => {
+				acc = {
+					"totalAdults": acc.totalAdults += Number(item.adultPax),
+					"totalChild": acc.totalChild += Number(item.childPax)
+				}
+				return acc;
+			}, {
+				"totalAdults": 0,
+				"totalChild": 0,        
+			})
+			let newReqData = { ...reqData, roomOcc, totalAdults, totalChild };
+			dispatch(submitReqData({ reqData: newReqData }));
+			let reqRef = await setDoc(doc(db, "requests", newReqId), {
+				...newReqData,
+				reqId: newReqId,
+				userId: userData?.phone,
+				createdAt: Date.now()
+			}, { merge: true });
 
-		let newReqId = nanoid();
-		const { totalAdults = 0, totalChild = 0 } = roomOcc.reduce((acc, item) => {
-			acc = {
-				"totalAdults": acc.totalAdults += Number(item.adultPax),
-				"totalChild": acc.totalChild += Number(item.childPax)
-			}
-			return acc;
-		}, {
-			"totalAdults": 0,
-			"totalChild": 0,        
-		})
-		let newReqData = { ...reqData, roomOcc, totalAdults, totalChild };
-		dispatch(submitReqData({ reqData: newReqData }));
-		let reqRef = await setDoc(doc(db, "requests", newReqId), {
-			...newReqData,
-			reqId: newReqId,
-			userId: userData?.phone,
-			createdAt: Date.now()
-		}, { merge: true });
-
-		let userPackRef = await setDoc(doc(db, "userRequests", userData?.phone), {
-			reqsList: arrayUnion(newReqId),
-			updatedAt: Date.now()
-		}, { merge: true });
-
-		console.log("new Req post 2: ", reqData, newReqId, reqRef); //, userPackRef
-		// return;
-		// if (copyNew) {
-		// 	setTimeout(() => navigate(`/request/${newReqId}/copy-new`));
-		// }
-		// else {
-		setTimeout(() => navigate("/itinerary/" + newReqId));
-		// }
-		setButtonLoading(false);
+			let userPackRef = await setDoc(doc(db, "userRequests", userData?.phone), {
+				reqsList: arrayUnion(newReqId),
+				updatedAt: Date.now()
+			}, { merge: true });
+			setShowSnackbar({open: true, message: 'Request created! Redirecting to Package pdf..', severity: 'success', });
+			console.log("new Req post 2: ", reqData, newReqId, reqRef); //, userPackRef
+			// return;
+			// if (copyNew) {
+			// 	setTimeout(() => navigate(`/request/${newReqId}/copy-new`));
+			// }
+			// else {
+			setTimeout(() => navigate("/itinerary/" + newReqId), 1000);
+			// }
+			setButtonLoading(false);
+		} catch (error) {
+			setShowSnackbar({open: true, message: 'Request error! Please refresh and try again.', severity: 'error', });
+		}
 	}
 
 	const handleUpdatePost = async () => {
@@ -327,7 +332,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 
 	console.log("child home render ", roomOcc, roomOcc.length > 0, reqData.childPax, storeReqData)
 	console.log("DESTINATION", destination)
-	return (
+	return (<>
 		<Box sx={{ display: "flex", justifyContent: "center", alignItems: "flex-start", mt: 2 }}>
 			<Box maxWidth={'md'} sx={{ border: "2px solid #ccc", borderRadius: 4, padding: isMobile ? 1 : 2, bgcolor: "transparent" }}>
 				<Box sx={{ "display": "flex", mb: 2 }}>
@@ -651,7 +656,17 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 				</Grid>
 			</Box>
 		</Box>
-	)
+		
+		{showSnackbar && (
+			<SnackbarMsg
+				open={showSnackbar.open}
+				message={showSnackbar.message}
+				anchorOrigin={showSnackbar.anchorOrigin}
+				severity={showSnackbar.severity || "success"}
+				onClose={() => setShowSnackbar({ open: false })}
+			/>
+		)}
+	</>)
 }
 
 export default AppHome;

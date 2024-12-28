@@ -27,6 +27,7 @@ import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
 import SelectTemplate from "./selectTemplate.js";
 // import EditCancellationPolicy from "../PackageBuilder/editCancellationPolicy.js";
 import { isEmptyObject } from "../Utility.js";
+import SnackbarMsg from "../Commons/snackbarMsg";
 
 const Profile = () => {
   // const user = JSON.parse(localStorage.getItem("user"));
@@ -38,6 +39,7 @@ const Profile = () => {
   const [viewFile, setViewFile] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [destinationInput, setDestinationInput] = useState("");
+  const [showSnackbar, setShowSnackbar] = useState({open: false});
   const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
   const userData = JSON.parse(localStorage.getItem('user'));
   const userPhone = userData.phone;
@@ -128,11 +130,13 @@ const Profile = () => {
     try {
       await updateDoc(userDocRef, { ...editedData, destinations });
       localStorage.setItem("user", JSON.stringify({ ...editedData, destinations }));
-      alert("Profile updated successfully!");
-      window.location.reload();
+      // alert("Profile updated successfully!");
+      setShowSnackbar({open: true, message: 'Profile updated successfully!', severity: 'success', });
+      // window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile.");
+      // alert("Failed to update profile.");
+      setShowSnackbar({open: true, message: 'Failed to update profile! Please refresh and try again', severity: 'error', });
     }
   };
 
@@ -149,11 +153,13 @@ const Profile = () => {
       },
       { merge: true });
       localStorage.setItem("user", JSON.stringify({ ...editedData, templateName: userDataStore?.templateName }));
-      alert("Brand data updated successfully!");
-      window.location.reload();
+      // alert("Brand data updated successfully!");
+      setShowSnackbar({open: true, message: 'Brand data updated successfully!', severity: 'success' });
+      // window.location.reload();
     } catch (error) {
       console.log("Error updating Brand data:", error);
-      alert("Failed to update Brand data.");
+      // alert("Failed to update Brand data.");
+      setShowSnackbar({open: true, message: 'Brand data updated Error! Please refresh and try again.', severity: 'error' });
     }
   };
 
@@ -638,6 +644,15 @@ const Profile = () => {
         </Box> */}
       </Paper>
     </Container>
+    {showSnackbar && (
+      <SnackbarMsg
+        open={showSnackbar.open}
+        message={showSnackbar.message}
+        anchorOrigin={showSnackbar.anchorOrigin}
+        severity={showSnackbar.severity || "success"}
+        onClose={() => setShowSnackbar({ open: false })}
+      />
+    )}
   </Box>);
 };
 
