@@ -13,12 +13,14 @@ import InfoIcon from '@mui/icons-material/Info';
 import InputLabel from '@mui/material/InputLabel';
 import axios from 'axios';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useSelector } from 'react-redux';
 
 import { storage } from '../firebaseConfig';
 import PopUp from '../Commons/messagePopUp';
 import LoadingButton from "../Commons/LoadingButton";
 import { MainContext } from "../Utility";
 import ViewRatesSheets from "./viewActiveRatesheets.js";
+import SnackbarMsg from "../Commons/snackbarMsg";
 // const userData = JSON.parse(localStorage.getItem("user"));
 
 const bull = (<Box
@@ -41,8 +43,10 @@ const UploadRatesheet = () => {
     const [submitMsg, setSubmitMsg] = useState(false);
     const [missingInput, setMissingInput] = useState(false);
     const { userData={} } = useContext(MainContext);
-    const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+    // const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+    const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+    const [showSnackbar, setShowSnackbar] = useState({open: false});
     const url = "https://docs.google.com/spreadsheets/d/1isrnm1tjqj-IPzRgSBBPMQ1OBym4b-Bxwk6QoM7HE6U/edit?gid=0#gid=0";
 
     const handleInputChange = (event) => {
@@ -69,27 +73,30 @@ const UploadRatesheet = () => {
             setMissingInput(true);
             return;
         }
-        setLoading(true);
-        
-        const axiosOptions = {
-            method: 'POST',
-            headers: { 
-                // 'content-type': 'application/x-www-form-urlencoded',
-                'Authorization': firebaseIdToken 
-            },
-            data: {
-                validFrom: ratesheet.startDate,
-                validUntil: ratesheet.endDate,
-                fileUrl: ratesheet.ratesheetUrl
-            },
-            url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
-        };
-        console.log("Ratesheet ->", userData, firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
+        try {
+            setLoading(true);
+            const axiosOptions = {
+                method: 'POST',
+                headers: { 
+                    // 'content-type': 'application/x-www-form-urlencoded',
+                    'Authorization': firebaseIdToken 
+                },
+                data: {
+                    validFrom: ratesheet.startDate,
+                    validUntil: ratesheet.endDate,
+                    fileUrl: ratesheet.ratesheetUrl
+                },
+                url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
+            };
+            console.log("Ratesheet ->", userData, firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
 
-        let response = await axios(axiosOptions);
-        console.log('response axios ', response);
-        setLoading(false);
-        setSubmitMsg(true);
+            let response = await axios(axiosOptions);
+            console.log('response axios ', response);
+            setLoading(false);
+            setSubmitMsg(true);
+        } catch (error) {
+            setShowSnackbar({open: true, message: 'Ratesheet Upload Error!', severity: 'error', });
+        }
     };
 
     const handleSubmitMsg = () => {
@@ -237,6 +244,15 @@ const UploadRatesheet = () => {
                 submitText="Close"
                 onClick={handleSubmitMsg}
             />
+            {showSnackbar && (
+                <SnackbarMsg
+                    open={showSnackbar.open}
+                    message={showSnackbar.message}
+                    anchorOrigin={showSnackbar.anchorOrigin}
+                    severity={showSnackbar.severity || "success"}
+                    onClose={() => setShowSnackbar({ open: false })}
+                />
+            )}
         </Container>
     );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 import { todoSlice } from './PackageBuilder/packBuilderSlice';
 // import {Base64Encode} from 'base64-stream';
 // import concatStream from 'concat-stream';
@@ -111,14 +112,13 @@ export const fileToBase64 = file => new Promise((resolve, reject) => {
   reader.onerror = reject;
 });
 
-export const getB64Img = async (data) => {
-  if(!data?.logoUrl) return;
+export const getB64Img = async (data, firebaseIdToken) => {
+  if(!firebaseIdToken || !data?.logoUrl) return;
 
   // "error": {
   //       "code": "auth/id-token-expired"
 
   try {
-    const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
     const axiosOptions = {
 		  method: 'POST',
 		  headers: { 

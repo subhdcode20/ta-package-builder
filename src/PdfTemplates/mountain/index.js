@@ -253,7 +253,7 @@ const HtmlPdfView = ({
               <Text style={styles.InfoTitle}>Flights</Text>
               <View style={styles.transferContainer}>
                 <Text style={styles.transferText}>
-                  {`${flights?.arrival ? `Arrival Flight for the trip: ${flights?.arrival}.` : ''} ${flights?.departure ? `Departure Flight for the trip: ${flights?.departure}.` : ''}`}
+                  {`${flights?.arr ? `Arrival Flight for the trip: ${flights?.arr}.` : ''} ${flights?.dep ? `Departure Flight for the trip: ${flights?.dep}.` : ''}`}
                 </Text>
               </View>
             </>)
@@ -261,7 +261,7 @@ const HtmlPdfView = ({
           <Text style={styles.InfoTitle}>Transfer</Text>
           <View style={styles.transferContainer}>
             <Text style={styles.transferText}>
-              {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
+              {`Pick / Drop and all sightseeing transport is on private ${req?.cabType || 'Vehichle'}. We will welcome you at ${req?.pickUp}.`}
             </Text>
           </View>
         </View>
@@ -364,7 +364,7 @@ const HtmlPdfView = ({
 
           <View style={styles.priceSection} wrap={false}>
             <Text style={styles.priceTitle}>Total Package Price</Text>
-            <Text style={styles.totalPrice}>{`INR ${totalPackPrice || 'N/A'}`}</Text>
+            <Text style={styles.totalPrice}>{`Rs ${totalPackPrice || 'N/A'}`}</Text>
           </View>
 
           <View style={styles.footerContainer} wrap={false}>

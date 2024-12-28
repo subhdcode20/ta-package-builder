@@ -18,12 +18,12 @@ import destImagesMap from './destPdfImagesMap.js';
 // import useRefreshFirebaseToken from '../Commons/useRefreshFirebaseToken.js';
 
 // Temporary defined HERE:
-const destinationImages = {
-    "kerala": '/kerala2.png',
-    "karnataka": '/kerala2.png',
-	"bali": '/bali-banner.jpg',
-    // TO add More Images
-  };
+// const destinationImages = {
+//     "kerala": '/kerala2.png',
+//     "karnataka": '/kerala2.png',
+// 	"bali": '/bali-banner.jpg',
+//     // TO add More Images
+//   };
 
 const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null}) => {
     // // const { packageId } = useParams();
@@ -38,7 +38,8 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || [];
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	let { companyInfo: { companyLogo: logoUrl } = {} } = userData || {};
-	const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+	// const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
+	const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
 	// const [templateData, setTemplateData] = useState(null)
 	const [headerImage, setHeaderImage] = useState("");
 	const {
@@ -62,15 +63,17 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 				console.log("dest img select ", randomDestImgIndex, destImagesMap[dest][randomDestImgIndex])
 				// destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
 				// 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] });
+				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] }, firebaseIdToken );
 				console.log("getB64Img headerImg ", data);
 				setHeaderImage(data);
 			}
 		}
 
-		getDestImgB64();
+		if(firebaseIdToken) {
+			getDestImgB64();
+		}
 		getAboutDest();
-	},[reqData?.destination])
+	},[reqData?.destination, firebaseIdToken])
 
 	const getLogoB64encoded = async () => {
 		const axiosOptions = {
@@ -164,13 +167,13 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	// }, [userData])
 
 	useEffect(() => {
-		console.log("CHECKBIDDATAINSIDE axios LOGO - ", logoUrl)
+		console.log("CHECKBIDDATAINSIDE axios LOGO - ", logoUrl, firebaseIdToken)
 		// if(logoUrl) {
 		//   //fetch logo base64
 		//   getLogoB64encoded();
 		// }
 		const getLogoB64 = async () => {
-			let { data = null, err = null } = await getB64Img({ logoUrl });
+			let { data = null, err = null } = await getB64Img({ logoUrl }, firebaseIdToken);
 			console.log("getB64Img final ", data);
 			setUserPdfData(prev => ({ 
 				...userData, 
@@ -178,8 +181,10 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 			}))
 		}
 
-		getLogoB64();
-	}, [logoUrl]);
+		if(firebaseIdToken && logoUrl) {
+			getLogoB64();
+		}
+	}, [logoUrl, firebaseIdToken]);
 
     if (loading) {
         return (<Box display="flex" flexDirection='column' justifyContent={'center'} style={{ flex: 1, justifyContent: 'flex-start', minWidth: !isMobile ? '40%' : '100%' }}>
@@ -187,7 +192,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		</Box>);
     }
 
-    console.log("packagePdf render => ", cancellationData, headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
+    console.log("packagePdf render => ", firebaseIdToken, cancellationData, headerImage, finalPackPrice, pkgSelectedHotels, userPdfData);
 
     return (<>
         {

@@ -94,43 +94,23 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 			{
 				(currentDayIndex == daysArray.length - 1) && (<Box display={'flex'} flexDirection={'row'} justifyContent={'space-evenly'} flexWrap={'wrap'} sx={{ m: 1 }}>
 					<FormControlLabel
-						control={<Checkbox checked={showComponentPrices} onChange={(e) => setShowComponentPrices(e.target.checked)} inputProps={{ 'aria-label': 'controlled' }} />}
+						control={<Checkbox size="small" checked={showComponentPrices} onChange={(e) => setShowComponentPrices(e.target.checked)} inputProps={{ 'aria-label': 'controlled' }} />}
 						label="Set Component Prices"
 					/>
 					{
 						showComponentPrices && (<>
-							<FormControlLabel
-								control={<Checkbox checked={showComponentPrices} onChange={(e) => setShowComponentPrices(e.target.checked)} inputProps={{ 'aria-label': 'controlled' }} />}
-								label="Set Component Prices"
-							/>
-							{
-								showComponentPrices && (<>
-									<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
-										<InputLabel htmlFor="total-pack-price-input" sx={{ fontSize: 12 }}>
-											Total Transfer Price:
-										</InputLabel>
-										<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
-											InputProps={{
-												startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
-											}}
-											onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))}
-											value={finalTransferPrice || ''} sx={{ margin: "auto" }}
-										/>
-									</Box>
-									<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
-										<InputLabel htmlFor="total-pack-price-input" sx={{ fontSize: 12 }}>
-											Sightseeing Cost:
-										</InputLabel>
-										<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
-											InputProps={{
-												startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
-											}}
-											onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))}
-											value={finalTransferPrice || ''} sx={{ margin: "auto" }}
-										/>
-									</Box>
-								</>)
-							}
+							<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
+								<InputLabel htmlFor="total-pack-price-input" sx={{ fontSize: 12 }}>
+									Total Transfer Price:
+								</InputLabel>
+								<TextField variant="outlined" type="number" size="small" id={`total-pack-price-input`}
+									InputProps={{
+										startAdornment: (<InputAdornment position="start">Rs. </InputAdornment>),
+									}}
+									onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))}
+									value={finalTransferPrice || ''} sx={{ margin: "auto" }}
+								/>
+							</Box>
 							<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
 								<InputLabel htmlFor="total-pack-price-input" sx={{ fontSize: 12 }}>
 									Sightseeing Cost:
@@ -157,6 +137,12 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 							value={finalPackPrice || totalPackPrice || ''} sx={{ margin: "auto" }}
 						/>
 					</Box>
+					
+					<FormControlLabel
+						control={<Checkbox size="small" checked={showComponentPrices} onChange={(e) => setShowComponentPrices(e.target.checked)} inputProps={{ 'aria-label': 'controlled' }} />}
+						label="Show Per Pax Price in Pdf"
+					/>
+					
 					<SavePackagePdf />
 				</Box>)
 			}

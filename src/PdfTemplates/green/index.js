@@ -1,6 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { tr } from 'date-fns/locale';
 import { isEmptyObject } from '../../Utility.js';
 import { MEAL_PLAN_LABEL } from '../../Constants.js';
@@ -225,10 +226,10 @@ const HtmlPdfView = ({
               <Text style={styles.InfoTitle1}>Flights</Text>
               <View style={styles.transferContainer}>
                 <Text style={styles.transferText}>
-                  {`${flights?.arrival ? `Arrival Flight: ${flights?.arrival}.` : ''}`}
+                  {`${flights?.arr ? `Arrival Flight: ${flights?.arr}.` : ''}`}
                 </Text>
                 <Text style={styles.transferText}>
-                  {`${flights?.departure ? `Departure Flight: ${flights?.departure}.` : ''}`}
+                  {`${flights?.dep ? `Departure Flight: ${flights?.dep}.` : ''}`}
                 </Text>
               </View>
             </>)
@@ -331,7 +332,7 @@ const HtmlPdfView = ({
 
           <View style={styles.priceSection} wrap={false}>
             <Text style={styles.priceTitle}>Total Package Price</Text>
-            <Text style={styles.totalPrice}>{`INR ${totalPackPrice || 'N/A'}`}</Text>
+            <Text style={styles.totalPrice}>{`Rs. ${totalPackPrice || 'N/A'}`}</Text>
           </View>
 
           <View style={styles.footerContainer} wrap={false}>

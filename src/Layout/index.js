@@ -4,13 +4,13 @@ import Container from "@mui/material/Container";
 import React, { useEffect, useMemo, useState } from "react";
 import { useHref, useNavigate } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { db, auth } from "../firebaseConfig";
 import Navbar from '../Navbar/index.js';
 import PublicNavbar from '../Navbar/publicNavbar.js';
 import { MainContext } from "../Utility";
-import { setUserData } from '../PackageBuilder/packBuilderSlice.js';
+import { setUserData, setFirebaseIdToken } from '../PackageBuilder/packBuilderSlice.js';
 
 const RedirectComponent = () => {
   useEffect(() => {
@@ -29,6 +29,7 @@ function PrivateRoute({ children, authed = false, props }) {
 
 const AppLayout = ({ children, showNavBar = true }) => {
   let userData = JSON.parse(localStorage.getItem("user"));
+  // const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
   console.log("layout userData ", userData, userData?.phone)
   const isLoggedIn = Boolean(userData);
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
@@ -44,11 +45,13 @@ const AppLayout = ({ children, showNavBar = true }) => {
 						//   console.log(data)
 						// });
 						let signedInIdToken = await auth.currentUser.getIdToken(
-							/* forceRefresh */ false,
+							/* forceRefresh */ true,
 						);
 						console.log("signedInIdToken ", userData?.phone, signedInIdToken, typeof signedInIdToken);
+            dispatch(setFirebaseIdToken(signedInIdToken));
+
 						// localStorage.setItem('user', JSON.stringify({ ...userData, firebaseIdToken: signedInIdToken }));
-            localStorage.setItem('afFirebaseIdToken', signedInIdToken);
+            // localStorage.setItem('afFirebaseIdToken', signedInIdToken);
             // userData['firebaseIdToken'] = signedInIdToken;
 					}
 				});

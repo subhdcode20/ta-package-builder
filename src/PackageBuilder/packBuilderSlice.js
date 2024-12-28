@@ -41,7 +41,8 @@ export const todoSlice = createSlice({
     totalDayPrices: [],
     reqHistory: [],
     finalPackPrice: '',
-    finalTransferPrice: ''
+    finalTransferPrice: '',
+    fbIdToken: null
   },
   reducers: {
     setUserData: (state, action) => {
@@ -492,6 +493,11 @@ export const todoSlice = createSlice({
       console.log("addDayItiText text final", newArr, currArr);
       itiData[state?.currDayIndex].text = newArr;
       // state?.itineraryDesc = newArr;
+    },
+    setFirebaseIdToken: (state, action) => {
+      let signedInToken = action?.payload;
+      console.log("set fbIdToken", signedInToken);
+      state["fbIdToken"] = signedInToken;
     }
   }
 });
@@ -531,6 +537,7 @@ export const {
   setArrFlightsData,
   setAboutDest,
   addDayItiText,
+  setFirebaseIdToken
 } = todoSlice.actions;
 
 // this is for configureStore
