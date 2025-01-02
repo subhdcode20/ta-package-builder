@@ -180,7 +180,10 @@ const RateSheetTable = ({ reqsList = [] }) => {
             </Typography>
         </Box>
 
-        {
+        <Box flex={1} sx={{ ml: 2, width: isMobile ? '100%' : '55%' }}>
+          <MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
+        </Box>
+        {/* {
           tableData.length > 0
           ? (<Box flex={1} sx={{ ml: 2, width: isMobile ? '100%' : '55%' }}>
             <MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
@@ -189,7 +192,7 @@ const RateSheetTable = ({ reqsList = [] }) => {
             <Typography variant='body2' sx={{ margin: 'auto' }}>No Rate Sheet Uploaded Yet! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
             <Button size="small" variant='text'>Now!</Button>
           </Box>)
-        }
+        } */}
         {/* <Box sx={{ display: 'flex', flexDirection: 'row', margin: "auto", width: "100%"}}>
           <Typography variant="body1" sx={{ mt: 2 }}>
               Check your Rate sheet Data:

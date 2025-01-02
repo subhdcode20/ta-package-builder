@@ -291,54 +291,46 @@ const Profile = () => {
           Payment Details:
         </Typography>
         <Grid container spacing={2} sx={{ marginTop: 0 }}>
-          {
-            paymentDetails?.accName && (<Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Bank Account Name"
-                name="accName"
-                value={paymentDetails?.accName || ''}
-                onChange={(e) => handlePayDetailsChange("accName", e.target.value)}
-                variant="outlined"
-              />
-            </Grid>)
-          }
-          {
-            paymentDetails?.accNo && (<Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Bank Account No:"
-                name="accNo"
-                value={paymentDetails?.accNo}
-                onChange={(e) => handlePayDetailsChange("accNo", e.target.value)}
-                variant="outlined"
-              />
-            </Grid>)
-          }
-          {
-            paymentDetails?.ifscCode && (<Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Bank IFSC code:"
-                name="ifscCode"
-                value={paymentDetails?.ifscCode}
-                onChange={(e) => handlePayDetailsChange("ifscCode", e.target.value)}
-                variant="outlined"
-              />
-            </Grid>)
-          }
-          {
-            paymentDetails?.upiId && (<Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="UPI Id:"
-                name="upiId"
-                value={paymentDetails?.upiId}
-                onChange={(e) => handlePayDetailsChange("upiId", e.target.value)}
-                variant="outlined"
-              />
-            </Grid>)
-          }
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Bank Account Name"
+              name="accName"
+              value={paymentDetails?.accName || ''}
+              onChange={(e) => handlePayDetailsChange("accName", e.target.value)}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Bank Account No:"
+              name="accNo"
+              value={paymentDetails?.accNo}
+              onChange={(e) => handlePayDetailsChange("accNo", e.target.value)}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Bank IFSC code:"
+              name="ifscCode"
+              value={paymentDetails?.ifscCode}
+              onChange={(e) => handlePayDetailsChange("ifscCode", e.target.value)}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="UPI Id:"
+              name="upiId"
+              value={paymentDetails?.upiId}
+              onChange={(e) => handlePayDetailsChange("upiId", e.target.value)}
+              variant="outlined"
+            />
+          </Grid>
         </Grid>
 
         <Typography variant="h6" sx={{ marginTop: 2 }}>
