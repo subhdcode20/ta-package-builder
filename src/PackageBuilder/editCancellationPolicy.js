@@ -32,13 +32,20 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
 
 	const getCancellationPolicy = async () => {
 		// console.log(reqData, 'gemRes -- ');
-        console.log("Get Profile Date", userData, userData.phone);
+        console.log("Get Profile Date cancel", userData, userData.phone);
         if(userProfileData) return;
         setLoading(true);
         let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
         if (docSnapPdfData.exists()) {
-            console.log("Profile Date", docSnapPdfData.data());
-            dispatch(setProfileData(docSnapPdfData.data()));
+            let profileData = docSnapPdfData.data();
+            console.log("Profile Date cancel", profileData, profileData?.cancellationData);
+            if(!profileData?.cancellationData) {
+                console.log("Profile Date cancel inside", profileData?.cancellationData, DEFAULT_POLICIES["cancellationPolicyDefault"]);
+                profileData["cancellationData"] = DEFAULT_POLICIES["cancellationPolicyDefault"];
+            }
+            if(!profileData?.paymentPolicy) profileData["paymentPolicy"] = DEFAULT_POLICIES["paymentPolicyDefault"];
+            console.log("Profile Date cancel final", profileData, profileData?.cancellationData);
+            dispatch(setProfileData(profileData));
         }
         setLoading(false);
         // setCancellationData(cData);

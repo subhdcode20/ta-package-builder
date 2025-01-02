@@ -21,10 +21,10 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     const [loding, setLoading] = useState(false);
 	const userData = JSON.parse(localStorage.getItem("user"));  //useSelector((state) => state.packBuilderData.userData) || {};
 	const dispatch = useDispatch();
-    const { 
-        cancellationData = DEFAULT_POLICIES["cancellationPolicyDefault"], 
-        paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"] 
-    } = userProfileData || {};
+    // const { 
+    //     cancellationData = DEFAULT_POLICIES["cancellationPolicyDefault"], 
+    //     paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"] 
+    // } = userProfileData || {};
 
 	const getProfileData = async () => {
 		// console.log(reqData, 'gemRes -- ');
@@ -34,7 +34,10 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
         let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
         if (docSnapPdfData.exists()) {
             console.log("Profile Date", docSnapPdfData.data());
-            dispatch(setProfileData(docSnapPdfData.data()));
+            let profileData = docSnapPdfData.data();
+            if(!profileData?.inclusions) profileData["inclusions"] = DEFAULT_POLICIES["inclusionsDefault"];
+            if(!profileData?.exclusions) profileData["exclusions"] = DEFAULT_POLICIES["exclusionsDefault"];
+            dispatch(setProfileData(profileData));
         }
         setLoading(false);
         // setCancellationData(cData);

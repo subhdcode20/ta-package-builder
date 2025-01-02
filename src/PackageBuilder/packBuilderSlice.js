@@ -5,6 +5,7 @@ import { db } from "../firebaseConfig.js";
 import { isEmptyObject, itiRoomPriceFieldsMap } from '../Utility.js';
 import { DEFAULT_TEMPLATE_NAME } from '../Constants.js';
 import { store } from '../appStore/store.js';
+import { act } from 'react';
 
 // selectedHotels
 // [ 
@@ -430,7 +431,9 @@ export const todoSlice = createSlice({
     },
     setProfileData: (state, action) => {
       console.log("setProfileData ", action?.payload);
-      state["userProfileData"] = action?.payload;
+      let newData = action?.payload;
+      let currData = { ...(state["userProfileData"] || {}) }
+      state["userProfileData"] = { ...currData, ...newData};
     },
     selectTemplate: (state, action) => {
       let userData = state?.userData;
@@ -463,13 +466,13 @@ export const todoSlice = createSlice({
     },
     updatePolicyText: (state, action) => {
       let { policyType = null, val = '', textIndex = null } = action.payload;
-      console.log("policy edit ", policyType, val, textIndex)
+      console.log("policy edit ", policyType, val, textIndex, state?.userProfileData?.cancellationData.length)
       if(!policyType || isNaN(textIndex)) return;
       let newProfileData = state?.userProfileData || {};
       let currArr = newProfileData[policyType] || [];
       let newArr = [ ...currArr ];
       newArr[textIndex] = {"text": val};
-      console.log("policy edit 2 ", policyType, val, textIndex, newArr, currArr);
+      console.log("policy edit 2 ", policyType, val, textIndex, newArr.length, newArr[textIndex], currArr.length);
       newProfileData[policyType] = newArr;
     },
     setArrFlightsData: (state, action) => {
