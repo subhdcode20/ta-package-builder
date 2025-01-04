@@ -117,3 +117,9 @@ export const DEFAULT_POLICIES = {
     {text: "Entry fees for monuments and attractions if explicitly mentioned/discussed in the itinerary."},
   ]
 }
+
+export const PACKAGE_TYPES = {
+  "package": "Package",
+  "hotels": "Hotels",
+  "transport": "Only Transport"
+}

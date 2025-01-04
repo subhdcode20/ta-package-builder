@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 import { db } from '../firebaseConfig';
-import { MainContext, getB64Img, formattedAmountINR } from '../Utility.js';
+import { MainContext, getB64Img, formattedAmountINR, selectPdfImgB64 } from '../Utility.js';
 // import PdfView from './pdfView';
 import { DEFAULT_POLICIES } from '../Constants.js';
 import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
@@ -55,17 +55,18 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		const getDestImgB64 = async () => {
 			if(!reqData?.destination) return;
 			let dest = reqData?.destination.toLowerCase();
-			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest]);
+			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest].length);
 			// setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
 			let randomDestImgIndex = 0
 			if(destImagesMap[dest].length > 0) {
-				randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
-				console.log("dest img select ", randomDestImgIndex, destImagesMap[dest][randomDestImgIndex])
-				// destImagesMap[dest][randomDestImgIndex] = "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fimages-kerala.png?alt=media&token=16d4271b-aa97-43f9-a34d-53cdbe98e3e7"
-				// 'https://media.istockphoto.com/id/154232673/photo/blue-ridge-parkway-scenic-landscape-appalachian-mountains-ridges-sunset-layers.jpg?s=612x612&w=0&k=20&c=m2LZsnuJl6Un7oW4pHBH7s6Yr9-yB6pLkZ-8_vTj2M0='
-				let { data = null, err = null } = await getB64Img({ logoUrl:  destImagesMap[dest][randomDestImgIndex] }, firebaseIdToken );
-				console.log("getB64Img headerImg ", data);
-				setHeaderImage(data);
+				// randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
+				// console.log("dest img select ", Math.random(), destImagesMap[dest].length, Math.floor(Math.random() * destImagesMap[dest].length), firebaseIdToken)
+
+				// let finalDestImg = destImagesMap[dest][ Math.floor(Math.random() * destImagesMap[dest].length) ]
+				// let { data = null, err = null } = await getB64Img({ logoUrl: finalDestImg }, firebaseIdToken );
+				let {b64Data = ''} = await selectPdfImgB64({ dest, firebaseIdToken });
+				console.log("getB64Img headerImg ", b64Data);
+				setHeaderImage(b64Data);
 			}
 		}
 
@@ -203,6 +204,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 					userData={userPdfData}
 					totalPackPrice={formattedAmountINR(finalPackPrice)}
 					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
+					setHeaderImage={setHeaderImage}
 				/>
 			</Box>)
 		}

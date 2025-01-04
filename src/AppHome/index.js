@@ -19,6 +19,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 import MainDestSelect from "../Commons/mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
@@ -26,10 +28,11 @@ import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 import LoadingButton from '../Commons/LoadingButton.jsx';
 import { isEmptyObject } from '../Utility.js';
-import { CabTypes } from "../Constants.js"
+import { CabTypes, PACKAGE_TYPES } from "../Constants.js"
 import SnackbarMsg from "../Commons/snackbarMsg";
 
 const initialFormData = {
+	packType: "package",
 	destination: "",
 	// adultPax: "",
 	// childPax: "",
@@ -363,7 +366,44 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					</Typography>
 				</Box>
 
+				{/* <Box sx={{ "display": "flex", mb: 2 }}>
+					<FormControl>
+						<FormLabel id="packTypeLabel" error={formErrors["packType"]} sx={{ fontSize: 12 }}>Package Type*</FormLabel>
+						<RadioGroup
+							row
+							aria-labelledby="demo-controlled-radio-buttons-group"
+							name="controlled-radio-buttons-group"
+							value={reqData?.packType || ''}
+							onChange={(e) => handleFormChange(e, "packType")}
+						>
+							<FormControlLabel value="package" control={<Radio />} label="Package" />
+							<FormControlLabel value="hotels" control={<Radio />} label="Only Hotels" />
+							<FormControlLabel value="transport" control={<Radio />} label="Only Transport" />
+						</RadioGroup>
+					</FormControl>
+				</Box> */}
+
 				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 2 }}>
+					<Grid item xs={12}>
+						<FormControl>
+							{/* <FormLabel id="demo-controlled-radio-buttons-group">Package Type:</FormLabel> */}
+							<FormLabel id="packTypeLabel" error={formErrors["packType"]} sx={{ fontSize: 12 }}>Package Type*</FormLabel>
+							<RadioGroup
+								row
+								size="small"
+								aria-labelledby="demo-controlled-radio-buttons-group"
+								name="controlled-radio-buttons-group"
+								value={reqData?.packType || ''}
+								onChange={(e) => handleFormChange(e, "packType")}
+							>
+								<FormControlLabel value="package" control={<Radio />} label={PACKAGE_TYPES["package"]} />
+								<FormControlLabel value="hotels" control={<Radio />} label={PACKAGE_TYPES["hotels"]} />
+								<FormControlLabel value="transport" control={<Radio />} label={PACKAGE_TYPES["transport"]} />
+								{/* <FormControlLabel value="male" control={<Radio />} label="Only Transport" />
+								<FormControlLabel value="male" control={<Radio />} label="Only Transport" /> */}
+							</RadioGroup>
+						</FormControl>
+					</Grid>
 					<Grid item xs={4}>
 						<MainDestSelect handleDestSelect={handleDestSelect} destination={destination} />
 						{/* <br /> */}

@@ -86,17 +86,20 @@ const PackageDetailsFor1Day = ({ key }) => {
 	// }, [reqData, userData])
 
 	const getUserHotelRates = async (hotelLoc = '') => {
-		const { destination } = reqData || {};
+		const { destination, starCategory = {} } = reqData || {};
 		console.log("reqtest- getUserHotelRates reducer", destination, hotelLoc, userData?.phone);
 		if (!hotelLoc || !userData?.phone) return; // TODO show page error
 		let docName = `${userData?.phone}-${destination.toLowerCase()}`;
 		let docSnap = await getDoc(doc(db, "userRates", docName));
 		if (docSnap.exists()) {
 			let ratesData = docSnap.data();
-			let locHotels = ratesData?.hotels.filter((i, index) => i.location.toLowerCase() == hotelLoc.toLowerCase())
+			let locHotels = (ratesData?.hotels || []).filter((i, index) => {
+				return (i.location.toLowerCase() == hotelLoc.toLowerCase()) && (i?.starCategory == starCategory?.value);
+			})
 			console.log("reqtest- user hotel rates data ", locHotels, ratesData);
 
-			if (ratesData?.hotels) setUserHotelRates(locHotels || ratesData?.hotels);
+			// if (ratesData?.hotels) 
+			setUserHotelRates(locHotels || ratesData?.hotels || []);
 		} else {
 			console.error(`reqtest- user hotel rates not forund for ${docName}`);
 			// TODO show page error
