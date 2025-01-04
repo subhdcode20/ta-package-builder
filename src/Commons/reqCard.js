@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { setArrFlightsData } from '../PackageBuilder/packBuilderSlice.js';
+import { PACKAGE_TYPES } from '../Constants.js';
 
 const ReqCardView = ({ reqData = {} }) => {
     let { 
@@ -24,7 +25,8 @@ const ReqCardView = ({ reqData = {} }) => {
         startDate, 
         starCategory,
         trackingId = '',
-        pickUp = ''
+        pickUp = '',
+        packType = ''
     } = reqData;
     const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || null;
 
@@ -43,7 +45,9 @@ const ReqCardView = ({ reqData = {} }) => {
 
     console.log("pack req card render ", totalAdults, totalChild, reqData);
     return (<Paper sx={{ border: '1px solid', borderRadius: '5px', mb: 1 }}>
-        <Typography variant="caption" sx={{ margin: 'auto', textAlign: 'center', display: 'inherit', mt: 1 }}>Request Details For <b>{trackingId}</b></Typography>
+        <Typography variant="caption" sx={{ margin: 'auto', textAlign: 'center', display: 'inherit', mt: 1 }}>
+            <b>{packType ? `${PACKAGE_TYPES[packType] || ''} ` : ''}</b>Request Details For <b>{trackingId}</b>
+        </Typography>
         <Box display='flex' flexWrap='wrap'>
             <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}><Typography variant="caption"><b>{destination}</b></Typography>&nbsp;</Box>
             <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>

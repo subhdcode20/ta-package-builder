@@ -73,7 +73,7 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 					onChange={handleChange}
 					indicatorColor="secondary"
 					textColor="inherit"
-					variant="fullWidth"
+					variant="scrollable"
 					aria-label="day wise tabs"
 					scrollButtons="auto"
 				>
@@ -111,7 +111,7 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 									value={finalTransferPrice || ''} sx={{ margin: "auto" }}
 								/>
 							</Box>
-							<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
+							{/* <Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>
 								<InputLabel htmlFor="total-pack-price-input" sx={{ fontSize: 12 }}>
 									Sightseeing Cost:
 								</InputLabel>
@@ -122,7 +122,7 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 									onChange={(e) => dispatch(setTotalTransferPrice({ transferPrice: e.target.value }))}
 									value={finalTransferPrice || ''} sx={{ margin: "auto" }}
 								/>
-							</Box>
+							</Box> */}
 						</>)
 					}
 					<Box display={'flex'} flexDirection={'column'} sx={{ m: 1 }}>

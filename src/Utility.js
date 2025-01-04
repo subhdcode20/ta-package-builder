@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { todoSlice } from './PackageBuilder/packBuilderSlice';
 // import {Base64Encode} from 'base64-stream';
 // import concatStream from 'concat-stream';
+import destImagesMap from './PackagePdf/destPdfImagesMap.js';
 
 export const MainContext = React.createContext({});
 export const DayWiseItineraryContext = React.createContext({});
@@ -141,4 +142,19 @@ export const getB64Img = async (data, firebaseIdToken) => {
     }
     return {err: error}
   }  
+}
+
+export const selectPdfImgB64 = async ({dest, firebaseIdToken}) => {
+  try {
+
+    if(!dest || !firebaseIdToken || !destImagesMap[dest]) return null;
+    console.log("dest img select common ", Math.random(), destImagesMap[dest].length, Math.floor(Math.random() * destImagesMap[dest].length), firebaseIdToken)
+    let finalDestImg = destImagesMap[dest][ Math.floor(Math.random() * destImagesMap[dest].length) ];
+    if(!finalDestImg) return;
+    let { data = null, err = null } = await getB64Img({ logoUrl: finalDestImg }, firebaseIdToken );
+    return {"b64Data": data, err: err};
+  } catch (e) {
+    console.log("select pdf image error: ", e);
+    return {"b64Data": null, err: e}
+  }
 }

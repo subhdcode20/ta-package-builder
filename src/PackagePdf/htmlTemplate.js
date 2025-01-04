@@ -8,11 +8,13 @@ import { tr } from 'date-fns/locale';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { usePDF } from '@react-pdf/renderer';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useSelector } from 'react-redux';
 
 import { templatesMap } from "../PdfTemplates/templateList.js";
 import DefaultTemplate from '../PdfTemplates/default/index.js';
 import KeralaTemplate from '../PdfTemplates/kerala/index.js';
 import { DEFAULT_TEMPLATE_NAME } from '../Constants.js';
+import ChangePdfDestImg from '../Commons/changePdfDestImg.js';
 
 Font.register({
   family: 'Roboto',
@@ -544,12 +546,17 @@ const styles = StyleSheet.create({
 const RenderPreview = (props) => {
   const [reloadPdfView, setReloadPdfView] = useState(true);
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
   
   console.log("RenderPreview ", props);
   const {
+    reqData: {
+      req = {}
+    },
     userData: {
       templateName = DEFAULT_TEMPLATE_NAME  
-    } = {}
+    } = {},
+    setHeaderImage
   } = props;
   let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
   // const [instance, updateInstance] = usePDF({ document: TemplateView });
@@ -566,6 +573,7 @@ const RenderPreview = (props) => {
     <Box display="flex" justifyContent="center">
       <Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>&nbsp;
       {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
+      <ChangePdfDestImg destination={req?.destination} firebaseIdToken={firebaseIdToken} setHeaderImage={setHeaderImage} />
     </Box>
     {/* &nbsp; */}
     {/* <a href={instance.url} download="af-test.pdf">

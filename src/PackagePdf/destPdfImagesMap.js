@@ -3,8 +3,8 @@ export default {
         // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fandaman%2Ftato-andaman-png.png?alt=media&token=76986b19-1ac5-4f4e-88d8-a9056175cf18",
 
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fvineeth-kerala-png.png?alt=media&token=7f48b085-6e5c-449f-8cd1-ed76cf7c142a",
-        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fswastikw-kerala-png-2.png?alt=media&token=b658d19b-e901-405c-b16b-0ed652215829",
-        // "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fajin-kerala-png.png?alt=media&token=496d4641-e220-4712-937a-5d14ea05de46",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fswastikw-kerala-png-2.png?alt=media&token=b658d19b-e901-405c-b16b-0ed652215829",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkerala%2Fajin-kerala-png.png?alt=media&token=496d4641-e220-4712-937a-5d14ea05de46",
     ],
     "karnataka": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkarnataka%2Falka-karnataka-png.png?alt=media&token=3a92046d-455b-417e-9040-3d7bcf69eda7",
@@ -17,14 +17,16 @@ export default {
     "himachal": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fhimachal%2Fan-himachal-png-small.png?alt=media&token=ad8c6e13-9b95-48ae-a1fd-93848d5490a9",
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fhimachal%2Faryan-himachal-png.png?alt=media&token=64a6a6e2-c398-456f-8e7e-4c7202909976",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fhimachal%2Fanirudh-2-himachal-png-small.png?alt=media&token=1046ced0-3fdf-4de6-818b-3ce868dc00b7"
     ],
     "uttrakhand": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Futtrakhand%2Fmiheer-uttrakhand-png.png?alt=media&token=9300c3dd-822f-446f-849c-9d1fe83c22f7",
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Futtrakhand%2Farnav-uttrakhand-png.png?alt=media&token=f54b4a33-d6bc-4e69-a1cb-a029b80f38dc",
     ],
     "kashmir": [
-        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkashmir%2Fisa-kashmir-png.png?alt=media&token=35f08bcb-b0da-4acd-862d-ca8614a5c162",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkashmir%2Fnaweedey-kashmir-png-small.png?alt=media&token=87c5e16a-a094-4346-96d0-256cd1c8c595",
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkashmir%2Fasim-kashmir-png.png?alt=media&token=d7a54e11-fac2-4a01-846d-5b800e459aaf",
+        "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fkashmir%2Fjannes-2-kashmir-png.png?alt=media&token=0419d054-ffcb-4da8-aefe-9b1827e54a11"
     ],
     "sikkim": [
         "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/destPdfAssets%2Fsikkim%2Fmanav-sikkim-png.png?alt=media&token=18c48a6d-27af-48db-985c-43b897b6d617",

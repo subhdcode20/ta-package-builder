@@ -28,7 +28,7 @@ import { db, auth } from "../firebaseConfig";
 import { submitReqData } from "../PackageBuilder/packBuilderSlice.js";
 import LoadingButton from '../Commons/LoadingButton.jsx';
 import { isEmptyObject } from '../Utility.js';
-import { CabTypes } from "../Constants.js"
+import { CabTypes, PACKAGE_TYPES } from "../Constants.js"
 import SnackbarMsg from "../Commons/snackbarMsg";
 
 const initialFormData = {
@@ -396,9 +396,9 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 								value={reqData?.packType || ''}
 								onChange={(e) => handleFormChange(e, "packType")}
 							>
-								<FormControlLabel value="package" control={<Radio />} label="Package" />
-								<FormControlLabel value="hotels" control={<Radio />} label="Only Hotels" />
-								<FormControlLabel value="transport" control={<Radio />} label="Only Transport" />
+								<FormControlLabel value="package" control={<Radio />} label={PACKAGE_TYPES["package"]} />
+								<FormControlLabel value="hotels" control={<Radio />} label={PACKAGE_TYPES["hotels"]} />
+								<FormControlLabel value="transport" control={<Radio />} label={PACKAGE_TYPES["transport"]} />
 								{/* <FormControlLabel value="male" control={<Radio />} label="Only Transport" />
 								<FormControlLabel value="male" control={<Radio />} label="Only Transport" /> */}
 							</RadioGroup>
