@@ -180,7 +180,7 @@ const HtmlPdfView = ({
                         <View style={styles.headerSection}>
                           <View style={styles.headerSectionInner1}>
                             <Text style={styles.hotelName}>Hotel:</Text>
-                            <Text style={styles.hotelName1}>{hotelName} Royal Premium Hotels</Text>
+                            <Text style={styles.hotelName1}>{hotelName}</Text>
                           </View>
                           <View style={styles.headerSectionInner1}>
                             <Text style={styles.destinationName}>Location:</Text>
@@ -202,7 +202,7 @@ const HtmlPdfView = ({
                               <View style={styles.roomSection}>
                                 <View style={styles.roomSection1}>
                                   <Text style={styles.roomInfo}>Room:</Text>
-                                  <Text style={styles.roomInfo1}>{roomName}Family Suite ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})</Text>
+                                  <Text style={styles.roomInfo1}>{roomName} ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})</Text>
                                 </View>
                                 {/* <View style={styles.roomSection1}>
                                   <Text style={styles.roomInfo}>Guest:</Text>
@@ -228,7 +228,7 @@ const HtmlPdfView = ({
                 {itiDesc[currDayIndex]?.text && (
                   <View style={styles.lowerBox} wrap={true}>
                     <Text style={styles.itiDescTitle}>
-                      Itinerary Description for Day {currDayIndex + 1}
+                      Itinerary for Day {currDayIndex + 1}
                     </Text>
                     {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                       <Text key={pointIndex} style={styles.itiDescText}>
