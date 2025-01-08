@@ -176,7 +176,7 @@ const HtmlPdfView = ({
                   const { hotelName, location, selectedRooms = [] } = hotel;
                   return (
                     <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                      <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}Premium Hotel</Text></Text>
+                      <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}</Text></Text>
                       <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
                       {selectedRooms.map((currRoom, roomIndex) => {
                         const {
@@ -189,7 +189,7 @@ const HtmlPdfView = ({
 
                         return (
                           <View key={roomIndex} style={styles.roomDetails}>
-                            <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}Family Suite</Text> <Text style={styles.roomOccupancy}>
+                            <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}</Text> <Text style={styles.roomOccupancy}>
                               ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
                             </Text></Text>
                             <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
@@ -204,7 +204,7 @@ const HtmlPdfView = ({
               {/* Lower Half */}
               {itiDesc[currDayIndex]?.text && (
                 <View style={styles.lowerBox}>
-                  <Text style={styles.itiDescTitle}>Itinerary Description for Day {currDayIndex + 1}</Text>
+                  <Text style={styles.itiDescTitle}>Day {currDayIndex + 1} Itinerary</Text>
                   {itiDesc[currDayIndex].text.map((point, pointIndex) => (
                     <Text key={pointIndex} style={styles.itiDescText}>
                       {`${pointIndex + 1}. ${point}`}
