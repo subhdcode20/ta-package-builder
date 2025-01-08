@@ -39,6 +39,7 @@ const UploadRatesheet = () => {
         startDate: '',
         endDate: '',
         ratesheetUrl: null,
+        transportRatesUrl: null
     });
     const [formErrors, setFormErrors] = useState({});
     const [loading, setLoading] = useState(false);
@@ -57,17 +58,17 @@ const UploadRatesheet = () => {
         setRatesheet((prevRatesheet) => ({ ...prevRatesheet, [name]: value }));
     };
 
-    const handleUploadRatesheet = async (file) => {
-        const fileRef = ref(storage, `userRateSheets/${userId}-${ratesheet.destination}`);
+    const handleUploadRatesheet = async (file, sheetType) => {
+        const fileRef = ref(storage, `userRateSheets/${userId}-${ratesheet.destination}-${sheetType}`);
         await uploadBytes(fileRef, file);
         const downloadURL = await getDownloadURL(fileRef);
-        setRatesheet((prevRatesheet) => ({ ...prevRatesheet, ratesheetUrl: downloadURL }));
+        setRatesheet((prevRatesheet) => ({ ...prevRatesheet, [sheetType == 'transport' ? 'transportRatesUrl' : 'ratesheetUrl']: downloadURL }));
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = (event, sheetType = null) => {
         const file = event.target.files[0];
-        if (file) {
-            handleUploadRatesheet(file);
+        if (file && sheetType) {
+            handleUploadRatesheet(file, sheetType);
         }
     };
 
@@ -78,23 +79,44 @@ const UploadRatesheet = () => {
         }
         try {
             setLoading(true);
-            const axiosOptions = {
-                method: 'POST',
-                headers: { 
-                    // 'content-type': 'application/x-www-form-urlencoded',
-                    'Authorization': firebaseIdToken 
-                },
-                data: {
-                    validFrom: ratesheet.startDate,
-                    validUntil: ratesheet.endDate,
-                    fileUrl: ratesheet.ratesheetUrl
-                },
-                url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
-            };
-            console.log("Ratesheet ->", userData, firebaseIdToken, ratesheet, `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`, axiosOptions);
+            if(ratesheet.ratesheetUrl) {
+                const axiosOptionsHotels = {
+                    method: 'POST',
+                    headers: { 
+                        // 'content-type': 'application/x-www-form-urlencoded',
+                        'Authorization': firebaseIdToken 
+                    },
+                    data: {
+                        validFrom: ratesheet.startDate,
+                        validUntil: ratesheet.endDate,
+                        fileUrl: ratesheet.ratesheetUrl
+                    },
+                    url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-rate-sheet/`,
+                };
+                let response = await axios(axiosOptionsHotels);
+                console.log('response axios hotels ', response);
+            } else if (ratesheet.transportRatesUrl) {
+                const axiosOptionsTransport = {
+                    method: 'POST',
+                    headers: { 
+                        // 'content-type': 'application/x-www-form-urlencoded',
+                        'Authorization': firebaseIdToken 
+                    },
+                    data: {
+                        validFrom: ratesheet.startDate,
+                        validUntil: ratesheet.endDate,
+                        fileUrl: ratesheet.transportRatesUrl
+                    },
+                    url: `${process.env.REACT_APP_API_DOMAIN}/destinations/${ratesheet.destination}/upload-tranport-rate-sheet/`,
+                };
+                let resTransport = await axios(axiosOptionsTransport);
+                console.log('response axios transport ', resTransport);
+            }
+            // console.log("Ratesheet ->", userData, firebaseIdToken, ratesheet, axiosOptionsHotels, axiosOptionsTransport);
 
-            let response = await axios(axiosOptions);
-            console.log('response axios ', response);
+            
+            // let resTransport = await axios(axiosOptionsTransport);
+            // console.log('response axios transport ', resTransport);
             setLoading(false);
             setSubmitMsg(true);
         } catch (error) {
@@ -205,12 +227,24 @@ const UploadRatesheet = () => {
                 </Box>
 
                 <Box sx={{ mb: 3, width: isMobile ? '100%' : '55%' }}>
-                    <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload your RateSheet here:</Typography>
+                    <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload Hotels RateSheet here: (.csv file)</Typography>
                     <Button variant="contained" component="label" sx={{ width: "100%" }}>
                         <input
                             type="file"
                             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                            onChange={handleFileChange}
+                            onChange={e => handleFileChange(e, 'hotels')}
+                            style={{ width: '100%' }}
+                        />
+                    </Button>
+                </Box>
+
+                <Box sx={{ mb: 3, width: isMobile ? '100%' : '55%' }}>
+                    <Typography sx={{ fontSize: 12, marginBottom: "5px" }}>Upload Transport RateSheet here: (.csv file)</Typography>
+                    <Button variant="contained" component="label" sx={{ width: "100%" }}>
+                        <input
+                            type="file"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                            onChange={e => handleFileChange(e, 'transport')}
                             style={{ width: '100%' }}
                         />
                     </Button>

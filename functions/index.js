@@ -316,7 +316,7 @@ app.post("/destinations/:destinationName/upload-tranport-rate-sheet/", async (re
                 let transportMap = {}
                 results.forEach((rate) => {
                     // let currData = transportMap[rate['Cab Type']] || null;
-                    logger.log('new row currHotelData initial ', rate['Hotel Name'], rate['Room Name'], currHotelData, hotelsMap, currHotelData && currHotelData['roomRates']);
+                    logger.log('new row currTransportData initial ', rate['Cab Type'], rate['Price Per Day'], rate['Max Pax'], transportMap);
                     transportMap[rate['Cab Type']] = rate;
                 });
 
