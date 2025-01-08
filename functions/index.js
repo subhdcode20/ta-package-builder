@@ -268,37 +268,6 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                     }
                     logger.log('new row currHotelData final ', rate['Hotel Name'], rate['Room Name'], currHotelData, hotelsMap );
                     hotelsMap[rate['Hotel Name']] = currHotelData;
-
-                    // return {
-                    //     hotelRateId: nanoid(5),
-                    //     hotelName: rate['Hotel Name'],
-                    //     location: rate['location'],
-                    //     starCategory: rate['Star Category'],
-                    //     roomRates: {
-                    //         [rate['Room Name']]: {
-                    //             roomName: rate['Room Name'],
-                    //             cpaiPrice: rate['CPAI'],
-                    //             mapaiPrice: rate['MAPAI'],
-                    //             apaiPrice: rate['APAI'],
-                    //             extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
-                    //             extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
-                    //             extraBedApaiPrice: rate['Extra Bed Adult APAI'],
-                    //             extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
-                    //             extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
-                    //             extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
-                    //             occupancy: {
-                    //                 adult: rate['Adult Occupancy'],
-                    //                 child: rate['Child Occupancy']
-                    //             },
-                    //             minChildAgeForExtra: rate['Min Child Age For extra charge'],
-                    //             childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
-                    //             childNoBedMapaiPrice: rate['Child Without Bed MAPAI'],
-                    //             childNoBedApaiPrice: rate['Child Without Bed APAI']
-                    //         }
-                    //     },
-                    //     validFrom: validFromDate,
-                    //     validUntil: validUntilDate
-                    // }
                 });
 
                 // finalRatesData = Object.values(hotelsMap);
@@ -311,87 +280,56 @@ app.post("/destinations/:destinationName/upload-rate-sheet/", async (req, res) =
                 }, { merge: true });
 
                 return res.status(200).send({message: 'Rate sheet uploaded successfully', docRes: updateDocRes});
+            });
+            // return res.status(201).send({message: 'Rate sheet uploaded successfully. Doc updating in background'});
 
-                // let existingDoc = await userHotelRateDocRef.get();
-                // if(!existingDoc.exists) {
-                // } else {
+    } catch (err) {
+        logger.log(`Uploaded rate sheet processing failed => ${err}`)
+        return res.status(500).send({message: 'Something went wrong processing your request', error: err})
+    }
+});
 
-                    // results.forEach((rate) => {
-                        
-                    //     ({
-                    //         hotels: arrayUnion({
-                    //             hotelId: hotelId,
-                    //             hotelName: rate['Hotel Name'],
-                    //             location: rate['location'],
-                    //             starCategory: rate['Star Category'],
-                    //             roomRates: {
-                    //                 [rate['Room Name']]: {
-                    //                     cpaiPrice: rate['CPAI'],
-                    //                     mapaiPrice: rate['MAPAI'],
-                    //                     apaiPrice: rate['APAI'],
-                    //                     extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
-                    //                     extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
-                    //                     extraBedApaiPrice: rate['Extra Bed Adult APAI'],
-                    //                     extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
-                    //                     extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
-                    //                     extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
-                    //                     occupancy: {
-                    //                         adult: rate['Adult Occupancy'],
-                    //                         child: rate['Child Occupancy']
-                    //                     },
-                    //                     minChildAgeForExtra: rate['Min Child Age For extra charge'],
-                    //                     childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
-                    //                     childNoBedMapaiPrice: rate['Child Withour Bed MAPAI'],
-                    //                     childNoBedApaiPrice: rate['Child WithouT Bed APAI'],
-                    //                     roomName: rate['Room Name']
-                    //                 }
-                    //             },
-                    //             userId: res.locals.user,
-                    //             validFrom: validFromDate,
-                    //             validUntil: validUntilDate
-                    //         })
-                    //     })
-                    // }
+app.post("/destinations/:destinationName/upload-tranport-rate-sheet/", async (req, res) => {
+    try {
+        const [validFromDate, validUntilDate, fileUrl] =
+            [
+                Math.floor(new Date(req.body.validFrom).getTime() / 1000),
+                Math.floor(new Date(req.body.validUntil).getTime() / 1000),
+                req.body.fileUrl
+            ]
+        
+        logger.log('- UPLOAD RATE SHEET - ', res.locals.user, req.params.destinationName, validFromDate, validUntilDate, fileUrl)  //, hotelId
+        const response = await axios.get(fileUrl, {responseType: 'stream'});
+        const results = [];
+        response.data
+            .pipe(csv())
+            .on('data', (row) => {
+                logger.log("new row data", row);
+                results.push(row)
+            })
+            .on('end', async () => {
+                // let docRef
+                // const batch = db.batch()
+                // const dbCollection = await db.collection('userRates')
+                logger.log("all row data", results);
+                let userHotelRateDocRef = db.collection("userRates").doc(`${res.locals.user}-${req.params.destinationName.toLowerCase()}`);
+                let transportMap = {}
+                results.forEach((rate) => {
+                    // let currData = transportMap[rate['Cab Type']] || null;
+                    logger.log('new row currHotelData initial ', rate['Hotel Name'], rate['Room Name'], currHotelData, hotelsMap, currHotelData && currHotelData['roomRates']);
+                    transportMap[rate['Cab Type']] = rate;
+                });
 
-                // }
+                let finalRatesData = Object.values(transportMap);
 
-                // results.forEach((rate) => {
-                //     docRef = dbCollection.doc(`${res.locals.user}-${req.params.destinationName}`)
-                //     batch.set(docRef, {
-                //         hotels: arrayUnion({
-                //             hotelId: hotelId,
-                //             hotelName: rate['Hotel Name'],
-                //             location: rate['location'],
-                //             starCategory: rate['Star Category'],
-                //             roomRates: {
-                //                 [rate['Room Name']]: {
-                //                     cpaiPrice: rate['CPAI'],
-                //                     mapaiPrice: rate['MAPAI'],
-                //                     apaiPrice: rate['APAI'],
-                //                     extraBedCpaiPrice: rate['Extra Bed Adult CPAI'],
-                //                     extraBedMapaiPrice: rate['Extra Bed Adult MAPAI'],
-                //                     extraBedApaiPrice: rate['Extra Bed Adult APAI'],
-                //                     extraBedChildCpaiPrice: rate['Extra Bed Child CPAI'],
-                //                     extraBedChildMapaiPrice: rate['Extra Bed Child MAPAI'],
-                //                     extraBedChildApaiPrice: rate['Extra Bed Child APAI'],
-                //                     occupancy: {
-                //                         adult: rate['Adult Occupancy'],
-                //                         child: rate['Child Occupancy']
-                //                     },
-                //                     minChildAgeForExtra: rate['Min Child Age For extra charge'],
-                //                     childNoBedCpaiPrice: rate['Child Without Bed CPAI'],
-                //                     childNoBedMapaiPrice: rate['Child Withour Bed MAPAI'],
-                //                     childNoBedApaiPrice: rate['Child WithouT Bed APAI'],
-                //                     roomName: rate['Room Name']
-                //                 }
-                //             },
-                //             userId: res.locals.user,
-                //             validFrom: validFromDate,
-                //             validUntil: validUntilDate
-                //         })
-                //     })
-                // })
-                // await batch.commit()
+                logger.log("set final data row data", finalRatesData);
+                let updateDocRes = await userHotelRateDocRef.set({
+                    transport: finalRatesData,
+                    createdAt: Date.now(),
+                    userId: res.locals.user
+                }, { merge: true });
+
+                return res.status(200).send({message: 'Rate sheet uploaded successfully', docRes: updateDocRes});
             });
             // return res.status(201).send({message: 'Rate sheet uploaded successfully. Doc updating in background'});
 
