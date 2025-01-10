@@ -4,6 +4,9 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import LanguageIcon from "@mui/icons-material/Language";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
@@ -18,7 +21,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useSelector, useDispatch } from 'react-redux';
-
+import InstagramIcon from "@mui/icons-material/Instagram";
 import { db, storage } from "../firebaseConfig";
 // import templatesMap from "../PdfTemplates/templateList.js";
 import EditCancellationView from "../PackageBuilder/editCancellationPolicy.js";
@@ -28,6 +31,9 @@ import SelectTemplate from "./selectTemplate.js";
 // import EditCancellationPolicy from "../PackageBuilder/editCancellationPolicy.js";
 import { isEmptyObject } from "../Utility.js";
 import SnackbarMsg from "../Commons/snackbarMsg";
+import InputAdornment from "@mui/material/InputAdornment";  // import necessary functions from Realtime Database SDK
+import { rtdb } from "../firebaseConfig"; // Import the Firebase Realtime Database
+
 
 const Profile = () => {
   // const user = JSON.parse(localStorage.getItem("user"));
@@ -46,6 +52,7 @@ const Profile = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const dispatch = useDispatch();
 
+
   const {
     companyInfo= {},
     companyName = '',
@@ -53,7 +60,8 @@ const Profile = () => {
     phone = '',
     email = '',
     address = '',
-    paymentDetails = {}
+    paymentDetails = {},
+    socialMediaDetails={}
   } = editedData;
 
   const { companyLogo = '' } = companyInfo;
@@ -76,7 +84,7 @@ const Profile = () => {
       }
     };
 
-    fetchData();
+ fetchData();
   }, [userPhone]);
 
   const handleInputChange = (e) => {
@@ -90,6 +98,8 @@ const Profile = () => {
     await uploadBytes(fileRef, file);
     return getDownloadURL(fileRef);
   };
+
+  
 
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
@@ -124,6 +134,19 @@ const Profile = () => {
     setEditedData(userData);
     setIsEdited(false);
   };
+
+  const handleSocialMediaChange = (key, value) => {
+    if (!key) return;
+    let socialData = editedData?.socialMediaDetails;
+    if (!socialData) socialData = {};
+    else socialData = { ...editedData?.socialMediaDetails };
+    socialData[key] = value;
+    setEditedData({
+        ...editedData,
+        socialMediaDetails: socialData,
+    });
+    setIsEdited(true);
+};
 
   const handleUpdate = async () => {
     const userDocRef = doc(db, "userDetails", userPhone);
@@ -341,6 +364,79 @@ const Profile = () => {
           }
         </Grid>
 
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Social Media Details:
+        </Typography>
+<Grid container spacing={2} sx={{ marginTop: 0 }}>
+  <Grid item xs={12} sm={6}>
+    <TextField
+    fullWidth
+    label="Instagram Profile URL"
+    name="instagram"
+    value={socialMediaDetails?.instagram || ''}
+    onChange={(e) => handleSocialMediaChange("instagram", e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <InstagramIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+  </Grid>
+  <Grid item xs={12} sm={6}>
+  <TextField
+    fullWidth
+    label="LinkedIn Profile URL"
+    name="linkedin"
+    value={socialMediaDetails?.linkedin || ''}
+    onChange={(e) => handleSocialMediaChange("linkedin", e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <LinkedInIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+  <Grid item xs={12} sm={6}>
+  <TextField
+    fullWidth
+    label="WhatsApp Number"
+    name="whatsapp"
+    value={socialMediaDetails?.whatsapp || ''}
+    onChange={(e) => handleSocialMediaChange("whatsapp", e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <WhatsAppIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+  <Grid item xs={12} sm={6}>
+  <TextField
+    fullWidth
+    label="Website URL"
+    name="website"
+    value={socialMediaDetails?.website || ''}
+    onChange={(e) => handleSocialMediaChange("website", e.target.value)}
+    variant="outlined"
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <LanguageIcon />
+        </InputAdornment>
+      ),
+    }}
+  />
+</Grid>
+</Grid>
         <Typography variant="h6" sx={{ marginTop: 2 }}>
           Your Destinations
         </Typography>
