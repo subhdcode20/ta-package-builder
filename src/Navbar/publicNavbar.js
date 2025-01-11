@@ -44,10 +44,10 @@ const pages = [
     name: "Login",
     link: "/login",
   },
-  {
-    name: "Request a Demo",
-    link: "/request-demo"
-  }
+  // {
+  //   name: "Request a Demo",
+  //   link: "/request-demo"
+  // }
 ];
 
 const priorityPages = [
@@ -59,14 +59,14 @@ const priorityPages = [
         name: "Login",
         link: "/login",
     },
-    {
-        name: "Request a Demo",
-        link: "/request-demo"
-    },
-    {
-        name: "Pricing",
-        link: "/pricing"
-    }
+    // {
+    //     name: "Request a Demo",
+    //     link: "/request-demo"
+    // },
+    // {
+    //     name: "Pricing",
+    //     link: "/pricing"
+    // }
 ]
 
 function NavBar(props) {
