@@ -59,7 +59,7 @@ const SavePackagePdf = () => {
 			}
 			console.log("new pack post finalPackDetails ", newPackId, finalPackDetails);
 
-			dispatch(submitPackageData(finalPackDetails));
+			dispatch(submitPackageData({ packageData: finalPackDetails}));
 			let packRef = await setDoc(doc(db, "packages", newPackId), finalPackDetails);
 			
 			let reqPackRef = doc(db, "requests", reqId);
@@ -82,7 +82,7 @@ const SavePackagePdf = () => {
 				reqPackRef, 
 				{
 					packages: arrayUnion(newPackId),
-					dropLoc: reqData?.dropLoc
+					dropLoc: reqData?.dropLoc || ''
 				},
 				{merge: true}
 			);
