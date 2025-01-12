@@ -222,11 +222,11 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
         Flight Section
       </Typography>
       <Box sx={{ marginBottom: 2 }}>
-        <Typography sx={{ color: '#555', marginBottom: 1 }}>
-          Arrival Time: {packageDetails[0]?.flights?.arr || 'N/A'}
+        <Typography sx={{ color: '#555', marginBottom: 1}}>
+        <span style={{ fontWeight: 'bold' }}>Arrival Time: </span>{packageDetails[0]?.flights?.arr || 'N/A'}
         </Typography>
         <Typography sx={{ color: '#555', marginBottom: 1 }}>
-          Departure Time: {packageDetails[0]?.flights?.dep || 'N/A'}
+        <span style={{ fontWeight: 'bold' }}>Departure Time: </span>{packageDetails[0]?.flights?.dep || 'N/A'}
         </Typography>
       </Box>
     </Box>

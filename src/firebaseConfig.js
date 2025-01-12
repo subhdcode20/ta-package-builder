@@ -7,6 +7,7 @@ import { getMessaging } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
+import { getDatabase } from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -21,10 +22,12 @@ const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_CONFIG_APPID
 };
 
+
 // Initialize Firebase
 const firebase = initializeApp(firebaseConfig);
 const auth = getAuth(firebase);
 const db = getFirestore(firebase);
+const rtdb = getDatabase(firebase);
 // const messaging = getMessaging(firebase);
 const analytics = getAnalytics(firebase);
 const storage = getStorage(firebase);
