@@ -43,7 +43,8 @@ export const todoSlice = createSlice({
     reqHistory: [],
     finalPackPrice: '',
     finalTransferPrice: '',
-    fbIdToken: null
+    fbIdToken: null,
+    activities: {}  //Keys in object = string index value of Array. (easy to update for any day.)
   },
   reducers: {
     setUserData: (state, action) => {
@@ -86,7 +87,7 @@ export const todoSlice = createSlice({
       state.finalTransferPrice = isNaN(packageData?.finalTransferPrice) ? '' : packageData?.finalTransferPrice;
       state.finalPackPrice = isNaN(packageData?.finalPackPrice) ? '' : packageData?.finalPackPrice;
       state.itiFlightsData = packageData?.flights || {}
-      
+      state.activities = packageData?.activities || {}
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
       console.log("savedHotelsCHECK3", state.selectedRooms);
@@ -502,6 +503,15 @@ export const todoSlice = createSlice({
       let signedInToken = action?.payload;
       console.log("set fbIdToken", signedInToken);
       state["fbIdToken"] = signedInToken;
+    },
+    setCurrDayActivity: (state, action) => {
+      let { activityList = [] } = action?.payload;
+      let activityData = state?.activities || {};
+      let currDayData = activityData[`${state?.currDayIndex}`] || [];
+      let newData = [ ...currDayData ];
+      newData = activityList;
+      console.log("set day activity ", activityList, currDayData, state?.currDayIndex, newData);
+      state.activities[`${state?.currDayIndex}`] = newData;
     }
   }
 });
@@ -541,7 +551,8 @@ export const {
   setArrFlightsData,
   setAboutDest,
   addDayItiText,
-  setFirebaseIdToken
+  setFirebaseIdToken,
+  setCurrDayActivity
 } = todoSlice.actions;
 
 // this is for configureStore

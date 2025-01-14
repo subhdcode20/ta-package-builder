@@ -14,6 +14,7 @@ import ReqDataView from '../Commons/reqCard.js';
 // // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import PackagePdfView from '../PackagePdf/index.js';
 import useTotalPackPrice from './useTotalPackPrice.js';
+import SavePackagePdf from './savePackagePdf.js';
 // import axios from 'axios';
 
 const DayWisePackageBuilder = () => {
@@ -143,22 +144,25 @@ const DayWisePackageBuilder = () => {
 	// console.log("PACKAGEDATASTORE:", storePackageData);
 	console.log("SAVEDPACKAGEDATA:", storeNewPackageData);
 	// console.log("SAVEPACKGEINDEX: ", packageData?.hotels[0].hotels[0]);
-	return (<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} >
-		<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
-			<Typography variant="h6" sx={{textAlign:"center", fontWeight: '400', color: '#333'}} >Select Itinerary Details</Typography>
-			<Box>
-				{reqData && <ReqDataView reqData={reqData} />}
-				{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
+	return (<>
+		<Box display="flex" flexDirection={isMobile ? 'column' : 'row'} >
+			<Box sx={{ "display": "flex", flexDirection: "column", flex: 1.5, mr: 1 }}>
+				<Typography variant="h6" sx={{textAlign: "flex-start", fontWeight: '400', color: '#333'}} >Select Itinerary Details</Typography>
+				<Box>
+					{reqData && <ReqDataView reqData={reqData} />}
+					{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
+				</Box>
 			</Box>
+			<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
+			{/* {
+				storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
+					<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
+					<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
+				</Box>)
+			} */}
 		</Box>
-		<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
-		{/* {
-			storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-				<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-				<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
-			</Box>)
-		} */}
-	</Box>)
+		<SavePackagePdf />
+	</>)
 
 }
 

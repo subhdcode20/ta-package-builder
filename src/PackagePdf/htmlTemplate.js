@@ -570,10 +570,12 @@ const RenderPreview = (props) => {
   }
 
   return (<div style={{ width: '100%', height: 'auto' }}>
-    <Box display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="space-between">
       <Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>&nbsp;
-      {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
-      <ChangePdfDestImg destination={req?.destination} firebaseIdToken={firebaseIdToken} setHeaderImage={setHeaderImage} />
+      <Box display={'flex'}>
+        {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
+        <ChangePdfDestImg destination={req?.destination} firebaseIdToken={firebaseIdToken} setHeaderImage={setHeaderImage} />
+      </Box>
     </Box>
     {/* &nbsp; */}
     {/* <a href={instance.url} download="af-test.pdf">

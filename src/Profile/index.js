@@ -22,6 +22,8 @@ import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useSelector, useDispatch } from 'react-redux';
 import InstagramIcon from "@mui/icons-material/Instagram";
+import InputAdornment from "@mui/material/InputAdornment"; 
+
 import { db, storage } from "../firebaseConfig";
 // import templatesMap from "../PdfTemplates/templateList.js";
 import EditCancellationView from "../PackageBuilder/editCancellationPolicy.js";
@@ -31,9 +33,6 @@ import SelectTemplate from "./selectTemplate.js";
 // import EditCancellationPolicy from "../PackageBuilder/editCancellationPolicy.js";
 import { isEmptyObject } from "../Utility.js";
 import SnackbarMsg from "../Commons/snackbarMsg";
-import InputAdornment from "@mui/material/InputAdornment";  // import necessary functions from Realtime Database SDK
-import { rtdb } from "../firebaseConfig"; // Import the Firebase Realtime Database
-
 
 const Profile = () => {
   // const user = JSON.parse(localStorage.getItem("user"));
@@ -84,7 +83,7 @@ const Profile = () => {
       }
     };
 
- fetchData();
+  fetchData();
   }, [userPhone]);
 
   const handleInputChange = (e) => {

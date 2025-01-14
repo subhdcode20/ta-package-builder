@@ -114,13 +114,13 @@ const PackDetailsFor1Room = ({ hotelIndex, roomIndex, roomItem,  }) => {
             </Grid>
         </Grid>
         {
-            childAges.length > 0 && (<Grid container spacing={3} sx={{ pt: 3, pl: 2 }}>
+            childAges.length > 0 && (<Grid container spacing={3} sx={{ pt: 3, pl: 1 }}>
                 {childAges.map((c, cIndex) => {
                     console.log("childAges room details", c, cIndex)
                     return (
                         <Grid item xs={12} md={6} lg={6} sx={{ pl: '8px !important', pt: '8px !important' }}>
                             <Grid container spacing={1} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                                <Grid item xs={5} sx={{ mb: 3, mx: 1 }}>
+                                <Grid item xs={2.5} sx={{ mb: 3, mx: 1 }}>
                                     <InputLabel id="childPax" sx={{ fontSize: 12 }}>{`Child ${cIndex + 1} Age*`}</InputLabel>
                                     <TextField
                                         sx={{ width: "100%" }}

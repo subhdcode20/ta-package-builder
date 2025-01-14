@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
+import Fab from '@mui/material/Fab';
 
 import { submitPackageData } from './packBuilderSlice.js';
 import { db, auth } from "../firebaseConfig";
@@ -17,6 +18,7 @@ const SavePackagePdf = () => {
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || '';
 	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || '';
 	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
+	const activitiesData = useSelector((state) => state.packBuilderData.activities) || {};
     const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const [showSnackbar, setShowSnackbar] = useState({open: false});
@@ -45,6 +47,7 @@ const SavePackagePdf = () => {
 				hotels: finalHotelDetails,
 				flights: itiFlightsData,
 				itiTexts: selectedItineraryText,
+				activities: activitiesData,
 				packageId: newPackId,
 				totalDayPrices,
 				finalPackPrice,
@@ -103,12 +106,17 @@ const SavePackagePdf = () => {
     }
 
     return (<>
-		<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
+		{/* <Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
 			Save Package Details
-			{/* {
-				loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} />
-			} */}
-		</Button>
+		</Button> */}
+
+		
+		<Fab variant="extended" size="medium" color="primary" sx={{ position: 'fixed', bottom: '2em', right: '2em' }}
+			onClick={savePackageWithPdf}
+		>
+			{ loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} /> }
+			Save Package 
+		</Fab>
 		{showSnackbar && (
 			<SnackbarMsg
 				open={showSnackbar.open}

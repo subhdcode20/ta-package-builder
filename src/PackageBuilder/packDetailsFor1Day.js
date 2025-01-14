@@ -30,6 +30,7 @@ import { useParams } from "react-router-dom";
 // import SavePackagePdf from "./savePackagePdf.js";
 import EditCancellationView from "./editCancellationPolicy.js";
 import EditExclusions from "../Profile/editExclusions.js";
+import AddActivities from "./addActivities.js";
 
 const bull = (
 	<Box
@@ -243,7 +244,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 				{
 					(currDayHotels || []).map((hData = [], hIndex) => {
 						return (<Grid item xs={12}>
-							<Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>Hotel {`${hIndex + 1}`}</Typography>
+							<Typography variant="subtitle1" color="primary" sx={{ mb: 0 }}>Hotel {`${hIndex + 1}`}</Typography>
 							<Grid container spacing={1}>
 								<Grid item xs={12} display={'flex'} justifyContent={'space-between'}>
 									<Grid item xs={4}>
@@ -277,48 +278,12 @@ const PackageDetailsFor1Day = ({ key }) => {
 								<Button size="small" variant="outlined" sx={{ my: 'auto', mb: 1, width: 'fit-content' }}
 									onClick={() => handleAddRoom(hIndex)} 
 								>Add Room +</Button>
-								
-								
-								{/* <Button size="small" variant="contained" onClick={generateItineraryDay1} sx={{ width: 'fit-content' }}>
-									Generate Itinerary for Day {currentDayIndex + 1}
-									{
-										geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }} />
-									}
-								</Button>
-								<Grid item xs={12} display={'flex'} flexDirection={'column'} sx={{ mt: 1 }}>
-									{
-										itineraryDesc[currentDayIndex]?.text && (<Box sx={{ border: `1px solid`, borderColor: 'primary', borderRadius: 1, p: 1 }}>
-											<InputLabel id={'iti-desc'} sx={{ fontSize: 12 }}>Itinerary Description:</InputLabel>
-											{
-												itineraryDesc[currentDayIndex]?.text.map((itiText, itiTextIndex) => {
-													return (<Box sx={{ display: 'flex', p: 1 }}>
-														{bull} &nbsp;
-														<TextField
-															sx={{ width: "100%" }}
-															id=""
-															value={itiText || ''}
-															variant="standard"
-															multiline
-															size="small"
-															onChange={(e) => handleItiDescChange(e.target.value, itiTextIndex)}
-														/>
-													</Box>)
-												})
-											}
-										</Box>)
-									}
-								</Grid> */}
 							</Grid>
-							{/* <Grid item xs={12} display={'flex'} flexDirection={'column'} justifyContent={'center'} sx={{ mt: isMobile ? 1 : -4 }}>
-								<GenerateItineraryBtn />
-							</Grid> */}
-							
-							{/* <Grid item xs={12}>
-								<hr />
-							</Grid> */}
 						</Grid>)
 					})
 				}
+
+				{currentDayIndex + 1 && <AddActivities />}
 				
 				<GenerateItineraryBtn />
 
