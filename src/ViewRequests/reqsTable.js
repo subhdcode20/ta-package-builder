@@ -105,12 +105,6 @@ const ReqsListTable = ({ reqsList = [] }) => {
             </TableRow>
 
           </TableHead>
-          {
-            tableData.length == 0 && <Box sx={{ m: 2, display: 'flex', width: 'max-content', justifyContent: 'space-evenly' }}>
-              <Typography variant='body2' sx={{ margin: 'auto' }}>No Requests Created Yet! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
-              <Button size="small" variant='text' onClick={() => navigate('/home')}>Now!</Button>
-            </Box>
-          }
           <TableBody>
             {tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
               <TableRow key={row.id}>
@@ -135,7 +129,8 @@ const ReqsListTable = ({ reqsList = [] }) => {
                     (row.packages && row.packages.length > 0) 
                     ? (<Box display={'flex'} flexDirection={'row'}>
                       <CheckCircleIcon sx={{ color: 'green', marginY: 'auto', fontSize: '15px' }} />
-                      {/* <Typography variant='caption' sx={{ marginY: 'auto' }}>{` (${row.packages.length})`}</Typography> */}
+                      {/* <Typography variant='caption' sx={{ marginY: 'auto' }}>{`View`}</Typography> */}
+                      <Button size="small" variant='text' onClick={() => selectRow(row.id, row.packages)}>View</Button>
                     </Box>)
                     : null
                   }
@@ -147,42 +142,39 @@ const ReqsListTable = ({ reqsList = [] }) => {
                       variant="outlined"
                       color="primary"
                       onClick={() => handleCopy(row.reqId)}
-                      sx={{ fontSize: '10px' }}
+                      sx={{ fontSize: '10px', mb: 1 }}
                     >
                       Edit Request
                     </Button>
-                    &nbsp;
                     {
                       (row?.packages || []).length == 0 && (<Button
                         size="small"
                         variant="outlined"
                         color="primary"
                         onClick={() => navigate(`/itinerary/${row.reqId}`)}
-                        sx={{ fontSize: '10px' }}
+                        sx={{ fontSize: '10px', mb: 1 }}
                       >
                         Create Package Pdf
                       </Button>)
                     }
-                    &nbsp;
                     {
                       (row?.packages || []).length > 0 && (<Button
                         size="small"
                         variant="outlined"
                         color="primary"
                         onClick={() => navigate(`/itinerary/${row.reqId}`)}
-                        sx={{ fontSize: '10px' }}
+                        sx={{ fontSize: '10px', mb: 1 }}
                       >
                         Update Package Pdf
                       </Button>)
                     }
-                    &nbsp;
                     {
                       (row?.packages || []).length > 0 && (<Button
                         size="small"
                         variant="outlined"
                         color="primary"
                         onClick={() => handleCopyNew(row.reqId)}
-                        sx={{ fontSize: '10px' }}
+                        sx={{ fontSize: '10px', mb: 1 }}
                       >
                         Copy to New Package
                       </Button>)
@@ -205,6 +197,13 @@ const ReqsListTable = ({ reqsList = [] }) => {
             </TableRow>
           </TableFooter>
         </Table>
+        
+          {
+            tableData.length == 0 && <Box sx={{ m: 2, display: 'flex', width: 'max-content', justifyContent: 'space-evenly' }}>
+              <Typography variant='body2' sx={{ margin: 'auto' }}>No Requests Created Yet! Try Fastest way to a professional Itinerary/Quote pdf</Typography>
+              <Button size="small" variant='text' onClick={() => navigate('/home')}>Now!</Button>
+            </Box>
+          }
       </TableContainer>
       {selectedRequestData && (
         <Collapse in={!!selectedRequestData}>
