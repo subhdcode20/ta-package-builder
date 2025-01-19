@@ -148,59 +148,85 @@ const HtmlPdfView = ({
                 }
                 {itiDesc.map((itiCurrDay, currDayIndex) => {
                     let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
-                    return (<View key={currDayIndex} style={styles.daySection} wrap={false}>
-                        <View style={styles.boxContainer}>
-                            {/* Upper Half */}
-                            <View style={styles.upperBox}>
-                                <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-                                {hotelsCurrDay.map((hotel, hotelIndex) => {
-                                    const { hotelName, location, selectedRooms = [] } = hotel;
-                                    return (
-                                        <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                                            <Text style={styles.hotelName}>Hotel: <Text style={styles.hotelName1}>{hotelName}</Text></Text>
-                                            <Text style={styles.destinationName}>Destination: <Text style={styles.destinationName1}>{location}</Text></Text>
-                                            {selectedRooms.map((currRoom, roomIndex) => {
-                                                const {
-                                                    roomName,
-                                                    selectedOccupancy: { adults = 0, child = 0 } = {},
-                                                    mp,
-                                                } = currRoom;
-
-                                                let mealPlan = MEAL_PLAN_LABEL[mp] || 'No meal plan specified';
-
-                                                return (
-                                                    <View key={roomIndex} style={styles.roomDetails}>
-                                                        <Text style={styles.roomInfo}>Room: <Text style={styles.roomInfo1}>{roomName}</Text> <Text style={styles.roomOccupancy}>
-                                                            ({adults} Adult{adults > 1 && 's'} {child ? `| ${child} Children` : ''})
-                                                        </Text></Text>
-                                                        <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                                                    </View>
-                                                );
-                                            })}
+                    return (
+                        <View
+                            key={currDayIndex}
+                            style={styles.daySection}
+                            break={currDayIndex !== 0} 
+                        >
+                            <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
+                            {
+                                !isEmptyObject(flights) && (
+                                    <>
+                                        {currDayIndex === 0 && (
+                                            <View style={styles.transferContainer}>
+                                                <Text style={styles.InfoTitle1}>Flights</Text>
+                                                <Text style={styles.transferText}>
+                                                    First day arrival{`${flights?.arr ? `Arrival Flight: ${flights?.arr}.` : ''}`}
+                                                </Text>
+                                            </View>
+                                        )}
+                                        {currDayIndex === itiDesc.length - 1 && (
+                                            <View style={styles.transferContainer}>
+                                                <Text style={styles.InfoTitle1}>Flights</Text>
+                                                <Text style={styles.transferText}>
+                                                    Last Day Departure {`${flights?.dep ? `Departure Flight: ${flights?.dep}.` : ''}`}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </>
+                                )
+                            }
+                            <View style={styles.boxContainer}>
+                                <View style={styles.upperBox}>
+                                    {itiDesc[currDayIndex]?.text && (
+                                        <View style={styles.lowerBox}>
+                                            {itiDesc[currDayIndex].text.map((point, pointIndex) => (
+                                                <Text key={pointIndex} style={styles.itiDescText}>
+                                                    {`${pointIndex + 1}. ${point}`}
+                                                </Text>
+                                            ))}
                                         </View>
-                                    );
-                                })}
-                            </View>
+                                    )}
+                                    {hotelsCurrDay.map((hotel, hotelIndex) => {
+                                        const { hotelName, location, selectedRooms = [] } = hotel;
+                                        return (
+                                            <View key={hotelIndex} style={styles.hotelDetailsContainer}>
+                                                <Text style={styles.hotelName}>
+                                                    Hotel: <Text style={styles.hotelName1}>{hotelName}</Text>
+                                                </Text>
+                                                <Text style={styles.destinationName}>
+                                                    Destination: <Text style={styles.destinationName1}>{location}</Text>
+                                                </Text>
+                                                {selectedRooms.map((currRoom, roomIndex) => {
+                                                    const {
+                                                        roomName,
+                                                        selectedOccupancy: { adults = 0, child = 0 } = {},
+                                                        mp,
+                                                    } = currRoom;
 
-                            {/* Lower Half */}
-                            {itiDesc[currDayIndex]?.text && (
-                                <View style={styles.lowerBox}>
-                                    <Text style={styles.itiDescTitle}>Day {currDayIndex + 1} Itinerary</Text>
-                                    {itiDesc[currDayIndex].text.map((point, pointIndex) => (
-                                        <Text key={pointIndex} style={styles.itiDescText}>
-                                            {`${pointIndex + 1}. ${point}`}
-                                        </Text>
-                                    ))}
+                                                    let mealPlan = MEAL_PLAN_LABEL[mp] || 'No meal plan specified';
+
+                                                    return (
+                                                        <View key={roomIndex} style={styles.roomDetails}>
+                                                            <Text style={styles.roomInfo}>
+                                                                Room: <Text style={styles.roomInfo1}>{roomName}</Text>
+                                                                <Text style={styles.roomOccupancy}>
+                                                                    ({adults} Adult{adults > 1 ? 's' : ''} {child ? `| ${child} Children` : ''})
+                                                                </Text>
+                                                            </Text>
+                                                            <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
+                                                        </View>
+                                                    );
+                                                })}
+                                            </View>
+                                        );
+                                    })}
                                 </View>
-                            )}
-                            {logoB64Str && (
-                                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                            )}
+                            </View>
                         </View>
-                    </View>)
-                }
-                )}
-
+                    );
+                })}
                 <View style={styles.boxContainer2} wrap={false} break>
                     {
                         !isEmptyObject(flights) && (<>
@@ -378,10 +404,8 @@ const getThemedStyles = ({ themeData = {} }) => {
             top: 0,
             left: 0,
             width: '100%',
-            height: '100%',
+            height: '20%',
             objectFit: 'cover',
-            zIndex: -1,
-            opacity: 0.4,
         },
         page2: {
             position: 'relative',
@@ -502,18 +526,11 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         boxContainer: {
             marginTop: 20,
-            zIndex: 1,
-            borderWidth: 1,
-            borderColor: '#ccc',
             overflow: 'hidden',
             width: "80%",
             alignSelf: "center",
-            shadowColor: "#000",
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-            backgroundColor: "#fff",
             marginBottom: 20,
+            color: "black",
         },
         boxContainer2: {
             borderWidth: 1,
@@ -550,15 +567,19 @@ const getThemedStyles = ({ themeData = {} }) => {
             marginTop: 20,
         },
         upperBox: {
-            backgroundColor: '#30746c',
             padding: 20,
             width: '100%',
+            marginTop: "35%",
         },
         dayTitle: {
             fontSize: 25,
+            position: "absolute",
+            top: 20,
             fontWeight: 'extrabold',
-            color: '#84bfb9',
+            color: 'white',
             marginBottom: 15,
+            left: '50%',
+            transform: 'translateX(-50%)',
         },
         InfoTitle: {
             fontSize: 30,
@@ -578,23 +599,21 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         hotelDetailsContainer: {
             marginBottom: 15,
+            color: "black",
         },
         hotelName: {
             fontSize: 18,
-            color: '#fff',
             opacity: 0.8,
             marginBottom: 5,
             textAlign: 'left',
         },
         destinationName: {
             fontSize: 16,
-            color: '#fff',
             opacity: 0.8,
             marginBottom: 20,
         },
         destinationName1: {
             fontSize: 16,
-            color: '#fff',
             opacity: 0.8,
             fontWeight: 'bold',
             marginBottom: 20,
@@ -609,7 +628,6 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         roomInfo: {
             fontSize: 16,
-            color: '#fff',
             marginBottom: 5,
         },
         roomInfo1: {
@@ -619,19 +637,16 @@ const getThemedStyles = ({ themeData = {} }) => {
             fontSize: 16,
             fontWeight: 'bold',
             textAlign: 'center',
-            color: '#fff',
             opacity: '0.8',
             marginBottom: 10,
         },
         destination: {
             fontSize: 14,
-            color: '#fff',
             textAlign: 'center',
             marginBottom: 10,
         },
         mealPlan: {
             fontSize: 14,
-            color: '#fff',
         },
 
         itiDescTitle: {
@@ -641,9 +656,9 @@ const getThemedStyles = ({ themeData = {} }) => {
             marginBottom: 13,
         },
         lowerBox: {
-            backgroundColor: '#fff',
             padding: 30,
             width: '100%',
+            marginTop: 5,
         },
         itiDescText: {
             fontSize: 16,
