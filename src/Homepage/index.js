@@ -26,7 +26,7 @@ const PbHomepage = () => {
 			</Helmet> */}
 		  	<div class="home">
 			  <div class="top-bar">
-				<div class="wallet-logo" style={{ marginTop: '-28px' }}>
+				<div class="wallet-logo" style={{ marginTop: '-49px', marginLeft: '16px' }}>
 					{/* <div class="wallet">AgentFlow</div> */}
 					<img src='/afLogoDarkBg.png' alt="logo" width={'100%'} />
 				</div>
@@ -153,7 +153,7 @@ const PbHomepage = () => {
 					  <div class="rectangle">
 						<span class="span" style={{ textDecoration: 'none', letterSpacing: '10px' }}>STARTER</span>
 						<span class="text-wrapper-4">Rs. 700 /month</span>
-						<span class="text-wrapper-5">for 3 months</span>
+						<span class="text-wrapper-5" style={{ lineHeight: '16px' }}>for 3 months</span>
 						<br />
 						<span class="also">Inclusions:</span>
 						<span class="span" style={{ textDecoration: 'none' }}>Itinerary PDF Builder</span>
@@ -162,7 +162,7 @@ const PbHomepage = () => {
 					  <div class="rectangle">
 						<span class="span" style={{ textDecoration: 'none', letterSpacing: '10px' }}>PRO</span>
 						<span class="text-wrapper-4">Rs. 1200 /month</span>
-						<span class="text-wrapper-5">for 6 months</span>
+						<span class="text-wrapper-5" style={{ lineHeight: '16px' }}>for 6 months</span>
 						<br />
 						<span class="also">Inclusions:</span>
 						<span class="span" style={{ textDecoration: 'none' }}>Itinerary PDF Builder</span>
@@ -180,7 +180,7 @@ const PbHomepage = () => {
 						{/* <span class="span">Rs. 1200</span> */}
 						<span class="span" style={{ textDecoration: 'none', letterSpacing: '10px' }}>LEGEND</span>
 						<span class="text-wrapper-4">Rs. 1000 /month</span>
-						<span class="text-wrapper-5">for 12 months</span>
+						<span class="text-wrapper-5" style={{ lineHeight: '16px' }}>for 12 months</span>
 						<br />
 						<span class="also">Inclusions:</span>
 						<span class="span" style={{ textDecoration: 'none' }}>Itinerary PDF Builder</span>
