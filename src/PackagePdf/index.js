@@ -55,10 +55,10 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 		const getDestImgB64 = async () => {
 			if(!reqData?.destination) return;
 			let dest = reqData?.destination.toLowerCase();
-			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest].length);
+			console.log("CHECK_IMGheader:", dest, destImagesMap, destImagesMap[dest]);
 			// setHeaderImage(destinationImages[reqData?.destination.toLowerCase()]);
 			let randomDestImgIndex = 0
-			if(destImagesMap[dest].length > 0) {
+			if(destImagesMap[dest] && destImagesMap[dest].length > 0) {
 				// randomDestImgIndex = Math.floor(Math.random() * destImagesMap[dest].length);
 				// console.log("dest img select ", Math.random(), destImagesMap[dest].length, Math.floor(Math.random() * destImagesMap[dest].length), firebaseIdToken)
 

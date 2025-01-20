@@ -544,10 +544,6 @@ const styles = StyleSheet.create({
 // }
 
 const RenderPreview = (props) => {
-  const [reloadPdfView, setReloadPdfView] = useState(true);
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
-  
   console.log("RenderPreview ", props);
   const {
     reqData: {
@@ -558,9 +554,14 @@ const RenderPreview = (props) => {
     } = {},
     setHeaderImage
   } = props;
-  let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
+  const [reloadPdfView, setReloadPdfView] = useState(true);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+  const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
+  const [selectedTemplate, setSelectedTemplate] = useState(templateName);
+  
+  let TemplateView = templatesMap[selectedTemplate.toLowerCase()]?.viewComponent;
   // const [instance, updateInstance] = usePDF({ document: TemplateView });
-  console.log("user template ", templateName, props);
+  console.log("user template ", templateName, selectedTemplate, props);
   // let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
   // if(process.env.NODE_ENV == 'development' && !reloadPdfView) TemplateView = null;
 
@@ -569,11 +570,19 @@ const RenderPreview = (props) => {
     setTimeout(() => setReloadPdfView(true), 1000);
   }
 
+  const changeTemplate = () => {
+    let templateNameArr = Object.keys(templatesMap);
+    let newTemplate = templateNameArr[ Math.floor(Math.random() * templateNameArr.length) ] || '';
+    if(newTemplate) setSelectedTemplate(newTemplate)
+  }
+
   return (<div style={{ width: '100%', height: 'auto' }}>
     <Box display="flex" justifyContent="space-between">
       <Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>&nbsp;
       <Box display={'flex'}>
-        {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
+        {/* {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>} */}
+        <Button variant="text" size="small" onClick={changeTemplate}><RefreshIcon fontSize='small' />Change Template</Button>
+        &nbsp;
         <ChangePdfDestImg destination={req?.destination} firebaseIdToken={firebaseIdToken} setHeaderImage={setHeaderImage} />
       </Box>
     </Box>

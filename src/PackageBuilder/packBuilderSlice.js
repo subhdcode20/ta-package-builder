@@ -477,9 +477,10 @@ export const todoSlice = createSlice({
       newProfileData[policyType] = newArr;
     },
     setArrFlightsData: (state, action) => {
-      if(!action?.payload) return;
+      // if(!action?.payload) return;
+      console.log("setArrFlightsData ", action?.payload);
       let { flightType = '', flightText = '' } = action?.payload;
-      if(!flightType || !flightText) return;
+      if(!flightType) return;
       let flightsData = state["itiFlightsData"] || {};
       let newData = {...flightsData};
       newData[flightType] = flightText;

@@ -91,16 +91,14 @@ const SavePackagePdf = () => {
 			);
 
 
-			setShowSnackbar({open: true, message: 'Package saved! You can edit anytime from "My Request" page...', severity: 'success', });
+			setShowSnackbar({open: true, message: 'Package saved! Edit anytime from "My Request" page', severity: 'success', });
 			setLoading(false);
 		} catch (error) {
 			console.log("save Complete Package catch error ", error);
-			alert("Error saving package.")
+			// alert("Error saving package.")
+			setShowSnackbar({open: true, message: 'Error saving package. Please try again or contact support', severity: 'error', });
 			setLoading(false);
 		}
-		// eta template wip
-				
-
 		// return;
 		// setTimeout(() => navigate(`/my-reqs?reqId=${reqId}`));
     }
@@ -114,7 +112,7 @@ const SavePackagePdf = () => {
 		<Fab variant="extended" size="medium" color="primary" sx={{ position: 'fixed', bottom: '2em', right: '2em' }}
 			onClick={savePackageWithPdf}
 		>
-			{ loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} /> }
+			{ loading && <CircularProgress color="textSecondary" size="5px" sx={{ ml: 1, color: 'white' }} /> }
 			Save Package 
 		</Fab>
 		{showSnackbar && (
