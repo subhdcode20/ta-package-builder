@@ -9,12 +9,13 @@ import Button from '@mui/material/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@mui/material/CircularProgress';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 import { gemini } from '../firebaseConfig.js';
 import { setItineraryDesc, updateItineraryDesc, handleRemoveItiItem, setAboutDest, addDayItiText } from './packBuilderSlice.js';
 
 // Gemini Prompt for itinerary text for 1 day
-const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1}) => {
+const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1, activitesData = {}}) => {
     let { pickUp = '', noOfNights = 0, dropLoc } = reqData;
     let { location, hotelName } = selectedHotels[currentDayIndex]?.hotels[0] || {}
     let currDayPickup = pickUp;
@@ -25,7 +26,7 @@ const aiHotelDetails = async ({reqData, selectedHotels = [], currentDayIndex = 1
     const day1Prompt = `Write a summarized travel itinerary for the 1st day of the Trip with following details: 
      Welcome and Pick up: ${pickUp || "Airport"}. Destination for the Day: ${location}. Stay tonight at: Hotel ${hotelName}.
      Structure your response in json more specifically an Array of Strings with every string mentioning parts of the Itenerary.
-     Include the sightseeing of the Location for the day.
+     Include the below activities/sightseeings apart form the obvious - ${activitesData[`${currentDayIndex}`]?.reduce((acc, i) => {return acc += `${i?.name}, `}, '')}
      Summarize in maximum 5 points or strings in the array. Your response string should be a valid JSON string.
     `
     const dayNPrompt = `Write a summarized travel itinerary for a day of the Trip with following details: 
@@ -65,13 +66,14 @@ const GenerateItineraryBtn = ({  }) => {
     const itineraryDesc = useSelector((state) => state.packBuilderData.itineraryDesc) || [];
     const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const userData = useSelector((state) => state.packBuilderData.userData) || {};
+    const activitesData = useSelector((state) => state.packBuilderData.activities) || {};
     const [geminiLoading, setGeminiLoading] = useState(false);
 	const dispatch = useDispatch();
 
 	const generateItineraryDay1 = async () => {
 		console.log(reqData, 'gemRes -- ');
 		setGeminiLoading(true);
-		let gemRes = await aiHotelDetails({ reqData, selectedHotels, currentDayIndex });
+		let gemRes = await aiHotelDetails({ reqData, selectedHotels, currentDayIndex, activitesData });
 		setGeminiLoading(false);
 		dispatch(setItineraryDesc({ text: gemRes }));
 	}
@@ -82,7 +84,9 @@ const GenerateItineraryBtn = ({  }) => {
 	}
 
     return (<Grid item xs={12} display={'flex'} flexDirection={'column'} justifyContent={'flex-end'}>
-        <Button size="small" variant="contained" onClick={generateItineraryDay1} sx={{ width: 'fit-content', margin: 'auto', mb: 1 }}>
+        <Button size="small" variant="outlined" onClick={generateItineraryDay1} 
+            sx={{ width: 'fit-content', margin: 'auto', mb: 1 }} startIcon={<AutoAwesomeIcon color="primary" />}
+        >
             Generate Itinerary for Day {currentDayIndex + 1}
             {
                 geminiLoading && <CircularProgress color="secondary" size="10px" sx={{ ml: 1 }} />

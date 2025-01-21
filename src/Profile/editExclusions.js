@@ -26,6 +26,8 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     //     paymentPolicy = DEFAULT_POLICIES["paymentPolicyDefault"] 
     // } = userProfileData || {};
 
+    
+
 	const getProfileData = async () => {
 		// console.log(reqData, 'gemRes -- ');
         console.log("Get Profile Date", userData, userData.phone);

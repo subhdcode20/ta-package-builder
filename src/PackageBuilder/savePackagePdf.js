@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import CircularProgress from '@mui/material/CircularProgress';
+import Fab from '@mui/material/Fab';
 
 import { submitPackageData } from './packBuilderSlice.js';
 import { db, auth } from "../firebaseConfig";
@@ -17,6 +18,7 @@ const SavePackagePdf = () => {
 	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || '';
 	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || '';
 	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
+	const activitiesData = useSelector((state) => state.packBuilderData.activities) || {};
     const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const [showSnackbar, setShowSnackbar] = useState({open: false});
@@ -45,6 +47,7 @@ const SavePackagePdf = () => {
 				hotels: finalHotelDetails,
 				flights: itiFlightsData,
 				itiTexts: selectedItineraryText,
+				activities: activitiesData,
 				packageId: newPackId,
 				totalDayPrices,
 				finalPackPrice,
@@ -88,27 +91,30 @@ const SavePackagePdf = () => {
 			);
 
 
-			setShowSnackbar({open: true, message: 'Package saved! You can edit anytime from "My Request" page...', severity: 'success', });
+			setShowSnackbar({open: true, message: 'Package saved! Edit anytime from "My Request" page', severity: 'success', });
 			setLoading(false);
 		} catch (error) {
 			console.log("save Complete Package catch error ", error);
-			alert("Error saving package.")
+			// alert("Error saving package.")
+			setShowSnackbar({open: true, message: 'Error saving package. Please try again or contact support', severity: 'error', });
 			setLoading(false);
 		}
-		// eta template wip
-				
-
 		// return;
 		// setTimeout(() => navigate(`/my-reqs?reqId=${reqId}`));
     }
 
     return (<>
-		<Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
+		{/* <Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
 			Save Package Details
-			{/* {
-				loading && <CircularProgress color="secondary" size="5px" sx={{ ml: 1 }} />
-			} */}
-		</Button>
+		</Button> */}
+
+		
+		<Fab variant="extended" size="medium" color="primary" sx={{ position: 'fixed', bottom: '2em', right: '2em' }}
+			onClick={savePackageWithPdf}
+		>
+			{ loading && <CircularProgress color="textSecondary" size="5px" sx={{ ml: 1, color: 'white' }} /> }
+			Save Package 
+		</Fab>
 		{showSnackbar && (
 			<SnackbarMsg
 				open={showSnackbar.open}

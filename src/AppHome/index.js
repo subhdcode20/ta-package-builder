@@ -21,6 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { useTheme } from '@mui/material/styles';
 
 import MainDestSelect from "../Commons/mainDestSearch.js";
 import { MAX_CHILD_AGE, HOTEL_STAR_CAT_OPTS } from '../Constants.js'
@@ -81,6 +82,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 	const dispatch = useDispatch();
 	const storeReqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
+	const theme = useTheme();
 
 	useEffect(() => {
 		if (copyNew && requestData) {
@@ -383,7 +385,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 					</FormControl>
 				</Box> */}
 
-				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 2 }}>
+				<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 1 }}>
 					<Grid item xs={12}>
 						<FormControl>
 							{/* <FormLabel id="demo-controlled-radio-buttons-group">Package Type:</FormLabel> */}
@@ -543,7 +545,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 
 					{
 						roomOcc.length > 0 && (<>
-						<Grid item xs={12} sx={{ m: 1, ml: 2, mt: 2, pb: 2, border: `1px solid`, borderRadius: '5px', borderColor: 'secondary', width: 'inherit' }}>
+						<Grid item xs={12} sx={{ m: 1, ml: 2, mt: 2, pb: 2, border: `1px solid ${theme.palette.secondary.main}`, borderRadius: '5px', borderColor: 'secondary', width: 'inherit' }}>
 							{
 								roomOcc.map((r, rIndex) => {
 									console.log("room render ", rIndex, r, (r.childAges || []).length);
@@ -630,7 +632,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 												}
 											</Grid>
 										</Grid>
-										<Grid item xs={12} md={12} lg={10}>
+										<Grid item xs={12} md={12} lg={11}>
 											<hr />
 										</Grid>
 									</Grid>)
