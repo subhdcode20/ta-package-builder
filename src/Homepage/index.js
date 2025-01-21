@@ -17,6 +17,11 @@ const bull = (
 const PbHomepage = () => {
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 
+	const scrollToDemo = () => {
+		let element = document.getElementById("demo-section");
+		element.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+	}
+
 	return (<>
 			{/* <Helmet>
 				<meta charset="utf-8" />
@@ -26,11 +31,11 @@ const PbHomepage = () => {
 			</Helmet> */}
 		  	<div class="home">
 			  <div class="top-bar">
-				<div class="wallet-logo" style={{ marginTop: '-49px', marginLeft: '16px' }}>
+				<div class="wallet-logo" style={{ marginTop: '-46px', marginLeft: '16px', width: isMobile ? '12em' : '16em' }}>
 					{/* <div class="wallet">AgentFlow</div> */}
 					<img src='/afLogoDarkBg.png' alt="logo" width={'100%'} />
 				</div>
-				<Box sx={{ display: 'flex', marginRight: 4 }}>
+				<Box sx={{ display: 'flex', marginRight: isMobile ? 3 : 7, marginLeft: 'auto', width: 'fit-content' }}>
 					<Button variant="text" href="/login" sx={{ margin: 'auto', marginRight: 2 }}>Login</Button>
 					{!isMobile && (<Button variant="contained" href="/signup" size={isMobile ? "small" : "medium"} sx={{ margin:'auto' }}>Request a Demo</Button>)}
 				</Box>
@@ -52,7 +57,7 @@ const PbHomepage = () => {
 					  Transform the way Travel Agents share Quotations <br />Save time, maximize margins, and impress clients without
 					  breaking a sweat.
 					</p>
-					<Button variant="contained" href="/signup" sx={{ margin:'auto' }} size="large">Watch Demo</Button>
+					<Button variant="contained" onClick={scrollToDemo} sx={{ margin:'auto' }} size="large">Watch Demo</Button>
 					{/* <a
 					  href="https://animaapp.com/?utm_source=figma-samples&utm_campaign=figma-lp-pets&utm_medium=figma-samples"
 					  target="_blank"
@@ -68,7 +73,7 @@ const PbHomepage = () => {
 					</div>
 				  </div> */}
 
-				  <img src="/landing-banner.png" width={isMobile ? "95%" : "80%"} height="auto" class="banner-img" />  
+				  <img src="/landing-banner.png" style={{ marginTop: isMobile ? '-120px' : '-600px' }} width={"100%"} height="auto" class="banner-img" />  
 
 				  {/* <img class="airport" src="img/airport.png" />
 				  <img class="airport-2" src="img/image.png" />
@@ -78,7 +83,7 @@ const PbHomepage = () => {
 				  <img class="taxi" src="img/taxi.png" /> */}
 				</div>
 			  </div>
-			  <div class="product-image" style={ isMobile ? { height: '300px', padding: '16px 16px' } : {} }>
+			  <div class="product-image" id="demo-section" style={ isMobile ? { height: '300px', padding: '16px 16px' } : {} }>
 				<div class="div">
 				  <img src="/screenshot-af.jpg" width="100%" />
 				</div>
@@ -135,13 +140,13 @@ const PbHomepage = () => {
 				<div class="overlap-group-wrapper">
 				  {/* <div class="overlap-group-2"> */}
 				  <Box className="overlap-group-2" sx={{ display: 'flex', flexDirection: 'column', px: 1 }}>	
-					<img class="quote-icon" src="img/quote-icon.svg" style={{ margin: 'auto' }}/>
+					<img class="quote-icon" src="/Quoteicon-landing.png" style={{ margin: 'auto' }}/>
 					<p class="text" style={{ margin: 'auto' }}>
 					  AgentFlow has been a game changer for our agency. We save hours on every itinerary, and our clients love
 					  the results! The team keeps adding more and more templates and features over time, we’re able to use these
 					  to set ourselves apart from the competition.
 					</p>
-					<div class="add-name-here" style={{ margin: 'auto' }}>Himanshu</div>
+					<div class="add-name-here" style={{ margin: 'auto' }}>Triposta - 26 December 2024</div>
 				  </Box>
 				</div>
 			  </div>
