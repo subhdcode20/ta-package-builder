@@ -49,15 +49,26 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                   <Typography sx={{ fontWeight: 'bold', color: '#333' }}>
                     Package {pkgIndex > 0 ? 'updated' : 'created'} on <b> {createdAt} </b>
                   </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href={`/itinerary/${reqId}` || ''}
-                    size="small"
-                    sx={{ marginLeft: 2 }}
-                  >
-                    View PDF
-                  </Button>
+                  <div>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      href={`/voucher/${reqId}/${pkg?.packageId}` || ''}
+                      size="small"
+                      sx={{ marginLeft: 2 }}
+                    >
+                      Create Voucher
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      href={`/itinerary/${reqId}` || ''}
+                      size="small"
+                      sx={{ marginLeft: 2 }}
+                    >
+                      View PDF
+                    </Button>
+                  </div>
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
