@@ -44,7 +44,8 @@ export const todoSlice = createSlice({
     finalPackPrice: '',
     finalTransferPrice: '',
     fbIdToken: null,
-    activities: {}  //Keys in object = string index value of Array. (easy to update for any day.)
+    activities: {},  //Keys in object = string index value of Array. (easy to update for any day.)
+    voucherData: {}
   },
   reducers: {
     setUserData: (state, action) => {
@@ -513,6 +514,15 @@ export const todoSlice = createSlice({
       newData = activityList;
       console.log("set day activity ", activityList, currDayData, state?.currDayIndex, newData);
       state.activities[`${state?.currDayIndex}`] = newData;
+    },
+    setVoucherData: (state, action) => {
+      let { bookingConfirmId = '', hotelConfirmId = '', transfersConfirmId = '', flightsConfirmId = '' } = action?.payload;
+      state["voucherData"] = {
+        bookingConfirmId, 
+        hotelConfirmId, 
+        transfersConfirmId, 
+        flightsConfirmId
+      }
     }
   }
 });
@@ -553,7 +563,8 @@ export const {
   setAboutDest,
   addDayItiText,
   setFirebaseIdToken,
-  setCurrDayActivity
+  setCurrDayActivity,
+  setVoucherData
 } = todoSlice.actions;
 
 // this is for configureStore

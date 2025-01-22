@@ -15,6 +15,7 @@ import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
 import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
 import destImagesMap from './destPdfImagesMap.js';
+import { templatesMap } from "../PdfTemplates/templateList.js";
 // import useRefreshFirebaseToken from '../Commons/useRefreshFirebaseToken.js';
 
 // Temporary defined HERE:
@@ -205,6 +206,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 					totalPackPrice={formattedAmountINR(finalPackPrice)}
 					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
 					setHeaderImage={setHeaderImage}
+					templatesMap={templatesMap}
 				/>
 			</Box>)
 		}

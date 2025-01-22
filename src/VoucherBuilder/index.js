@@ -13,7 +13,7 @@ import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
 import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from '../PackageBuilder/packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
 // // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
-import PackagePdfView from '../PackagePdf/index.js';
+import VoucherPdfView from '../PackagePdf/voucherPdfIndex.js';
 import useTotalPackPrice from '../PackageBuilder/useTotalPackPrice.js';
 import SavePackagePdf from '../PackageBuilder/savePackagePdf.js';
 import ConfirmInputs from './confirmInputs.js';
@@ -146,13 +146,8 @@ const DayWisePackageBuilder = () => {
 					{reqData && !isEmptyObject(reqData) && <DayWiseTabs/>}
 				</Box>
 			</Box>
-			<PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
-			{/* {
-				storeSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, maxWidth: !isMobile ? '40%' : '100%' }}>
-					<Typography variant="h6" textAlign={'center'}><b>Pdf Preview</b></Typography>
-					<HtmlTemplate packageData={{"hotels": storeSelectedHotels}} userData={userPdfData} />
-				</Box>)
-			} */}
+            <VoucherPdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
+			{/* <PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} /> */}
 		</Box>
 		<SavePackagePdf />
         {showSnackbar && (
