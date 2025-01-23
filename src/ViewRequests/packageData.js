@@ -7,7 +7,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 import { useNavigate } from "react-router-dom";
 import { isEmptyObject } from '../Utility';
 
@@ -15,7 +14,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
   const { pickUp, cabType, dropLoc } = reqData || {};
   const navigate = useNavigate();
   
-  console.log('PackageData render ', reqData)
+  console.log('PackageData render ', reqData);
   return (
     <Box
       sx={{
@@ -195,23 +194,45 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                 </Box>
 
                 <Box
-                  sx={{
-                    border: '1px solid #ddd',
-                    borderRadius: 2,
-                    padding: 3,
-                    textAlign: 'left',
-                    marginBottom: 3,
-                    marginTop:3,
-                    backgroundColor: '#fff',
-                  }}
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444' }}>
-                    Transfer Section
-                  </Typography>
-                  <Typography sx={{ color: '#555', marginTop: 1 }}>
-                    All tours and transfers are private by {cabType || ''} from {pickUp || ''} dropping at {dropLoc || ''}
-                  </Typography>
-                </Box>
+  sx={{
+    display: 'flex', // Enables flexbox
+    border: '1px solid #ddd',
+    borderRadius: 2,
+    padding: 3,
+    textAlign: 'left',
+    marginBottom: 3,
+    marginTop: 3,
+    backgroundColor: '#fff',
+    gap: 3, // Adds spacing between the sections
+  }}
+>
+  {/* Transfer Section */}
+  <Box sx={{ flex: 1 }}>
+    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
+      Transfer Section
+    </Typography>
+    <Typography sx={{ color: '#555', marginTop: 1 }}>
+      All tours and transfers are private by {cabType || ''} from {pickUp || ''} dropping at {dropLoc || ''}
+    </Typography>
+  </Box>
+
+  {(packageDetails[0]?.flights?.arr || packageDetails[0]?.flights?.dep) && (
+    <Box sx={{ flex: 1 }}>
+      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
+        Flight Section
+      </Typography>
+      <Box sx={{ marginBottom: 2 }}>
+        <Typography sx={{ color: '#555', marginBottom: 1}}>
+        <span style={{ fontWeight: 'bold' }}>Arrival Time: </span>{packageDetails[0]?.flights?.arr || 'N/A'}
+        </Typography>
+        <Typography sx={{ color: '#555', marginBottom: 1 }}>
+        <span style={{ fontWeight: 'bold' }}>Departure Time: </span>{packageDetails[0]?.flights?.dep || 'N/A'}
+        </Typography>
+      </Box>
+    </Box>
+  )}
+</Box>
+                  
 
                 <Box
                   sx={{

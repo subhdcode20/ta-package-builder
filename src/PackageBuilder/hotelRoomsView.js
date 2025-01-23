@@ -1,19 +1,11 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Autocomplete from '@mui/material/Autocomplete';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Radio from '@mui/material/Radio';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
-import RadioGroup from '@mui/material/RadioGroup';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTheme } from '@mui/material/styles';
 
 // import { isEmptyObject } from '../Utility.js';
 import { handleRoomSelect, selectedRoomOccupancy, handleRemoveRoom, 
@@ -40,6 +32,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 	const hotelRates = Object.values(currDayhotelData?.roomRates || {});
 	const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
 	const dispatch = useDispatch();
+	const theme = useTheme();
 
 	console.log("hotel rooms render ", currentDayIndex, currDayhotelData, hotelIndex, hotelRates);
 	// const handleRoomChange = (roomIndex, data) => {
@@ -96,7 +89,7 @@ const HotelRoomsBuilder = ({ hotelIndex = null }) => {
 			(selectedRooms || []).map((rItem, rindex) => {
 				console.log("rItem render ", rItem, rindex);
 				// let childAges = rItem?.selectedOccupancy?.childAges || [];
-				return (<Grid item xs={12} sx={{ position: 'relative', border: '1px solid', borderRadius: '5px', my: 0.5 }}>
+				return (<Grid item xs={12} sx={{ position: 'relative', borderLeft: `1px solid ${theme.palette.primary.main}`, my: 0.5, ml: 1 }}>
 					{
 						(rindex >= reqData?.roomOcc.length) && (<IconButton aria-label="delete" size="small" color="primary" 
 						onClick={() => dispatch(handleRemoveRoom({hotelIndex, deleteIndex: rindex}))}

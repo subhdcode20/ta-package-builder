@@ -13,6 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { useSelector, useDispatch } from 'react-redux';
+
 import PackDetailsFor1Day from "./packDetailsFor1Day.js";
 import { DayWiseItineraryContext } from "../Utility.js";
 import {
@@ -82,7 +83,7 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 			</AppBar>
 			{
 				(daysArray && daysArray.length > 0) && (<Card container>
-					<CardContent sx={{ pb: 1 }}>
+					<CardContent sx={{ py: 1 }}>
 						<PackDetailsFor1Day
 							key={`day-${currentDayIndex}`}
 						/>
@@ -143,7 +144,7 @@ const DayWiseTabs = ({ reqDatass = {} }) => {
 						label="Show Per Pax Price in Pdf"
 					/> */}
 
-					<SavePackagePdf />
+					{/* <SavePackagePdf /> */}
 				</Box>)
 			}
 			{/* <div style={{marginLeft: '8px', marginBottom: '8px'}}><SavePackagePdf /></div> */}
