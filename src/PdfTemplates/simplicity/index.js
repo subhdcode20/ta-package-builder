@@ -4,17 +4,13 @@ import { fromUnixTime, format } from 'date-fns';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { tr } from 'date-fns/locale';
 import { isEmptyObject } from '../../Utility.js';
-import { MEAL_PLAN_LABEL } from '../../Constants.js';
+import { DIR_BANNER_IMG_B64, DIR_POLE_IMG_B64, MEAL_PLAN_LABEL } from '../../Constants.js';
 
 Font.register({
-    family: 'Roboto',
+    family: 'Hina Mincho',
     fonts: [
         {
-            src: 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxP.ttf',
-        },
-        {
-            src: 'https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmEU9fBBc9.ttf',
-            fontWeight: 'bold',
+            src: '/fonts/HinaMincho-Regular.ttf',
         },
     ],
 });
@@ -30,7 +26,8 @@ const formatDate = (timestamp) => {
 
 };
 
-let _defaultHeaderImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQju3VIlMJkHgaFA3VLW_RMgsY18qBs5MeAmw&s'
+let _defaultHeaderImage = 'https://images.unsplash.com/photo-1522332870908-7c428896fb25?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGRhcmslMjBqYXBhbnxlbnwwfHwwfHx8MA%3D%3D'
+let qrIMG = "https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
 const HtmlPdfView = ({
     reqData: {
         req = {},
@@ -63,7 +60,7 @@ const HtmlPdfView = ({
     console.log("HOTELS_DETAILS", JSON.stringify(hotels));
     console.log("pdf template render ", req, logoB64Str, hotels);
     console.log("HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
-    console.log("CHECK_ABOUT:", headerImage); //aboutDestText
+    console.log("CHECK_ABOUT:", headerImage);
     const styles = getThemedStyles(themeData) || null;
     if (!styles) return null;
     return (
@@ -97,8 +94,9 @@ const HtmlPdfView = ({
                     }
                     <View style={styles.body}>
                         <Text style={styles.dayTrip}>{req?.noOfNights} Day Trip</Text>
+                        <Text style={styles.horizontalLine}>-----------</Text>
+                        <Text style={styles.title}>{req?.destination || 'N/A'} Itinerary</Text>
 
-                        <Text style={styles.title}>{req?.destination || 'N/A'}  Itinerary</Text>
 
                         <View style={styles.infoBox}>
                             <View style={styles.infoRow}>
@@ -130,7 +128,7 @@ const HtmlPdfView = ({
                             {/* <Text style={{ fontSize: 30, fontWeight: 'extrabold', letterSpacing: 3, marginBottom: 30, textAlign: 'left', color: '#84bfb9' }}>
                             About {req?.destination}
                         </Text> */}
-                            <Text style={{ fontSize: 17, textAlign: 'center', lineHeight: 1.5, letterSpacing: 1.3, fontWeight: 'extralight', color: 'white' }}>
+                            <Text style={{ fontSize: 18, marginLeft: 10, marginRight: 10, textAlign: 'center', lineHeight: 1.5, letterSpacing: 1.3, fontWeight: 'extralight', color: 'white' }}>
                                 {aboutDestText}
                             </Text>
                         </View>
@@ -139,117 +137,130 @@ const HtmlPdfView = ({
                 </View>
             </Page>
             <Page style={[styles.page, styles.page2]} >
-                {
+                {/* {
                     headerImage && (<Image
                         style={styles.backgroundImage}
                         src={headerImage || _defaultHeaderImage}
                         fixed
                     />)
-                }
+                } */}
+                <Image
+                    style={styles.backgroundImage}
+                    src={_defaultHeaderImage}
+                    fixed
+                />
+                <Image
+                    style={styles.bgPole}
+                    src={DIR_POLE_IMG_B64}
+                    fixed
+                />
+                <Image
+                    style={styles.bgPic}
+                    src={DIR_BANNER_IMG_B64}
+                    fixed
+                />
+
                 {itiDesc.map((itiCurrDay, currDayIndex) => {
                     let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
                     return (
-                        <View
-                            key={currDayIndex}
-                            style={styles.daySection}
-                            break={currDayIndex !== 0} 
-                        >
-                            <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
-                            {
-                                !isEmptyObject(flights) && (
-                                    <>
-                                        {currDayIndex === 0 && (
-                                            <View style={styles.transferContainer}>
-                                                <Text style={styles.InfoTitle1}>Flights</Text>
-                                                <Text style={styles.transferText}>
-                                                    First day arrival{`${flights?.arr ? `Arrival Flight: ${flights?.arr}.` : ''}`}
-                                                </Text>
-                                            </View>
-                                        )}
-                                        {currDayIndex === itiDesc.length - 1 && (
-                                            <View style={styles.transferContainer}>
-                                                <Text style={styles.InfoTitle1}>Flights</Text>
-                                                <Text style={styles.transferText}>
-                                                    Last Day Departure {`${flights?.dep ? `Departure Flight: ${flights?.dep}.` : ''}`}
-                                                </Text>
-                                            </View>
-                                        )}
-                                    </>
-                                )
-                            }
-                            <View style={styles.boxContainer}>
-                                <View style={styles.upperBox}>
-                                    {itiDesc[currDayIndex]?.text && (
-                                        <View style={styles.lowerBox}>
-                                            {itiDesc[currDayIndex].text.map((point, pointIndex) => (
-                                                <Text key={pointIndex} style={styles.itiDescText}>
-                                                    {`${pointIndex + 1}. ${point}`}
-                                                </Text>
-                                            ))}
+                        <>
+
+                            <View
+                                key={currDayIndex}
+                                style={styles.daySection}
+                                break={currDayIndex !== 0}
+                            >
+                                <Text style={styles.dayTitle}>Day {currDayIndex + 1}</Text>
+                                <Text style={styles.locationTitle}>{hotels[currDayIndex].hotels[0]?.location || ""}</Text>
+                                <View style={styles.dayDetails}>
+                                    {
+                                        !isEmptyObject(flights) && (
+                                            <>
+                                                {currDayIndex === 0 && (
+                                                    <View style={styles.flightContainer}>
+                                                        <Text style={styles.InfoTitle1}>Flight Arrival</Text>
+                                                        <Text style={styles.transferText}>
+                                                            {`${flights?.arr ? `${flights?.arr}.` : ''}`}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                                {currDayIndex === itiDesc.length - 1 && (
+                                                    <View style={styles.flightContainer}>
+                                                        <Text style={styles.InfoTitle1}>Flight Departure</Text>
+                                                        <Text style={styles.transferText}>
+                                                            {`${flights?.dep ? `${flights?.dep}.` : ''}`}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </>
+                                        )
+                                    }
+                                    <View style={styles.boxContainer}>
+                                        <View style={styles.upperBox}>
+                                            {itiDesc[currDayIndex]?.text && (
+                                                <View style={styles.lowerBox}>
+                                                    {itiDesc[currDayIndex].text.map((point, pointIndex) => (
+                                                        <Text key={pointIndex} style={styles.itiDescText}>
+                                                            {`${pointIndex + 1}. ${point}`}
+                                                        </Text>
+                                                    ))}
+                                                </View>
+                                            )}
+                                            {hotelsCurrDay.map((hotel, hotelIndex) => {
+                                                const { hotelName, location, selectedRooms = [] } = hotel;
+                                                return (
+                                                    <View key={hotelIndex} style={styles.hotelDetailsContainer}>
+                                                        <Text style={styles.hotelName}>
+                                                            {/* Hotel:  */}
+                                                            <Text style={styles.hotelName1}>{hotelName}</Text>
+                                                        </Text>
+                                                        <Text style={styles.destinationName}>
+                                                            {/* Destination:  */}
+                                                            {/* <Text style={styles.destinationName1}>{location}</Text> */}
+                                                        </Text>
+                                                        {selectedRooms.map((currRoom, roomIndex) => {
+                                                            const {
+                                                                roomName,
+                                                                selectedOccupancy: { adults = 0, child = 0 } = {},
+                                                                mp,
+                                                            } = currRoom;
+
+                                                            let mealPlan = MEAL_PLAN_LABEL[mp] || 'No meal plan specified';
+
+                                                            return (
+                                                                <View key={roomIndex} style={styles.roomDetails}>
+                                                                    <Text style={styles.roomInfo}>
+                                                                        {/* Room:  */}
+                                                                        <Text style={styles.roomInfo1}>{roomName}</Text>
+                                                                        <Text style={styles.roomOccupancy}>
+                                                                            ({adults} Adult{adults > 1 ? 's' : ''} {child ? `| ${child} Children` : ''})
+                                                                        </Text>
+                                                                    </Text>
+                                                                    <Text style={styles.mealPlan}>
+                                                                        {/* Meal Plan: */}
+                                                                        {mealPlan}</Text>
+                                                                </View>
+                                                            );
+                                                        })}
+                                                    </View>
+                                                );
+                                            })}
                                         </View>
-                                    )}
-                                    {hotelsCurrDay.map((hotel, hotelIndex) => {
-                                        const { hotelName, location, selectedRooms = [] } = hotel;
-                                        return (
-                                            <View key={hotelIndex} style={styles.hotelDetailsContainer}>
-                                                <Text style={styles.hotelName}>
-                                                    Hotel: <Text style={styles.hotelName1}>{hotelName}</Text>
-                                                </Text>
-                                                <Text style={styles.destinationName}>
-                                                    Destination: <Text style={styles.destinationName1}>{location}</Text>
-                                                </Text>
-                                                {selectedRooms.map((currRoom, roomIndex) => {
-                                                    const {
-                                                        roomName,
-                                                        selectedOccupancy: { adults = 0, child = 0 } = {},
-                                                        mp,
-                                                    } = currRoom;
-
-                                                    let mealPlan = MEAL_PLAN_LABEL[mp] || 'No meal plan specified';
-
-                                                    return (
-                                                        <View key={roomIndex} style={styles.roomDetails}>
-                                                            <Text style={styles.roomInfo}>
-                                                                Room: <Text style={styles.roomInfo1}>{roomName}</Text>
-                                                                <Text style={styles.roomOccupancy}>
-                                                                    ({adults} Adult{adults > 1 ? 's' : ''} {child ? `| ${child} Children` : ''})
-                                                                </Text>
-                                                            </Text>
-                                                            <Text style={styles.mealPlan}>Meal Plan: {mealPlan}</Text>
-                                                        </View>
-                                                    );
-                                                })}
-                                            </View>
-                                        );
-                                    })}
+                                    </View>
                                 </View>
+
                             </View>
-                        </View>
+                        </>
                     );
+
                 })}
                 <View style={styles.boxContainer2} wrap={false} break>
-                    {
-                        !isEmptyObject(flights) && (<>
-                            <Text style={styles.InfoTitle1}>Flights</Text>
-                            <View style={styles.transferContainer}>
-                                <Text style={styles.transferText}>
-                                    {`${flights?.arr ? `Arrival Flight: ${flights?.arr}.` : ''}`}
-                                </Text>
-                                <Text style={styles.transferText}>
-                                    {`${flights?.dep ? `Departure Flight: ${flights?.dep}.` : ''}`}
-                                </Text>
-                            </View>
-                        </>)
-                    }
-                    <Text style={styles.InfoTitle1}>Transfer</Text>
+                    <Text style={styles.InfoTitle}>Transfer</Text>
                     <View style={styles.transferContainer}>
                         <Text style={styles.transferText}>
                             {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
                         </Text>
                     </View>
-                    {logoB64Str && (
-                        <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                    )}
                 </View>
 
                 {/* <View style={styles.boxContainer2} wrap={false}>
@@ -275,9 +286,6 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
-                            {logoB64Str && (
-                                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                            )}
                         </View>
                     </>)
                 }
@@ -293,9 +301,6 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
-                            {logoB64Str && (
-                                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                            )}
                         </View>
                     </>)
                 }
@@ -311,9 +316,6 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
-                            {logoB64Str && (
-                                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                            )}
                         </View>
                     </>)
                 }
@@ -329,9 +331,6 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
-                            {logoB64Str && (
-                                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
-                            )}
                         </View>
                     </>)
                 }
@@ -343,7 +342,7 @@ const HtmlPdfView = ({
                     </View>
 
                     <View style={styles.footerContainer} wrap={false}>
-                        <Text style={styles.footerTitle}>Bank Account Details</Text>
+                        <Text style={styles.footerTitle}>Payment Details</Text>
                         {
                             paymentDetails?.accName && (<Text style={styles.footerDetailsText}>
                                 Account Name: {paymentDetails?.accName}
@@ -371,6 +370,11 @@ const HtmlPdfView = ({
                                 resizeMode="contain"
                             />
                         )}
+                        <Image
+                            style={styles.qr}
+                            src={qrIMG} // Actual qr to add.
+                            resizeMode="contain"
+                        />
                         <View style={styles.footerContact}>
                             {email && (<Text style={styles.footerText}>Email : {email}</Text>)}
                             {phone && (<Text style={styles.footerText}>Phone : {phone}</Text>)}
@@ -395,7 +399,7 @@ const getThemedStyles = ({ themeData = {} }) => {
 
     return StyleSheet.create({
         page: {
-            fontFamily: 'Roboto',
+            fontFamily: 'Hina Mincho',
             fontSize: 12,
             position: 'relative',
         },
@@ -405,6 +409,22 @@ const getThemedStyles = ({ themeData = {} }) => {
             left: 0,
             width: '100%',
             height: '20%',
+            objectFit: 'cover',
+        },
+        bgPole: {
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '80rem',
+            height: "auto",
+            objectFit: 'cover',
+        },
+        bgPic: {
+            position: 'absolute',
+            bottom: 5,
+            right: 0,
+            width: '100rem',
+            height: "auto",
             objectFit: 'cover',
         },
         page2: {
@@ -423,8 +443,9 @@ const getThemedStyles = ({ themeData = {} }) => {
             top: 20,
             width: 120,
             height: 'auto',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            alignItems: "center",
+            alignSelf: "center",
+            justifyContent: "center",
         },
         logoInContainer: {
             position: "absolute",
@@ -462,7 +483,7 @@ const getThemedStyles = ({ themeData = {} }) => {
         dayTrip: {
             fontSize: 22,
             textAlign: 'center',
-            marginBottom: 10,
+            marginBottom: 2,
             color: "white",
         },
         infoBox: {
@@ -525,42 +546,27 @@ const getThemedStyles = ({ themeData = {} }) => {
             padding: 20,
         },
         boxContainer: {
-            marginTop: 20,
             overflow: 'hidden',
-            width: "80%",
+            width: "100%",
             alignSelf: "center",
-            marginBottom: 20,
+            marginBottom: 5,
             color: "black",
         },
         boxContainer2: {
-            borderWidth: 1,
-            borderColor: '#ccc',
             overflow: 'hidden',
             width: "80%",
             height: '60%',
             alignSelf: "center",
-            shadowColor: "#000",
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-            backgroundColor: "#fff",
             marginBottom: 20,
             padding: 20,
             paddingBottom: 50,
             marginTop: 20,
         },
         boxContainer3: {
-            borderWidth: 1,
-            borderColor: '#ccc',
             overflow: 'hidden',
             width: "80%",
             height: '80%',
             alignSelf: "center",
-            shadowColor: "#000",
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-            elevation: 5,
-            backgroundColor: "#fff",
             marginBottom: 20,
             padding: 20,
             paddingBottom: 50,
@@ -569,7 +575,6 @@ const getThemedStyles = ({ themeData = {} }) => {
         upperBox: {
             padding: 20,
             width: '100%',
-            marginTop: "35%",
         },
         dayTitle: {
             fontSize: 25,
@@ -577,46 +582,66 @@ const getThemedStyles = ({ themeData = {} }) => {
             top: 20,
             fontWeight: 'extrabold',
             color: 'white',
-            marginBottom: 15,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            left: '20%',
+            right: '20%',
+            textAlign: "center",
+        },
+        locationTitle: {
+            fontSize: 50,
+            position: "absolute",
+            top: 50,
+            fontWeight: 'extrabold',
+            color: 'white',
+            left: '20%',
+            right: '20%',
+            textAlign: "center",
+        },
+        underLine: {
+            fontSize: 26,
+            position: "absolute",
+            top: 25,
+            fontWeight: 'extrabold',
+            color: 'white',
+            marginBottom: 10,
+            left: '20%',
+            right: '20%',
+            textAlign: "center",
         },
         InfoTitle: {
-            fontSize: 30,
+            fontSize: 35,
+            position: "absolute",
+            top: 20,
             fontWeight: 'extrabold',
-            color: '#30746c',
-            marginBottom: 30,
-            marginLeft: 7,
-            marginTop: 10,
+            color: 'white',
+            marginBottom: 15,
+            left: '20%',
+            right: '20%',
+            textAlign: "center",
         },
         InfoTitle1: {
-            fontSize: 30,
-            fontWeight: 'extrabold',
-            color: '#30746c',
-            marginBottom: 10,
-            marginLeft: 7,
-            marginTop: 20,
+            fontSize: 20,
+            textAlign: "center",
         },
         hotelDetailsContainer: {
             marginBottom: 15,
             color: "black",
+            textAlign: "center",
         },
         hotelName: {
             fontSize: 18,
             opacity: 0.8,
             marginBottom: 5,
-            textAlign: 'left',
         },
         destinationName: {
             fontSize: 16,
             opacity: 0.8,
-            marginBottom: 20,
+            marginBottom: 10,
         },
         destinationName1: {
             fontSize: 16,
             opacity: 0.8,
             fontWeight: 'bold',
-            marginBottom: 20,
+            marginBottom: 10,
         },
         hotelName1: {
             fontSize: 18,
@@ -632,6 +657,7 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         roomInfo1: {
             fontWeight: "bold",
+            marginRight: 1,
         },
         roomOccupancy: {
             fontSize: 16,
@@ -648,7 +674,11 @@ const getThemedStyles = ({ themeData = {} }) => {
         mealPlan: {
             fontSize: 14,
         },
-
+        horizontalLine: {
+            borderBottomWidth: 1,
+            borderBottomColor: 'white',
+            marginBottom: 10, 
+        },
         itiDescTitle: {
             fontSize: 25,
             fontWeight: 'extrabold',
@@ -658,7 +688,6 @@ const getThemedStyles = ({ themeData = {} }) => {
         lowerBox: {
             padding: 30,
             width: '100%',
-            marginTop: 5,
         },
         itiDescText: {
             fontSize: 16,
@@ -668,7 +697,11 @@ const getThemedStyles = ({ themeData = {} }) => {
             opacity: 0.6,
             marginBottom: 8,
         },
-
+        dayDetails: {
+            // backgroundColor: "red",
+            marginTop: "25%",
+            width: "100%",
+        },
         dayHeader: {
             // backgroundColor: '#B8E0D2',
             padding: 3,
@@ -720,9 +753,10 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         exclusionContainer: {
             marginLeft: 10,
+            marginTop: "35%",
         },
         bullet: {
-            fontSize: 16,
+            fontSize: 18,
             marginVertical: 1,
             lineHeight: 1.5,
             color: '#555555',
@@ -736,36 +770,47 @@ const getThemedStyles = ({ themeData = {} }) => {
             alignItems: 'center',
             marginTop: 20,
             padding: 15,
-            backgroundColor: primaryColor,
-            borderWidth: 1,
-            borderRadius: 5,
             marginBottom: 30,
         },
         priceTitle: {
-            fontSize: 16,
+            position: "absolute",
+            fontSize: 20,
             fontWeight: 'bold',
             color: 'white',
-            textAlign: 'center',
-            opacity: 0.8,
             marginBottom: 5,
+            left: '20%',
+            right: '20%',
+            margin: 0,
+            marginTop: 20,
+            // transform: 'translateX(-50%)',
+            textAlign: 'center',
         },
         totalPrice: {
-            fontSize: 18,
+            position: "absolute",
+            fontSize: 25,
             fontWeight: 'bold',
             color: 'white',
-            textAlign: 'center',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginTop: 100,
         },
         transferContainer: {
             marginLeft: 10,
             padding: 10,
-            borderRadius: 5,
+            marginTop: "35%",
             marginBottom: 10,
+        },
+        flightContainer: {
+            textAlign: "center",
+            justifyContent: "center",
+            marginTop: 10,
         },
         transferText: {
             fontSize: 18,
             opacity: 0.8,
-            color: '#333333',
+            color: 'black',
             lineHeight: 1.5,
+            textAlign: 'center',
         },
         exclusionSection: {
             marginTop: 10,
@@ -777,24 +822,22 @@ const getThemedStyles = ({ themeData = {} }) => {
             borderRadius: 5,
         },
         footerContainer: {
-            backgroundColor: '#FFFFFF',
+            marginTop: "25%",
             padding: 20,
-            borderWidth: 1,
-            borderColor: '#CCCCCC',
             alignItems: 'center',
             justifyContent: 'center',
             alignSelf: "center",
             width: "80%",
         },
         footerTitle: {
-            fontSize: 16,
+            fontSize: 22,
             fontWeight: 'bold',
             color: '#000000',
             marginBottom: 10,
             textAlign: 'center',
         },
         footerDetailsText: {
-            fontSize: 12,
+            fontSize: 18,
             color: '#333333',
             textAlign: 'center',
             marginBottom: 5,
@@ -804,13 +847,21 @@ const getThemedStyles = ({ themeData = {} }) => {
             height: 70,
             marginBottom: 15,
         },
+        footerLogo: {
+            height: 70,
+            marginBottom: 15,
+        },
+        qr: {
+            height: 90,
+            marginBottom: 15,
+        },
         footerContact: {
             flexDirection: 'column',
             alignItems: 'center',
             marginTop: 20,
         },
         footerText: {
-            fontSize: 12,
+            fontSize: 14,
             color: '#333333',
             fontWeight: 'bold',
             marginBottom: 5,
