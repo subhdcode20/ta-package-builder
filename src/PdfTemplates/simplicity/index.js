@@ -4,7 +4,7 @@ import { fromUnixTime, format } from 'date-fns';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { tr } from 'date-fns/locale';
 import { isEmptyObject } from '../../Utility.js';
-import { DIR_BANNER_IMG_B64, DIR_POLE_IMG_B64, MEAL_PLAN_LABEL } from '../../Constants.js';
+import { MEAL_PLAN_LABEL } from '../../Constants.js';
 
 Font.register({
     family: 'Hina Mincho',
@@ -151,12 +151,12 @@ const HtmlPdfView = ({
                 />
                 <Image
                     style={styles.bgPole}
-                    src={DIR_POLE_IMG_B64}
+                    src="/dirBanner.jpg"
                     fixed
                 />
                 <Image
                     style={styles.bgPic}
-                    src={DIR_BANNER_IMG_B64}
+                    src="/imgBanner.jpg"
                     fixed
                 />
 
