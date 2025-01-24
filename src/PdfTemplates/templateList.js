@@ -1,6 +1,7 @@
 import DefaultTemplate from '../PdfTemplates/default/index.js';
 import KeralaTemplate from './kerala/index.js';
 import GreenPdfView from "./green/index.js";
+import SimplicityPdfView from "./simplicity/index.js";
 import MountainPdfView from  "./mountain/index.js";
 
 export const defaultTemplate = {
@@ -38,6 +39,13 @@ export const templatesMap = {
         exPdf: "",
         width: '30%',
         disabled: true
+    },
+    "simplicity": {
+        name: "Simplicity",
+        viewComponent: SimplicityPdfView,
+        thumbnail: "/Kerala2.png",
+        exPdf: "",
+        width: '30%',
     }
 }
 

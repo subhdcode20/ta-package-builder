@@ -31,7 +31,7 @@ const PbHomepage = () => {
 			</Helmet> */}
 		  	<div class="home">
 			  <div class="top-bar">
-				<div class="wallet-logo" style={{ marginTop: '-46px', marginLeft: '16px', width: isMobile ? '12em' : '16em' }}>
+				<div class="wallet-logo" style={{ marginTop: isMobile ? '-46px' : '-76px', marginLeft: '16px', width: isMobile ? '12em' : '16em' }}>
 					{/* <div class="wallet">AgentFlow</div> */}
 					<img src='/afLogoDarkBg.png' alt="logo" width={'100%'} />
 				</div>
@@ -57,7 +57,7 @@ const PbHomepage = () => {
 					  Transform the way Travel Agents share Quotations <br />Save time, maximize margins, and impress clients without
 					  breaking a sweat.
 					</p>
-					<Button variant="contained" onClick={scrollToDemo} sx={{ margin:'auto' }} size="large">Watch Demo</Button>
+					<Button variant="outlined" onClick={scrollToDemo} sx={{ margin:'auto' }} size="small">Watch Demo</Button>
 					{/* <a
 					  href="https://animaapp.com/?utm_source=figma-samples&utm_campaign=figma-lp-pets&utm_medium=figma-samples"
 					  target="_blank"
@@ -73,7 +73,7 @@ const PbHomepage = () => {
 					</div>
 				  </div> */}
 
-				  <img src="/landing-banner.png" style={{ marginTop: isMobile ? '-120px' : '-600px' }} width={"100%"} height="auto" class="banner-img" />  
+				  <img src="/landing-banner.png" style={{ marginTop: isMobile ? '-120px' : '-400px' }} width={isMobile ? "100%" : "80%"} height="auto" class="banner-img" />  
 
 				  {/* <img class="airport" src="img/airport.png" />
 				  <img class="airport-2" src="img/image.png" />
