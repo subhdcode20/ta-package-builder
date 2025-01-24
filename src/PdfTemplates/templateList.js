@@ -11,17 +11,17 @@ export const defaultTemplate = {
 }
     
 export const templatesMap = {
-    // "default": {
-    //     name: "Default",
-    //     viewComponent: DefaultTemplate,
-    //     thumbnail: "/Kerala2.png",
-    //     width: '30%'
-    // },
+    "default": {
+        name: "Default",
+        viewComponent: GreenPdfView,
+        thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",
+        width: '30%'
+    },
     "green": {
         name: "Green",
         viewComponent: GreenPdfView,
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",  //"/green-thumbnail.jpg",
-        examplePdf: "",
+        exPdf: "",
         width: '30%'
     },
     "mountain": {

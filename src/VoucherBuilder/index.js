@@ -104,14 +104,14 @@ const DayWisePackageBuilder = () => {
 				setTimeout(() => {
 					dispatch(submitReqData({ reqData: docSnap.data() }));
 				});
-				console.log("REQDATA::", reqData);
 				// if(data?.packages && data?.packages.length > 0){
-				// 	let len = data.packages.length;
-				// 	console.log("LENTEMP", data.packages[len-1]);
-				// 	const packageId = data?.packages[len - 1];
-				// 	getPackageData(packageId);				
-				// }
-                let pkgExistsInReq = (data?.packages || []).find((i) => i?.packageId == packageId);
+                    // 	let len = data.packages.length;
+                    // 	console.log("LENTEMP", data.packages[len-1]);
+                    // 	const packageId = data?.packages[len - 1];
+                    // 	getPackageData(packageId);				
+                    // }
+                let pkgExistsInReq = (data?.packages || []).find((i) => i == packageId);
+                console.log("REQDATA::", data?.packages, packageId, pkgExistsInReq);
                 if(pkgExistsInReq) getPackageData(packageId);
 			} else {
 				console.error(`Req details not forund for ${reqId}`);

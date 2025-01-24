@@ -555,7 +555,7 @@ const RenderPreview = (props) => {
   
   let TemplateView = templatesMap[selectedTemplate.toLowerCase()]?.viewComponent;
   // const [instance, updateInstance] = usePDF({ document: TemplateView });
-  console.log("user template ", templateName, selectedTemplate, props);
+  console.log("user template ", templatesMap[selectedTemplate.toLowerCase()], templatesMap, selectedTemplate.toLowerCase(), props);
   // let TemplateView = templatesMap[templateName.toLowerCase()]?.viewComponent;
   // if(process.env.NODE_ENV == 'development' && !reloadPdfView) TemplateView = null;
 

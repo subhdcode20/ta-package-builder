@@ -103,6 +103,7 @@ const SignUp = () => {
         // others,
         "phone": `+91${personalInfo.phone}`,
         "createdAt": Date.now(),
+        status: 'active',
         userId: `U-${nanoid()}`
       };
 

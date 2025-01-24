@@ -89,6 +89,7 @@ export const todoSlice = createSlice({
       state.finalPackPrice = isNaN(packageData?.finalPackPrice) ? '' : packageData?.finalPackPrice;
       state.itiFlightsData = packageData?.flights || {}
       state.activities = packageData?.activities || {}
+      state.voucherData = packageData?.voucherData || {}
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
       console.log("savedHotelsCHECK3", state.selectedRooms);
@@ -313,7 +314,7 @@ export const todoSlice = createSlice({
           };
         })
       }
-      if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
+      // if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
     },
     setMealPlanFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;

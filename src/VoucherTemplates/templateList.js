@@ -14,7 +14,7 @@ export const templatesMap = {
     //     thumbnail: "/Kerala2.png",
     //     width: '30%'
     // },
-    "basic": {
+    "default": {
         name: "Basic",
         viewComponent: BasicPdfView,
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",  //"/green-thumbnail.jpg",
