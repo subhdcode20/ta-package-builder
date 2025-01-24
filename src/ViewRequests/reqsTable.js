@@ -24,12 +24,14 @@ import { useUrlParams } from '../Utility.js';
 const ReqsListTable = ({ reqsList = [] }) => {
   const [tableData, setTableData] = React.useState([]);
   const [selectedRow, setSelectedRow] = React.useState(null);
-  const [packageDetails, setPackageDetails] = React.useState(null);
+  const [packageDetails, setPackageDetails] = React.useState({});
   const [selectedRequestData, setSelectedRequestData] = React.useState(null);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const navigate = useNavigate();
   const urlParamsData = useUrlParams();
+
+  console.log("selectedRequestData ", selectedRequestData)
 
   React.useEffect(() => {
     if (!reqsList) return;
@@ -54,10 +56,11 @@ const ReqsListTable = ({ reqsList = [] }) => {
     setSelectedRow(id);
     const selectedReq = tableData.find((row) => row.id === id);
     if(!selectedReq) return;
-    console.log('selected row ', selectedReq)
     setSelectedRequestData(selectedReq);
-    let { packages = [] } = selectedReq; 
-    if (packages?.length) {
+    let { reqId = null, packages = [] } = selectedReq; 
+    console.log('selected row ', reqId, packageDetails[reqId], packageDetails)
+    
+    if (!packageDetails[reqId] && packages?.length) {  
       const packageData = await Promise.all(
         packages.map(async (packageId) => {
           const docRef = doc(db, 'packages', packageId);
@@ -69,10 +72,17 @@ const ReqsListTable = ({ reqsList = [] }) => {
           }
         })
       );
-      setPackageDetails(packageData);
-    } else {
-      setPackageDetails(null);
-    }
+      // setPackageDetails(packageData.sort((a, b) => Number(b?.createdAt) - Number(a?.createdAt)));
+      setPackageDetails(prev => {
+        return {
+          ...prev,
+          [reqId]: packageData.sort((a, b) => Number(b?.createdAt) - Number(a?.createdAt))
+        }
+      })
+    } 
+    // else if(packageDetails[reqId]) {
+    //   // setPackageDetails({ [reqId]: null });
+    // }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -207,7 +217,7 @@ const ReqsListTable = ({ reqsList = [] }) => {
       </TableContainer>
       {selectedRequestData && (
         <Collapse in={!!selectedRequestData}>
-          <PackageData packageDetails={packageDetails} reqData={selectedRequestData} />
+          <PackageData packageDetails={selectedRequestData ? packageDetails[selectedRequestData?.reqId] || [] : []} reqData={selectedRequestData} />
         </Collapse>
       )}
     </Box>

@@ -19,6 +19,7 @@ const SavePackagePdf = () => {
 	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || '';
 	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
 	const activitiesData = useSelector((state) => state.packBuilderData.activities) || {};
+	const voucherData = useSelector((state) => state.packBuilderData.voucherData) || {};
     const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
 	const [showSnackbar, setShowSnackbar] = useState({open: false});
@@ -35,7 +36,7 @@ const SavePackagePdf = () => {
 		
 		try {
 			let newPackId = nanoid();
-			console.log("new pack save pdf", newPackId, finalTransferPrice);
+			console.log("new pack save pdf", newPackId, finalTransferPrice, voucherData);
 			let finalHotelDetails = [...selectedPackHotels];
 			// .map((day, dayIndex) => {
 			// 	let dayHotels = { ...day?.hotels[0] };
@@ -48,6 +49,7 @@ const SavePackagePdf = () => {
 				flights: itiFlightsData,
 				itiTexts: selectedItineraryText,
 				activities: activitiesData,
+				voucherData: voucherData,
 				packageId: newPackId,
 				totalDayPrices,
 				finalPackPrice,
@@ -112,7 +114,7 @@ const SavePackagePdf = () => {
 		<Fab variant="extended" size="medium" color="primary" sx={{ position: 'fixed', bottom: '2em', right: '2em' }}
 			onClick={savePackageWithPdf}
 		>
-			{ loading && <CircularProgress color="textSecondary" size="5px" sx={{ ml: 1, color: 'white' }} /> }
+			{/* { loading && <CircularProgress color="textSecondary" size="5px" sx={{ ml: 1, color: 'white' }} /> } */}
 			Save Package 
 		</Fab>
 		{showSnackbar && (

@@ -44,7 +44,8 @@ export const todoSlice = createSlice({
     finalPackPrice: '',
     finalTransferPrice: '',
     fbIdToken: null,
-    activities: {}  //Keys in object = string index value of Array. (easy to update for any day.)
+    activities: {},  //Keys in object = string index value of Array. (easy to update for any day.)
+    voucherData: {}
   },
   reducers: {
     setUserData: (state, action) => {
@@ -88,6 +89,7 @@ export const todoSlice = createSlice({
       state.finalPackPrice = isNaN(packageData?.finalPackPrice) ? '' : packageData?.finalPackPrice;
       state.itiFlightsData = packageData?.flights || {}
       state.activities = packageData?.activities || {}
+      state.voucherData = packageData?.voucherData || {}
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
       console.log("savedHotelsCHECK3", state.selectedRooms);
@@ -312,7 +314,7 @@ export const todoSlice = createSlice({
           };
         })
       }
-      if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
+      // if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
     },
     setMealPlanFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;
@@ -513,6 +515,15 @@ export const todoSlice = createSlice({
       newData = activityList;
       console.log("set day activity ", activityList, currDayData, state?.currDayIndex, newData);
       state.activities[`${state?.currDayIndex}`] = newData;
+    },
+    setVoucherData: (state, action) => {
+      let { bookingConfirmId = '', hotelConfirmId = '', transfersConfirmId = '', flightsConfirmId = '' } = action?.payload;
+      state["voucherData"] = {
+        bookingConfirmId, 
+        hotelConfirmId, 
+        transfersConfirmId, 
+        flightsConfirmId
+      }
     }
   }
 });
@@ -553,7 +564,8 @@ export const {
   setAboutDest,
   addDayItiText,
   setFirebaseIdToken,
-  setCurrDayActivity
+  setCurrDayActivity,
+  setVoucherData
 } = todoSlice.actions;
 
 // this is for configureStore

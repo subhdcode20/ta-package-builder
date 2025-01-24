@@ -15,6 +15,7 @@ import { aiAboutDest } from '../PackageBuilder/geminiComponents.js';
 import HtmlTemplate from './htmlTemplate.js';
 import { setProfileData, setAboutDest } from '../PackageBuilder/packBuilderSlice.js';
 import destImagesMap from './destPdfImagesMap.js';
+import { templatesMap } from "../PdfTemplates/templateList.js";
 // import useRefreshFirebaseToken from '../Commons/useRefreshFirebaseToken.js';
 
 // Temporary defined HERE:
@@ -197,7 +198,9 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 
     return (<>
         {
-			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, minWidth: !isMobile ? '40%' : '100%' }}>
+			pkgSelectedHotels && (<Box display="flex" flexDirection='column' 
+				sx={{ flex: 1, minWidth: !isMobile ? '40%' : '100%', mt: isMobile ? 2 : 0 }}
+			>
 				<HtmlTemplate 
 					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
@@ -205,6 +208,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 					totalPackPrice={formattedAmountINR(finalPackPrice)}
 					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
 					setHeaderImage={setHeaderImage}
+					templatesMap={templatesMap}
 				/>
 			</Box>)
 		}

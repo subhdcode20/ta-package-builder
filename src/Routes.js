@@ -17,6 +17,7 @@ import ReqCopy from "./AppHome/updateReq.js";
 import ReqCopyNew from "./AppHome/reqCopyNew.js";
 import PublicNavbar from './Navbar/publicNavbar.js';
 import Profile from "./Profile/index.js";
+import VoucherBuilder from "./VoucherBuilder/index.js";
 
 const PBHome = loadable(
   () => import('./Homepage/index.js'), 
@@ -124,6 +125,15 @@ const router = createBrowserRouter([
     element: (
       <AppLayout>
         <Profile/>
+      </AppLayout>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/voucher/:reqId/:packageId",
+    element: (
+      <AppLayout>
+        <VoucherBuilder />
       </AppLayout>
     ),
     errorElement: <ErrorPage />,

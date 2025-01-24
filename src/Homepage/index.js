@@ -31,13 +31,13 @@ const PbHomepage = () => {
 			</Helmet> */}
 		  	<div class="home">
 			  <div class="top-bar">
-				<div class="wallet-logo" style={{ marginTop: isMobile ? '-46px' : '-76px', marginLeft: '16px', width: isMobile ? '12em' : '16em' }}>
+				<div class="wallet-logo" style={{ margin: 'auto 32px', width: isMobile ? '12em' : '13em' }}>
 					{/* <div class="wallet">AgentFlow</div> */}
-					<img src='/afLogoDarkBg.png' alt="logo" width={'100%'} />
+					<img src='/afLogo.png' alt="logo" width={'100%'} />
 				</div>
 				<Box sx={{ display: 'flex', marginRight: isMobile ? 3 : 7, marginLeft: 'auto', width: 'fit-content' }}>
 					<Button variant="text" href="/login" sx={{ margin: 'auto', marginRight: 2 }}>Login</Button>
-					{!isMobile && (<Button variant="contained" href="/signup" size={isMobile ? "small" : "medium"} sx={{ margin:'auto' }}>Request a Demo</Button>)}
+					{!isMobile && (<Button variant="contained" href="/signup" size={isMobile ? "small" : "medium"} sx={{ margin:'auto' }}>Signup</Button>)}
 				</Box>
 				{/* <a
 				  href="https://animaapp.com/?utm_source=figma-samples&utm_campaign=figma-lp-pets&utm_medium=figma-samples"
@@ -73,7 +73,7 @@ const PbHomepage = () => {
 					</div>
 				  </div> */}
 
-				  <img src="/landing-banner.png" style={{ marginTop: isMobile ? '-120px' : '-400px' }} width={isMobile ? "100%" : "80%"} height="auto" class="banner-img" />  
+				  <img src="/landing-banner.png" width={isMobile ? "100%" : "80%"} height="auto" class="banner-img" />  
 
 				  {/* <img class="airport" src="img/airport.png" />
 				  <img class="airport-2" src="img/image.png" />
@@ -83,8 +83,8 @@ const PbHomepage = () => {
 				  <img class="taxi" src="img/taxi.png" /> */}
 				</div>
 			  </div>
-			  <div class="product-image" id="demo-section" style={ isMobile ? { height: '300px', padding: '16px 16px' } : {} }>
-				<div class="div">
+			  <div class="product-image" id="demo-section" style={{ minHeight: '200px', padding: `0px ${ isMobile ? '16px' : '100px'}` }}>
+				<div class="div" class="product-image-child">
 				  <img src="/screenshot-af.jpg" width="100%" />
 				</div>
 			  </div>
@@ -260,10 +260,10 @@ const PbHomepage = () => {
 				</Box>
 			  </Box>
 			  <div class="line"></div>
-			  <div class="footer" style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
-				<div class="wallet-logo" style={isMobile ? { display: 'flex', alignSelf: 'center' } : { marginTop: '-10px' }}>
+			  <div class="footer" style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-evenly', flexWrap: 'wrap', paddingRight: '20%', paddingLeft: '20%'  }}>
+				<div class="wallet-logo" style={{ display: 'flex', alignSelf: 'center' }}>
 					{/* <div class="wallet">AgentFlow</div> */}
-					<img src='/afLogoDarkBg.png' alt="logo" width={'100%'} />
+					<img src='/afLogo.png' style={{ margin: 'auto 32px', width: '10em' }} alt="logo" width={'100%'} />
 				</div>
 				<div class="wallet-2" style={isMobile ? { marginBottom: '16px', fontSize: '12px' } : {}}>
 					<div class="text-wrapper-8">©</div>

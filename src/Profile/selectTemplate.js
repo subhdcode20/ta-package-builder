@@ -12,6 +12,7 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import { templatesMap, defaultTemplate } from "../PdfTemplates/templateList.js";
 import { selectTemplate } from '../PackageBuilder/packBuilderSlice.js';
@@ -133,7 +134,7 @@ export default function ButtonBaseDemo({ setIsBrandEdited }) {
               style={{
                   width: '100%',
                   // minWidth: '25%',
-                  border: selectedTemplate?.name == image.name ? `8px solid ${AF_THEME_PRIMARY_COLOR}` : '3px solid white',
+                  border: selectedTemplate?.name == image.name ? `4px solid ${AF_THEME_PRIMARY_COLOR}` : '3px solid white',
                   borderRadius: '5px',
                   marginRight: '4px'
               }}
@@ -159,10 +160,11 @@ export default function ButtonBaseDemo({ setIsBrandEdited }) {
               </Image>
             </ImageButton>
             <IconButton
-              sx={{ width: 'fit-content', margin: 'auto' }}
+              sx={{ width: 'fit-content', margin: 'auto', display: 'flex', justifyContent: 'center' }}
               onClick={(e) => {e.stopPropagation(); e.preventDefault(); setViewFile(image)}}
             >
-              <Visibility />
+              <Visibility /> &nbsp;
+              { selectedTemplate?.name == image.name && (<CheckCircleIcon color='primary' />)}
             </IconButton>
           </Box>)
         })
