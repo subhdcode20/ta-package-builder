@@ -574,7 +574,7 @@ const RenderPreview = (props) => {
     <Box display="flex" justifyContent="space-between">
       <Typography variant="h6" textAlign={'center'}>Pdf Preview</Typography>&nbsp;
       <Box display={'flex'}>
-        {/* {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>} */}
+        {process.env.NODE_ENV == 'development' && <Button variant="text" size="small" onClick={handleRefresh}><RefreshIcon fontSize='small' />Refresh PDF</Button>}
         <Button variant="text" size="small" onClick={changeTemplate}><RefreshIcon fontSize='small' />Change Template</Button>
         &nbsp;
         <ChangePdfDestImg destination={req?.destination} firebaseIdToken={firebaseIdToken} setHeaderImage={setHeaderImage} />

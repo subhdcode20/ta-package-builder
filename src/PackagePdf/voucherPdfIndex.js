@@ -199,11 +199,13 @@ const VoucherPdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 
     return (<>
         {
-			pkgSelectedHotels && (<Box display="flex" flexDirection='column' style={{ flex: 1, minWidth: !isMobile ? '40%' : '100%' }}>
+			pkgSelectedHotels && (<Box display="flex" flexDirection='column' 
+				sx={{ flex: 1, minWidth: !isMobile ? '40%' : '100%', mt: isMobile ? 2 : 0 }}
+			>
 				<HtmlTemplate 
 					dayWiseData={{"flights": itiFlightsData, "hotels": pkgSelectedHotels, "itiDesc": itineraryDesc}} 
 					reqData={{ req: reqData, headerImage: headerImage}} 
-					userData={userPdfData}
+					userData={{ ...userPdfData, templateName: 'default' }}
 					totalPackPrice={formattedAmountINR(finalPackPrice)}
 					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
 					setHeaderImage={setHeaderImage}

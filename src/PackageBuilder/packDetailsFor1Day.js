@@ -15,6 +15,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import parse from "html-react-parser";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import InputAdornment from '@mui/material/InputAdornment';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { nanoid } from 'nanoid';
 
 import HotelRoomsView from "./hotelRoomsView.js";
@@ -125,6 +129,8 @@ const PackageDetailsFor1Day = ({ key }) => {
 	}
 
 	const updatePriceFor1Day = async (newPrice = '') => {
+		console.log("updatePriceFor1Day--- ", newPrice);
+		if(isNaN(newPrice) || newPrice < 0 ) return;
 		dispatch(setHotelPriceForCurrDay({
 			totalHotelPriceForCurrDay: newPrice,
 			copyDetailsToDays: []
@@ -241,54 +247,129 @@ const PackageDetailsFor1Day = ({ key }) => {
 
 		{
 			currentDayIndex < daysArr.length - 1 && (<>
-				{
-					(currDayHotels || []).map((hData = [], hIndex) => {
-						return (<Grid item xs={12}>
-							<Typography variant="subtitle1" color="primary" sx={{ mb: 0 }}>Hotel {`${hIndex + 1}`}</Typography>
-							<Grid container spacing={1}>
-								<Grid item xs={12} display={'flex'} justifyContent={'space-between'}>
-									<Grid item xs={4}>
-										<InputLabel id={`room-day${hIndex + 1}`} sx={{ fontSize: 12 }}>
-											Location:
-										</InputLabel>
-										<TextField variant="outlined" size="small" onChange={(e) => handleLocationSelect({hotelIndex: hIndex, data: e.target.value})}
-											value={currDayHotels[hIndex]?.location || ''}
-										/>
+				<Accordion key={`hotel-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }} >
+					<AccordionSummary
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls={`day${currentDayIndex}-hotels`}
+						id={`day${currentDayIndex}-hotels`}
+					>
+						<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+							<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+								Hotels
+							</Typography>
+							{/* <div>
+								<Button
+									variant="contained"
+									color="primary"
+									href={`/itinerary/${reqId}` || ''}
+									size="small"
+									sx={{ marginLeft: 2 }}
+								>
+									View PDF
+								</Button>
+							</div> */}
+						</Box>	
+					</AccordionSummary>
+					<AccordionDetails>
+					{
+						(currDayHotels || []).map((hData = [], hIndex) => {
+							return (<Grid item xs={12}>
+								<Typography variant="subtitle1" color="primary" sx={{ mb: 0 }}>Hotel {`${hIndex + 1}`}</Typography>
+								<Grid container spacing={1}>
+									<Grid item xs={12} display={'flex'} justifyContent={'space-between'}>
+										<Grid item xs={4}>
+											<InputLabel id={`room-day${hIndex + 1}`} sx={{ fontSize: 12 }}>
+												Location:
+											</InputLabel>
+											<TextField variant="outlined" size="small" onChange={(e) => handleLocationSelect({hotelIndex: hIndex, data: e.target.value})}
+												value={currDayHotels[hIndex]?.location || ''}
+											/>
+										</Grid>
+										&nbsp;
+										<Grid item xs={8} md={8}>
+											<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
+											<HotelSearchFree
+												selectedHotel={currDayHotels[hIndex] || ''}
+												onChange={(val) => handleHotelChange(hIndex, val)}
+												userHotelRates={userHotelRates}
+											/>
+										</Grid>
 									</Grid>
-									&nbsp;
-									<Grid item xs={8} md={8}>
-										<InputLabel id={`d-${currentDayIndex + 1}_h-${hIndex + 1}`} sx={{ fontSize: 12 }}>Select Hotel*</InputLabel>
-										<HotelSearchFree
-											selectedHotel={currDayHotels[hIndex] || ''}
-											onChange={(val) => handleHotelChange(hIndex, val)}
-											userHotelRates={userHotelRates}
-										/>
-									</Grid>
+									{
+										!isEmptyObject(hData["selectedRooms"]) && (<Grid item xs={12} display={'flex'} flexDirection={'column'}>
+											<HotelRoomsView hotelIndex={hIndex} />
+											{/* <Grid item xs={6} md={6} display={'flex'} justifyContent={'flex-end'}>
+												<Button size="small" variant="outlined" onClick={() => handleAddRoom(hIndex)} sx={{ my: 'auto' }}>Add Room +</Button>
+											</Grid> */}
+										</Grid>)
+									}
 								</Grid>
-								{
-									!isEmptyObject(hData["selectedRooms"]) && (<Grid item xs={12} display={'flex'} flexDirection={'column'}>
-										<HotelRoomsView hotelIndex={hIndex} />
-										{/* <Grid item xs={6} md={6} display={'flex'} justifyContent={'flex-end'}>
-											<Button size="small" variant="outlined" onClick={() => handleAddRoom(hIndex)} sx={{ my: 'auto' }}>Add Room +</Button>
-										</Grid> */}
-									</Grid>)
-								}
-							</Grid>
-							<Grid item xs={4} display={'flex'} flexDirection={isMobile ? 'column' : 'row'} justifyContent={'space-between'} >
-								<Button size="small" variant="outlined" sx={{ my: 'auto', mb: 1, width: 'fit-content' }}
-									onClick={() => handleAddRoom(hIndex)} 
-								>Add Room +</Button>
-							</Grid>
-						</Grid>)
-					})
-				}
+								<Grid item xs={4} display={'flex'} flexDirection={isMobile ? 'column' : 'row'} justifyContent={'space-between'} >
+									<Button size="small" variant="outlined" sx={{ my: 'auto', mb: 1, width: 'fit-content' }}
+										onClick={() => handleAddRoom(hIndex)} 
+									>Add Room +</Button>
+								</Grid>
+							</Grid>)
+						})
+					}
+					</AccordionDetails>
+				</Accordion>
 
-				{currentDayIndex + 1 && <AddActivities />}
+				{currentDayIndex + 1 && (<Accordion key={`activities-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }}>
+					<AccordionSummary
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls={`day-${currentDayIndex}-activities`}
+						id={`day-${currentDayIndex}-activities`}
+					>
+						<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+						<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+							Activities/Sightseeing
+						</Typography>
+						{/* <div>
+							<Button
+								variant="contained"
+								color="primary"
+								href={`/itinerary/${reqId}` || ''}
+								size="small"
+								sx={{ marginLeft: 2 }}
+							>
+								View PDF
+							</Button>
+						</div> */}
+						</Box>	
+					</AccordionSummary>
+					<AccordionDetails>
+						<AddActivities />
+						&nbsp;
+						<GenerateItineraryBtn />
+					</AccordionDetails>
+				</Accordion>)}
 				
-				<GenerateItineraryBtn />
-
-				<Grid item xs={12}>
-					<Box display="flex" flexDirection={isMobile ? "column" : "row"} justifyContent="space-between" sx={{ my: 1 }}>
+				
+				<Accordion key={`activities-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }}>
+					<AccordionSummary
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls={`day-${currentDayIndex}-price`}
+						id={`day-${currentDayIndex}-price`}
+					>
+						<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+						<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+							Price
+						</Typography>
+						{/* <div>
+							<Button
+								variant="contained"
+								color="primary"
+								href={`/itinerary/${reqId}` || ''}
+								size="small"
+								sx={{ marginLeft: 2 }}
+							>
+								View PDF
+							</Button>
+						</div> */}
+						</Box>	
+					</AccordionSummary>
+					<AccordionDetails>
 						<Grid item xs={6} md={6}>
 							<InputLabel id={`room-day${currentDayIndex + 1}`} sx={{fontSize: 12}}>
 								Total Price for Day {currentDayIndex + 1}:
@@ -303,8 +384,26 @@ const PackageDetailsFor1Day = ({ key }) => {
 								value={currDayPrice} sx={{margin: "auto"}}
 							/>
 						</Grid>
-						{
-							(currentDayIndex < daysArr.length - 2) && (<Grid item xs={6} md={6}>
+					</AccordionDetails>
+				</Accordion>
+				{/* <Grid item xs={12}> */}
+					{/* <Box display="flex" flexDirection={isMobile ? "column" : "row"} justifyContent="space-between" sx={{ my: 1 }}> */}
+						{/* <Grid item xs={6} md={6}>
+							<InputLabel id={`room-day${currentDayIndex + 1}`} sx={{fontSize: 12}}>
+								Total Price for Day {currentDayIndex + 1}:
+							</InputLabel>
+							<TextField variant="outlined" type="number" size="small" 
+								InputProps={{
+									startAdornment: (
+									  <InputAdornment position="start">Rs. </InputAdornment>
+									),
+								}}
+								onChange={(e) => updatePriceFor1Day(e.target.value)} 
+								value={currDayPrice} sx={{margin: "auto"}}
+							/>
+						</Grid> */}
+						{/* {
+							(currentDayIndex < daysArr.length - 2) && (<Grid item xs={12} md={9}>
 								<Box display="flex" sx={{ pl: 1 }}>
 									<Box style={{ display: 'flex' }}>
 										<Typography variant="caption" color="primary" sx={{ margin: 'auto', mr: 1 }}>Copy Hotel Details for: &nbsp;</Typography>
@@ -328,14 +427,41 @@ const PackageDetailsFor1Day = ({ key }) => {
 									</FormGroup>
 								</Box>
 							</Grid>)
-						}
-					</Box>
-					<Grid item xs={12} md={12} display={'flex'} justifyContent={'flex-end'}>
+						} */}
+					
+					{
+						(currentDayIndex < daysArr.length - 2) && (<Grid item xs={12} md={9}>
+							<Box display="flex" sx={{ pl: 1 }}>
+								<Box style={{ display: 'flex' }}>
+									<Typography variant="caption" color="primary" sx={{ margin: 'auto', mr: 1 }}>Copy Hotel Details for: &nbsp;</Typography>
+								</Box>
+								<FormGroup row={true} sx={{ display: "flex" }}>
+									{
+										(daysArr || []).map((aa, aIndex) => {
+											let dayNo = aIndex + 1;
+											console.log("copy day render ", daysArr.length, aIndex, currentDayIndex, aa, Number(aIndex) > Number(currentDayIndex));
+											if (aIndex > currentDayIndex) {
+												return (<FormControlLabel
+													control={<Checkbox />}
+													label={`Day ${dayNo}`}
+													checked={selectedDaysToCopyDetails[dayNo]}
+													onChange={(e) => handleCopyDetailsFromCurrDay(dayNo, e.target.checked)}
+													inputProps={{ 'aria-label': 'controlled' }}
+												/>)
+											} else return null
+										})
+									}
+								</FormGroup>
+							</Box>
+						</Grid>)
+					}
+					<Grid item xs={12} md={3} display={'flex'} justifyContent={'flex-end'}>
 						<Button size="small" variant="contained" onClick={handleSaveDayPrice} 
 							sx={{ minWidth: "fit-content", my: 'auto' }}
 						>{`${!isEmptyObject(selectedDaysToCopyDetails) ? 'Save &' : ''} Next Day`}</Button>
 					</Grid>
-				</Grid>
+				{/* </Box> */}
+				{/* </Grid> */}
 			</>)
 		}
 		{/* <Grid item xs={12}>

@@ -16,7 +16,8 @@ export const templatesMap = {
         name: "Default",
         viewComponent: GreenPdfView,
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",
-        width: '30%'
+        width: '30%',
+        visible: false
     },
     "green": {
         name: "Green",
@@ -32,6 +33,13 @@ export const templatesMap = {
         exPdf: "",
         width: '30%'
     },
+    "simplicity": {
+        name: "Simplicity",
+        viewComponent: SimplicityPdfView,
+        thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2FSc-simplicty-thumbnail.jpg?alt=media&token=74a6798a-f487-453e-a2a3-049de02bfc0b",
+        exPdf: "",
+        width: '30%',
+    },
     "kerala": {
         name: "Coming Soon",
         viewComponent: KeralaTemplate,
@@ -39,13 +47,6 @@ export const templatesMap = {
         exPdf: "",
         width: '30%',
         disabled: true
-    },
-    "simplicity": {
-        name: "Simplicity",
-        viewComponent: SimplicityPdfView,
-        thumbnail: "/Kerala2.png",
-        exPdf: "",
-        width: '30%',
     }
 }
 

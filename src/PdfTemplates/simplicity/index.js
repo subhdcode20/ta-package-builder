@@ -81,7 +81,7 @@ const HtmlPdfView = ({
                     /> */}
                     <Image
                         style={styles.headerImage}
-                        src={_defaultHeaderImage}
+                        src={headerImage || _defaultHeaderImage}
                         resizeMode="cover"
                     />
 
@@ -146,7 +146,7 @@ const HtmlPdfView = ({
                 } */}
                 <Image
                     style={styles.backgroundImage}
-                    src={_defaultHeaderImage}
+                    src={headerImage || _defaultHeaderImage}
                     fixed
                 />
                 <Image

@@ -37,7 +37,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
             ? format(new Date(pkg.createdAt), 'dd-MMM-yyyy')
             : 'N/A';
 
-          console.log('PackageData render 22 ', pkg);
+          console.log('PackageData render 22 ', pkg, createdAt);
           return (
             <Accordion key={pkgIndex} sx={{ marginBottom: 2 }}>
               <AccordionSummary
@@ -50,7 +50,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                     Package {pkgIndex > 0 ? 'updated' : 'created'} on <b> {createdAt} </b>
                   </Typography>
                   <div>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       color="primary"
                       href={`/voucher/${reqId}/${pkg?.packageId}` || ''}
@@ -58,7 +58,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                       sx={{ marginLeft: 2 }}
                     >
                       Create Voucher
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="contained"
                       color="primary"
@@ -205,44 +205,44 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                 </Box>
 
                 <Box
-  sx={{
-    display: 'flex', // Enables flexbox
-    border: '1px solid #ddd',
-    borderRadius: 2,
-    padding: 3,
-    textAlign: 'left',
-    marginBottom: 3,
-    marginTop: 3,
-    backgroundColor: '#fff',
-    gap: 3, // Adds spacing between the sections
-  }}
->
-  {/* Transfer Section */}
-  <Box sx={{ flex: 1 }}>
-    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
-      Transfer Section
-    </Typography>
-    <Typography sx={{ color: '#555', marginTop: 1 }}>
-      All tours and transfers are private by {cabType || ''} from {pickUp || ''} dropping at {dropLoc || ''}
-    </Typography>
-  </Box>
+                  sx={{
+                    display: 'flex', // Enables flexbox
+                    border: '1px solid #ddd',
+                    borderRadius: 2,
+                    padding: 3,
+                    textAlign: 'left',
+                    marginBottom: 3,
+                    marginTop: 3,
+                    backgroundColor: '#fff',
+                    gap: 3, // Adds spacing between the sections
+                  }}
+                >
+                  {/* Transfer Section */}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
+                      Transfer Section
+                    </Typography>
+                    <Typography sx={{ color: '#555', marginTop: 1 }}>
+                      All tours and transfers are private by {cabType || ''} from {pickUp || ''} dropping at {dropLoc || ''}
+                    </Typography>
+                  </Box>
 
-  {(packageDetails[0]?.flights?.arr || packageDetails[0]?.flights?.dep) && (
-    <Box sx={{ flex: 1 }}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
-        Flight Section
-      </Typography>
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography sx={{ color: '#555', marginBottom: 1}}>
-        <span style={{ fontWeight: 'bold' }}>Arrival Time: </span>{packageDetails[0]?.flights?.arr || 'N/A'}
-        </Typography>
-        <Typography sx={{ color: '#555', marginBottom: 1 }}>
-        <span style={{ fontWeight: 'bold' }}>Departure Time: </span>{packageDetails[0]?.flights?.dep || 'N/A'}
-        </Typography>
-      </Box>
-    </Box>
-  )}
-</Box>
+                  {(packageDetails[0]?.flights?.arr || packageDetails[0]?.flights?.dep) && (
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#444', marginBottom: 2 }}>
+                        Flight Section
+                      </Typography>
+                      <Box sx={{ marginBottom: 2 }}>
+                        <Typography sx={{ color: '#555', marginBottom: 1}}>
+                        <span style={{ fontWeight: 'bold' }}>Arrival Time: </span>{packageDetails[0]?.flights?.arr || 'N/A'}
+                        </Typography>
+                        <Typography sx={{ color: '#555', marginBottom: 1 }}>
+                        <span style={{ fontWeight: 'bold' }}>Departure Time: </span>{packageDetails[0]?.flights?.dep || 'N/A'}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
                   
 
                 <Box

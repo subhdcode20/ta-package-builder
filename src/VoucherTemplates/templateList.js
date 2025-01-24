@@ -1,4 +1,4 @@
-import BasicPdfView from "./Basic/index.js";
+import BasicPdfView from "./Default/index.js";
 
 export const defaultTemplate = {
     name: "Default",
@@ -15,7 +15,7 @@ export const templatesMap = {
     //     width: '30%'
     // },
     "default": {
-        name: "Basic",
+        name: "Green",
         viewComponent: BasicPdfView,
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",  //"/green-thumbnail.jpg",
         examplePdf: "",
