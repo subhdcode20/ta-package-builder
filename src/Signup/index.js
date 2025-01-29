@@ -76,8 +76,9 @@ const SignUp = () => {
   };
 
   const handleSubmit = async () => {
-    if (!personalInfo.name || !personalInfo.phone || !personalInfo.companyName || !personalInfo.address || !personalInfo.email ||
-      !companyInfo.companyLogo || !companyInfo.businessDocs || !companyInfo.panCard) {
+    console.log("signup submit ", personalInfo, companyInfo)
+    if (!personalInfo.name || !personalInfo.phone || !personalInfo.address || !personalInfo.email ||
+      !companyInfo.companyLogo || !companyInfo.companyName) {
       setMissingInput(true);
       return;
     }
@@ -85,20 +86,22 @@ const SignUp = () => {
     try {
       const uploadPromises = [
         companyInfo.companyLogo ? handleFileUpload(companyInfo.companyLogo, "companyLogo") : null,
-        companyInfo.businessDocs ? handleFileUpload(companyInfo.businessDocs, "businessDocs") : null,
-        companyInfo.panCard ? handleFileUpload(companyInfo.panCard, "panCard") : null,
-        companyInfo.gst ? handleFileUpload(companyInfo.gst, "gst") : null,
+        // companyInfo.businessDocs ? handleFileUpload(companyInfo.businessDocs, "businessDocs") : null,
+        // companyInfo.panCard ? handleFileUpload(companyInfo.panCard, "panCard") : null,
+        // companyInfo.gst ? handleFileUpload(companyInfo.gst, "gst") : null,
       ];
 
-      const [companyLogoUrl, businessDocsUrl, panCardUrl, gstUrl] = await Promise.all(uploadPromises);
+      const [companyLogoUrl] = await Promise.all(uploadPromises);
+      // , businessDocsUrl, panCardUrl, gstUrl
 
       const formData = {
         ...personalInfo,
         companyInfo: {
+          ...companyInfo,
           companyLogo: companyLogoUrl,
-          businessDocs: businessDocsUrl,
-          panCard: panCardUrl,
-          gst: gstUrl,
+          // businessDocs: businessDocsUrl,
+          // panCard: panCardUrl,
+          // gst: gstUrl,
         },
         // others,
         "phone": `+91${personalInfo.phone}`,
@@ -131,6 +134,7 @@ const SignUp = () => {
     //   }, { merge: true });
     // }
 
+  console.log("signup render ", personalInfo, companyInfo);
   return (
     <Container maxWidth="sm">
       <CssBaseline />
@@ -141,7 +145,7 @@ const SignUp = () => {
           flexDirection="column"
           justifyContent="space-around"
           alignItems="center"
-          minHeight="70vh"
+          minHeight="60vh"
           paddingX={3}
           border={'1px solid'}
           borderColor={'secondary'}
@@ -152,6 +156,7 @@ const SignUp = () => {
             <img src="/logo.jpg" style={{margin: 'auto', width: '150px'}} />
           </div> */}
           <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }} >Sign Up</Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }} >We will contact for a Demo</Typography>
           {currentStep === 1 && (
             <Box width="100%">
               <Typography variant="body1" align="center" gutterBottom>
@@ -167,7 +172,7 @@ const SignUp = () => {
                 size="small"
               />
 
-              <TextField
+              {/* <TextField
                 label="Company Name"
                 fullWidth
                 margin="normal"
@@ -175,7 +180,7 @@ const SignUp = () => {
                 onChange={(e) => setPersonalInfo({ ...personalInfo, companyName: e.target.value })}
                 required
                 size="small"
-              />
+              /> */}
               <TextField
                 label="Phone"
                 fullWidth
@@ -239,10 +244,19 @@ const SignUp = () => {
                 padding: 3,
               }}
             >
-              <Typography variant="h5" align="center" gutterBottom >
+              <Typography variant="body1" align="center" gutterBottom >
                 Company Info
               </Typography>
 
+              <TextField
+                label="Company Name"
+                fullWidth
+                margin="normal"
+                value={companyInfo.companyName}
+                onChange={(e) => setCompanyInfo({ ...companyInfo, companyName: e.target.value })}
+                required
+                size="small"
+              />
               <Typography sx={{ marginTop: "20px" }}>Add Logo*</Typography>
               <Button
                 variant="contained"
@@ -250,15 +264,14 @@ const SignUp = () => {
                 component="label"
                 sx={{ width: "100%" }}
               >
-
                 <input
                   type="file"
-                  onChange={(e) => setCompanyInfo({ companyInfo, companyLogo: e.target.files[0] })}
+                  onChange={(e) => setCompanyInfo({ ...companyInfo, companyLogo: e.target.files[0] })}
                   required
                 />
               </Button>
 
-              <Typography sx={{ marginTop: "20px" }}>Attach Business Registration Documents*</Typography>
+              {/* <Typography sx={{ marginTop: "20px" }}>Attach Business Registration Documents*</Typography>
               <Button
                 variant="contained"
                 size="small"
@@ -297,7 +310,7 @@ const SignUp = () => {
                   type="file"
                   onChange={(e) => setCompanyInfo({ ...companyInfo, gst: e.target.files[0] })}
                 />
-              </Button>
+              </Button> */}
             </Box>
 
           )}
