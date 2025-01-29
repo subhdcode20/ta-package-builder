@@ -79,7 +79,7 @@ function NavBar(props) {
           <Box display="flex" flexDirection="row" sx={{ backgroundColor: "primary.main" }}>
             {<Avatar alt="logo" src={userData.logo} sx={{ margin: "auto 8px" }}/>}
           
-            <Box sx={{ py: 2, px: 1, flexGrow: "1", textAlign: "left" }}>
+            <Box sx={{ py: 2, px: 1, flexGrow: "1", textAlign: "left", color: 'white' }}>
               {`Hi, ${userData ? `${userData.name || ""}` : ""}`}
               <br />
             </Box>

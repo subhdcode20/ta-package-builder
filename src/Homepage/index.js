@@ -57,7 +57,7 @@ const PbHomepage = () => {
 					  Transform the way Travel Agents share Quotations <br />Save time, maximize margins, and impress clients without
 					  breaking a sweat.
 					</p>
-					<Button variant="outlined" onClick={scrollToDemo} sx={{ margin:'auto' }} size="small">Request Demo</Button>
+					<Button variant="outlined" href={"/signup"} sx={{ margin:'auto' }} size="small">Request Demo</Button>
 					{/* <a
 					  href="https://animaapp.com/?utm_source=figma-samples&utm_campaign=figma-lp-pets&utm_medium=figma-samples"
 					  target="_blank"
