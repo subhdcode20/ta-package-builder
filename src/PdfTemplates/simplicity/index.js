@@ -94,9 +94,8 @@ const HtmlPdfView = ({
                     }
                     <View style={styles.body}>
                         <Text style={styles.dayTrip}>{req?.noOfNights} Day Trip</Text>
-                        <Text style={styles.horizontalLine}>-----------</Text>
+                        <View style={styles.hr} />
                         <Text style={styles.title}>{req?.destination || 'N/A'} Itinerary</Text>
-
 
                         <View style={styles.infoBox}>
                             <View style={styles.infoRow}>
@@ -248,20 +247,21 @@ const HtmlPdfView = ({
                                         </View>
                                     </View>
                                 </View>
-
+                                <View style={styles.coverBg} />
                             </View>
                         </>
                     );
 
                 })}
-                <View style={styles.boxContainer2} wrap={false} break>
-                    <Text style={styles.InfoTitle}>Transfer</Text>
-                    <View style={styles.transferContainer}>
-                        <Text style={styles.transferText}>
-                            {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
-                        </Text>
+                    <View style={styles.boxContainer2} wrap={false} break>
+                        <Text style={styles.InfoTitle}>Transfer</Text>
+                        <View style={styles.transferContainer}>
+                            <Text style={styles.transferText}>
+                                {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
+                            </Text>
+                        </View>
+                    <View style={styles.coverBg} />
                     </View>
-                </View>
 
                 {/* <View style={styles.boxContainer2} wrap={false}>
           <Text style={styles.InfoTitle}>Transfer</Text>
@@ -286,6 +286,7 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
+                            <View style={styles.coverBg} />
                         </View>
                     </>)
                 }
@@ -301,6 +302,7 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
+                            <View style={styles.coverBg} />
                         </View>
                     </>)
                 }
@@ -316,6 +318,7 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
+                            <View style={styles.coverBg} />
                         </View>
                     </>)
                 }
@@ -331,6 +334,7 @@ const HtmlPdfView = ({
                                     })
                                 }
                             </View>
+                            <View style={styles.coverBg} />
                         </View>
                     </>)
                 }
@@ -340,7 +344,7 @@ const HtmlPdfView = ({
                         <Text style={styles.priceTitle}>Total Package Price</Text>
                         <Text style={styles.totalPrice}>{`Rs. ${totalPackPrice || 'N/A'}`}</Text>
                     </View>
-
+                    <View style={styles.coverBg} />
                     <View style={styles.footerContainer} wrap={false}>
                         <Text style={styles.footerTitle}>Payment Details</Text>
                         {
@@ -410,6 +414,17 @@ const getThemedStyles = ({ themeData = {} }) => {
             width: '100%',
             height: '20%',
             objectFit: 'cover',
+            zIndex: -1,
+        },
+        coverBg: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: 170,
+            objectFit: 'cover',
+            backgroundColor: "rgba(3, 3, 3, 0.49)",
+            zIndex: 1,
         },
         bgPole: {
             position: 'absolute',
@@ -467,6 +482,8 @@ const getThemedStyles = ({ themeData = {} }) => {
             textAlign: "center",
             // justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: "rgba(3, 3, 3, 0.49)",
+            marginBottom: "20%",
         },
         // headerText: {
         //   flexWrap: "wrap", 
@@ -485,6 +502,8 @@ const getThemedStyles = ({ themeData = {} }) => {
             textAlign: 'center',
             marginBottom: 2,
             color: "white",
+            fontWeight: 900,
+            textShadow: '2px 2px 4px rgb(0, 0, 0)',
         },
         infoBox: {
             marginTop: 10,
@@ -509,9 +528,9 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         hr: {
             borderBottomWidth: 1,
-            borderBottomColor: '#dddddd',
+            borderBottomColor: 'white',
             marginVertical: 15,
-            width: '100%',
+            width: '20%',
         },
         labelAbout: {
             flex: 1,
@@ -554,23 +573,18 @@ const getThemedStyles = ({ themeData = {} }) => {
         },
         boxContainer2: {
             overflow: 'hidden',
-            width: "80%",
-            height: '60%',
+            width: "100%",
             alignSelf: "center",
-            marginBottom: 20,
+            marginBottom: 10,
             padding: 20,
-            paddingBottom: 50,
-            marginTop: 20,
         },
         boxContainer3: {
             overflow: 'hidden',
-            width: "80%",
-            height: '80%',
+            width: "100%",
             alignSelf: "center",
-            marginBottom: 20,
+            marginBottom: 10,
             padding: 20,
             paddingBottom: 50,
-            marginTop: 20,
         },
         upperBox: {
             padding: 20,
@@ -677,7 +691,7 @@ const getThemedStyles = ({ themeData = {} }) => {
         horizontalLine: {
             borderBottomWidth: 1,
             borderBottomColor: 'white',
-            marginBottom: 10, 
+            marginBottom: 10,
         },
         itiDescTitle: {
             fontSize: 25,
@@ -686,7 +700,9 @@ const getThemedStyles = ({ themeData = {} }) => {
             marginBottom: 13,
         },
         lowerBox: {
-            padding: 30,
+            paddingLeft: 30,
+            paddingRight: 30,
+            marginTop: 3,
             width: '100%',
         },
         itiDescText: {
@@ -695,7 +711,8 @@ const getThemedStyles = ({ themeData = {} }) => {
             color: '#000',
             lineHeight: 1.5,
             opacity: 0.6,
-            marginBottom: 8,
+            marginBottom: 7,
+            marginTop:3,
         },
         dayDetails: {
             // backgroundColor: "red",
@@ -762,6 +779,8 @@ const getThemedStyles = ({ themeData = {} }) => {
             color: '#555555',
             fontWeight: 'extralight',
             marginBottom: 8,
+            marginLeft:10,
+            marginRight:10,
         },
         priceSection: {
             display: 'flex',
