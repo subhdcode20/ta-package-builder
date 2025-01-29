@@ -12,13 +12,13 @@ export const defaultTemplate = {
 }
     
 export const templatesMap = {
-    "default": {
-        name: "Default",
-        viewComponent: GreenPdfView,
-        thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",
-        width: '30%',
-        visible: false
-    },
+    // "default": {
+    //     name: "Default",
+    //     viewComponent: GreenPdfView,
+    //     thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2Fgreen-thumbnail-big.jpg?alt=media&token=3195c7db-dbd3-4ac2-970f-e401adc8da3c",
+    //     width: '30%',
+    //     visible: false
+    // },
     "green": {
         name: "Green",
         viewComponent: GreenPdfView,
@@ -43,7 +43,7 @@ export const templatesMap = {
     "kerala": {
         name: "Coming Soon",
         viewComponent: KeralaTemplate,
-        thumbnail: "/Kerala2.png",
+        thumbnail: "/bali-banner.jpg",
         exPdf: "",
         width: '30%',
         disabled: true

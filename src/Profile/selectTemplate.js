@@ -162,6 +162,7 @@ export default function ButtonBaseDemo({ setIsBrandEdited }) {
             <IconButton
               sx={{ width: 'fit-content', margin: 'auto', display: 'flex', justifyContent: 'center' }}
               onClick={(e) => {e.stopPropagation(); e.preventDefault(); setViewFile(image)}}
+              disabled={image?.disabled}
             >
               <Visibility /> &nbsp;
               { selectedTemplate?.name == image.name && (<CheckCircleIcon color='primary' />)}
