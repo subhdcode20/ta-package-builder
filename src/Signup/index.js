@@ -155,7 +155,7 @@ const SignUp = () => {
           {/* <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>
             <img src="/logo.jpg" style={{margin: 'auto', width: '150px'}} />
           </div> */}
-          <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }} >Sign Up</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 600, my: 1, textAlign: "center" }} >Sign Up</Typography>
           <Typography variant="body2" sx={{ fontWeight: 600, marginBottom: 1, textAlign: "center" }} >We will contact for a Demo</Typography>
           {currentStep === 1 && (
             <Box width="100%">
@@ -352,7 +352,7 @@ const SignUp = () => {
 
           </Box>
         )} */}
-          <Box mt={3} display="flex" justifyContent="space-between" width="100%">
+          <Box mt={3} display="flex" justifyContent="space-between" width="100%" sx={{ mb: 1 }}>
             <Button onClick={handleBack} disabled={currentStep === 1}
               size="small">
               Back
