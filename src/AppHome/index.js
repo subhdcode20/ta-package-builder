@@ -615,7 +615,7 @@ const AppHome = ({ isUpdateflow = false, requestData = null, copyNew = false }) 
 																	</Grid>
 																	<Grid item xs={6} md={6} lg={6}>
 																		{
-																			Number(c.age) >= 5 && (<RadioGroup
+																			Number(c.age) >= 3 && (<RadioGroup
 																				aria-labelledby="demo-radio-buttons-group-label"
 																				defaultValue="false"
 																				name="radio-buttons-group"

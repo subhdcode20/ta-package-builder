@@ -201,7 +201,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 		// let finalCurrDayPrice = ''
 		// if(totalDayPrices[currentDayIndex]?.totalPrice) finalCurrDayPrice = totalDayPrices[currentDayIndex]?.totalPrice;
 		// else 
-		let autoCalCurrDayPrice = await checkPricefor1Day()
+		let autoCalCurrDayPrice = await checkPricefor1Day();
 		let finalCurrDayPrice = totalDayPrices[currentDayIndex]?.totalPrice || autoCalCurrDayPrice;
 		console.log('finalCurrDayPrice ', finalCurrDayPrice, totalDayPrices[currentDayIndex]?.totalPrice, autoCalCurrDayPrice);
 		dispatch(setHotelPriceForCurrDay({
@@ -230,16 +230,97 @@ const PackageDetailsFor1Day = ({ key }) => {
 						/>
 					</Grid>
 					<Grid item xs={12} md={12} sx={{ display: 'flex' }}>
-						<GenerateItineraryBtn />
+						{/* <GenerateItineraryBtn /> */}
+						{currentDayIndex + 1 && (<Accordion key={`activities-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }}>
+							<AccordionSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls={`day-${currentDayIndex}-activities`}
+								id={`day-${currentDayIndex}-activities`}
+							>
+								<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+								<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+									Activities / Sightseeing
+								</Typography>
+								{/* <div>
+									<Button
+										variant="contained"
+										color="primary"
+										href={`/itinerary/${reqId}` || ''}
+										size="small"
+										sx={{ marginLeft: 2 }}
+									>
+										View PDF
+									</Button>
+								</div> */}
+								</Box>	
+							</AccordionSummary>
+							<AccordionDetails>
+								<AddActivities />
+								&nbsp;
+								<GenerateItineraryBtn />
+							</AccordionDetails>
+						</Accordion>)}
 					</Grid>
 					{/* <Grid item xs={12} md={12} sx={{ display: 'flex' }}>
 						<hr style={{ width: '100%' }} />
 					</Grid> */}
 					<Grid item xs={12} md={12}>
-						<EditCancellationView />
+						<Accordion key={`cancel-policy-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }}>
+							<AccordionSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls={`day-${currentDayIndex}-cancel-policy`}
+								id={`day-${currentDayIndex}-cancel-policy`}
+							>
+								<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+								<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+									Cancellation / Payment Policy
+								</Typography>
+								{/* <div>
+									<Button
+										variant="contained"
+										color="primary"
+										href={`/itinerary/${reqId}` || ''}
+										size="small"
+										sx={{ marginLeft: 2 }}
+									>
+										View PDF
+									</Button>
+								</div> */}
+								</Box>	
+							</AccordionSummary>
+							<AccordionDetails>
+								<EditCancellationView />
+							</AccordionDetails>
+						</Accordion>
 					</Grid>
 					<Grid item xs={12} md={12}>
-						<EditExclusions />
+					<Accordion key={`Exclusions-day-${currentDayIndex}`} sx={{ my: 1, width: '100%' }}>
+							<AccordionSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls={`day-${currentDayIndex}-Exclusions`}
+								id={`day-${currentDayIndex}-Exclusions`}
+							>
+								<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+								<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
+									Inclusions / Exclusions
+								</Typography>
+								{/* <div>
+									<Button
+										variant="contained"
+										color="primary"
+										href={`/itinerary/${reqId}` || ''}
+										size="small"
+										sx={{ marginLeft: 2 }}
+									>
+										View PDF
+									</Button>
+								</div> */}
+								</Box>	
+							</AccordionSummary>
+							<AccordionDetails>
+								<EditExclusions />
+							</AccordionDetails>
+						</Accordion>
 					</Grid>
 				</>)
 			// })
@@ -323,7 +404,7 @@ const PackageDetailsFor1Day = ({ key }) => {
 					>
 						<Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
 						<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
-							Activities/Sightseeing
+							Activities / Sightseeing
 						</Typography>
 						{/* <div>
 							<Button

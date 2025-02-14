@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-import { templatesMap, defaultTemplate } from "../PdfTemplates/templateList.js";
+import { templatesMap, comingSoonTemplates, defaultTemplate } from "../PdfTemplates/templateList.js";
 import { selectTemplate } from '../PackageBuilder/packBuilderSlice.js';
 import { AF_THEME_PRIMARY_COLOR, AF_THEME_SECONDARY_COLOR } from '../Constants.js';
 import { isEmptyObject } from '../Utility.js';
@@ -116,13 +116,15 @@ export default function ButtonBaseDemo({ setIsBrandEdited }) {
     setViewFile(false);
     if(setIsBrandEdited) setIsBrandEdited(true);
   }
+
+  const allTemplatesMap = useMemo(() => [ ...Object.values(templatesMap), ...Object.values(comingSoonTemplates) ], [templatesMap, comingSoonTemplates]);
     
   console.log("select temiplate ", selectedTemplate, userData);
   return (<>
     <Typography variant='caption' >Select Template for PDF</Typography>
     <Box sx={{ display: 'flex', flexWrap: 'no-wrap', minWidth: 300, width: '100%', overflowX: 'scroll' }}>
       {
-        Object.values(templatesMap).map((image, iIndex) => {
+        Object.values(allTemplatesMap).map((image, iIndex) => {
           console.log("image- ", image, image.thumbnail, defaultTemplate);
           return (<Box display={'flex'} flexDirection={'column'} justifyContent={'center'}
             sx={{ width: isMobile ? '20%' : "25%", minWidth: '25%', }}

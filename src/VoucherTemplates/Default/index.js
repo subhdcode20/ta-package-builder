@@ -44,7 +44,9 @@ const HtmlPdfView = ({
     bookingConfirmId = '',
     hotelConfirmId = '',
     transfersConfirmId = '',
-    flightsConfirmId = ''
+    arrConfirmId = '',
+    depConfirmId = '',
+    ssConfirmId = ''
   },
   userData: {
     phone,
@@ -71,6 +73,40 @@ const HtmlPdfView = ({
   console.log("Vouch HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
   console.log("Vouch CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
+
+  const confirmIdData = [
+    {
+      key: "bookingConfirmId",
+      label: "Booking Confirmation",
+      value: bookingConfirmId
+    },
+    {
+      key: "hotelConfirmId",
+      label: "Hotel Confirmation",
+      value: hotelConfirmId
+    },
+    {
+      key: "transfersConfirmId",
+      label: "Transfer Confirmation",
+      value: transfersConfirmId
+    },
+    {
+      key: "arrConfirmId",
+      label: "Arrival Confirmation",
+      value: arrConfirmId
+    },
+    {
+      key: "depConfirmId",
+      label: "Departure Confirmation",
+      value: depConfirmId
+    },
+    {
+      key: "ssConfirmId",
+      label: "Sightseeing Confirmations",
+      value: ssConfirmId
+    }
+  ]
+
   if (!styles) return null;
   return (
     <Document>
@@ -98,7 +134,7 @@ const HtmlPdfView = ({
           }
           <View style={styles.body}>
             {/* <View style={styles.headerText}> */}
-            <Text style={styles.title}>Service Voucher for travel to {req?.destination || 'N/A'}</Text>
+            <Text style={styles.title}>Voucher for {req?.destination || 'N/A'} Travel</Text>
             {/* </View> */}
 
             <View style={styles.infoBox}>
@@ -126,6 +162,46 @@ const HtmlPdfView = ({
           </View>
         </View>
       </Page>
+
+      <Page style={[styles.page, styles.page2]} >
+        {
+          headerImage && (<Image
+            style={styles.backgroundImage}
+            src={headerImage || _defaultHeaderImage}
+            fixed
+          />)
+        }
+        {
+          confirmIdData.map(( data, confirmIdIndex) => {
+            // let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
+            if(!data?.value) return null;
+            return (<View key={confirmIdIndex} style={styles.daySection} wrap={false}>
+              <View style={styles.boxContainer}>
+                {/* Upper Half */}
+                <View style={styles.upperBox}>
+                  <Text style={styles.dayTitle}>{data?.label}</Text>
+                </View>
+
+                {/* Lower Half */}
+                {data?.value && (
+                  <View style={styles.lowerBox}>
+                    <Text style={styles.itiDescTitle}>{data?.value}</Text>
+                    {/* {itiDesc[currDayIndex].text.map((point, pointIndex) => (
+                      <Text key={pointIndex} style={styles.itiDescText}>
+                        {`${pointIndex + 1}. ${point}`}
+                      </Text>
+                    ))} */}
+                  </View>
+                )}
+                {logoB64Str && (
+                  <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+                )}
+              </View>
+            </View>)
+          })
+        }
+      </Page>
+      
       <Page style={styles.page} wrap={false}>
         <View style={{height: '100%'}}>
           {/* Left Column - Image */}
@@ -465,6 +541,18 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginBottom: 30,
     },
     infoBox: {
+      width: '60%',
+      backgroundColor: '#30746c',
+      padding: 20,
+      borderRadius: 0,
+      alignSelf: 'flex-end',
+      position: 'absolute',
+      bottom: 40,
+      right: 30,
+      flexDirection: 'column',
+      marginBottom: 10,
+    },
+    infoBoxVouch: {
       width: '60%',
       backgroundColor: '#30746c',
       padding: 20,

@@ -177,20 +177,20 @@ const HtmlPdfView = ({
                                             <>
                                                 {currDayIndex === 0 && (
                                                     <View style={styles.flightContainer}>
-                                                        <Text style={styles.InfoTitle1}>Flight Arrival</Text>
+                                                        <Text style={styles.InfoTitle1}>Arrival</Text>
                                                         <Text style={styles.transferText}>
                                                             {`${flights?.arr ? `${flights?.arr}.` : ''}`}
                                                         </Text>
                                                     </View>
                                                 )}
-                                                {currDayIndex === itiDesc.length - 1 && (
+                                                {/* {currDayIndex === itiDesc.length - 1 && (
                                                     <View style={styles.flightContainer}>
-                                                        <Text style={styles.InfoTitle1}>Flight Departure</Text>
+                                                        <Text style={styles.InfoTitle1}>Departure</Text>
                                                         <Text style={styles.transferText}>
                                                             {`${flights?.dep ? `${flights?.dep}.` : ''}`}
                                                         </Text>
                                                     </View>
-                                                )}
+                                                )} */}
                                             </>
                                         )
                                     }
@@ -247,21 +247,34 @@ const HtmlPdfView = ({
                                         </View>
                                     </View>
                                 </View>
+                                {
+                                    flights?.dep && (<>
+                                        {currDayIndex === itiDesc.length - 1 && (
+                                            <View style={styles.flightContainer}>
+                                                <Text style={styles.InfoTitle1}>Departure</Text>
+                                                <Text style={styles.transferText}>
+                                                    {`${flights?.dep ? `${flights?.dep}.` : ''}`}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </>)
+                                }
                                 <View style={styles.coverBg} />
                             </View>
                         </>
                     );
 
                 })}
-                    <View style={styles.boxContainer2} wrap={false} break>
-                        <Text style={styles.InfoTitle}>Transfer</Text>
-                        <View style={styles.transferContainer}>
-                            <Text style={styles.transferText}>
-                                {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
-                            </Text>
-                        </View>
-                    <View style={styles.coverBg} />
+                
+                <View style={styles.boxContainer2} wrap={false} break>
+                    <Text style={styles.InfoTitle}>Transfer</Text>
+                    <View style={styles.transferContainer}>
+                        <Text style={styles.transferText}>
+                            {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
+                        </Text>
                     </View>
+                <View style={styles.coverBg} />
+                </View>
 
                 {/* <View style={styles.boxContainer2} wrap={false}>
           <Text style={styles.InfoTitle}>Transfer</Text>

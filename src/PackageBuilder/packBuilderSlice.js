@@ -314,7 +314,7 @@ export const todoSlice = createSlice({
           };
         })
       }
-      // if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
+      if(state.currDayIndex < state.totalDayPrices.length - 1) state["currDayIndex"] = Number(state.currDayIndex) + 1;
     },
     setMealPlanFor1Room: (state, action) => {
       let { hotelIndex = null, roomIndex = null, mealPlan = null } = action.payload;
@@ -517,12 +517,15 @@ export const todoSlice = createSlice({
       state.activities[`${state?.currDayIndex}`] = newData;
     },
     setVoucherData: (state, action) => {
-      let { bookingConfirmId = '', hotelConfirmId = '', transfersConfirmId = '', flightsConfirmId = '' } = action?.payload;
+      let { bookingConfirmId = '', hotelConfirmId = '', transfersConfirmId = '', 
+        arrConfirmId = '', depConfirmId = '', ssConfirmId = '' } = action?.payload;
       state["voucherData"] = {
         bookingConfirmId, 
         hotelConfirmId, 
         transfersConfirmId, 
-        flightsConfirmId
+        arrConfirmId,
+        depConfirmId,
+        ssConfirmId
       }
     }
   }

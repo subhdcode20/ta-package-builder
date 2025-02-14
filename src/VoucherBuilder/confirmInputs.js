@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
@@ -16,7 +16,7 @@ import { setVoucherData } from "../PackageBuilder/packBuilderSlice.js";
 
 const ConfirmInputs = () => {
     // const [ confirmIds, setConfirmIds ] = useState({});
-	const confirmIds = useSelector((state) => state.packBuilderData.voucherData);
+	const confirmIds = useSelector((state) => state.packBuilderData.voucherData) || [];
 	const [ formErrors, setFormErrors ] = useState({});
 	const dispatch = useDispatch();
 	
@@ -30,6 +30,7 @@ const ConfirmInputs = () => {
 		}))
     }
 
+	console.log("confirm ids render ", confirmIds);
     return (<Accordion key={'confirmids'} sx={{ marginBottom: 2, border: '1px solid', borderRadius: '8px' }}>
 		<AccordionSummary
 		  expandIcon={<ExpandMoreIcon />}
@@ -76,61 +77,93 @@ const ConfirmInputs = () => {
 					</Box> */}
 
 					<Grid container spacing={2} sx={{ padding: isMobile ? 1 : 1 }}>
-						<Grid item sx={{ pt: '0px !important' }} xs={3}>
-							<InputLabel id="bookingConfirmId" error={formErrors["bookingConfirmId"]} sx={{ fontSize: 12 }}>Booking Confirmation Id*</InputLabel>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={3}>
+							<InputLabel id="bookingConfirmId" error={formErrors["bookingConfirmId"]} sx={{ fontSize: 12 }}>Booking Confirmation</InputLabel>
 							<TextField
 								error={formErrors["bookingConfirmId"]}
 								sx={{ width: "100%" }}
 								id="bookingConfirmId"
 								variant="outlined"
 								size="small"
-								value={confirmIds.bookingConfirmId || ''}
+								value={confirmIds?.bookingConfirmId || ''}
 								onChange={(e) => handleFormChange({"field": "bookingConfirmId", "val": e.target.value})}
 								inputProps={{
 									type: "text",
 								}}
 							/>
 						</Grid>
-						<Grid item sx={{ pt: '0px !important' }} xs={3}>
-							<InputLabel id="hotelConfirmId" error={formErrors["hotelConfirmId"]} sx={{ fontSize: 12 }}>Hotel Confirmation Id*</InputLabel>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={3}>
+							<InputLabel id="hotelConfirmId" error={formErrors["hotelConfirmId"]} sx={{ fontSize: 12 }}>Hotel Confirmation</InputLabel>
 							<TextField
 								error={formErrors["hotelConfirmId"]}
 								sx={{ width: "100%" }}
 								id="hotelConfirmId"
 								variant="outlined"
 								size="small"
-								value={confirmIds.hotelConfirmId || ''}
+								value={confirmIds?.hotelConfirmId || ''}
 								onChange={(e) => handleFormChange({"field": "hotelConfirmId", "val": e.target.value})}
 								inputProps={{
 									type: "text",
 								}}
 							/>
 						</Grid>
-						<Grid item sx={{ pt: '0px !important' }} xs={3}>
-							<InputLabel id="transfersConfirmId" error={formErrors["transfersConfirmId"]} sx={{ fontSize: 12 }}>Transfer Confirmation Id*</InputLabel>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={3}>
+							<InputLabel id="transfersConfirmId" error={formErrors["transfersConfirmId"]} sx={{ fontSize: 12 }}>Transfer Confirmation</InputLabel>
 							<TextField
 								error={formErrors["transfersConfirmId"]}
 								sx={{ width: "100%" }}
 								id="transfersConfirmId"
 								variant="outlined"
 								size="small"
-								value={confirmIds.transfersConfirmId || ''}
+								value={confirmIds?.transfersConfirmId || ''}
 								onChange={(e) => handleFormChange({"field": "transfersConfirmId", "val": e.target.value})}
 								inputProps={{
 									type: "text",
 								}}
 							/>
 						</Grid>
-						<Grid item sx={{ pt: '0px !important' }} xs={3}>
-							<InputLabel id="flightsConfirmId" error={formErrors["flightsConfirmId"]} sx={{ fontSize: 12 }}>Flights Confirmation Id*</InputLabel>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={3}>
+							<InputLabel id="arrConfirmId" error={formErrors["arrConfirmId"]} sx={{ fontSize: 12 }}>Arrival Confirmation</InputLabel>
 							<TextField
-								error={formErrors["flightsConfirmId"]}
+								error={formErrors["arrConfirmId"]}
 								sx={{ width: "100%" }}
-								id="flightsConfirmId"
+								id="arrConfirmId"
 								variant="outlined"
 								size="small"
-								value={confirmIds.flightsConfirmId || ''}
-								onChange={(e) => handleFormChange({"field": "flightsConfirmId", "val": e.target.value})}
+								value={confirmIds?.arrConfirmId || ''}
+								onChange={(e) => handleFormChange({"field": "arrConfirmId", "val": e.target.value})}
+								inputProps={{
+									type: "text",
+								}}
+							/>
+						</Grid>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={3}>
+							<InputLabel id="depConfirmId" error={formErrors["depConfirmId"]} sx={{ fontSize: 12 }}>Departure Confirmation</InputLabel>
+							<TextField
+								error={formErrors["depConfirmId"]}
+								sx={{ width: "100%" }}
+								id="depConfirmId"
+								variant="outlined"
+								size="small"
+								value={confirmIds?.depConfirmId || ''}
+								onChange={(e) => handleFormChange({"field": "depConfirmId", "val": e.target.value})}
+								inputProps={{
+									type: "text",
+								}}
+							/>
+						</Grid>
+						<Grid item sx={{ pt: '0px !important', mb: 1 }} xs={6}>
+							<InputLabel id="ssConfirmId" error={formErrors["ssConfirmId"]} sx={{ fontSize: 12 }}>Sightseeing Confirmations</InputLabel>
+							<TextField
+								error={formErrors["ssConfirmId"]}
+								sx={{ width: "100%" }}
+								id="ssConfirmId"
+								variant="outlined"
+								multiline
+								minRows={2}
+								size="small"
+								value={confirmIds.ssConfirmId || ''}
+								onChange={(e) => handleFormChange({"field": "ssConfirmId", "val": e.target.value})}
 								inputProps={{
 									type: "text",
 								}}
