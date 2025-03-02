@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Stop, Svg, Defs, LinearGradient, Rect } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Link } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import BackgroundImageGradient from './imageGradient';
@@ -56,6 +56,7 @@ const HtmlPdfView = ({
     address,
     companyInfo = {},
     paymentDetails = {},
+    socialMediaDetails = {}
   },
   userProfileData: {
     themeData = {},
@@ -393,6 +394,44 @@ const HtmlPdfView = ({
               {email && (<Text style={styles.footerText}>Email : {email}</Text>)}
               {phone && (<Text style={styles.footerText}>Phone : {phone}</Text>)}
               {address && (<Text style={styles.footerText}>Address : {address}</Text>)}
+            </View>
+            <View style={styles.socialContainer}>
+              {
+                socialMediaDetails?.whatsapp && (<Link src={socialMediaDetails?.whatsapp}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/wa-icon-png.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.instagram && (<Link src={socialMediaDetails?.instagram}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/insta-icon.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.website && (<Link src={socialMediaDetails?.website}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/website-icon.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.linkedin && (<Link src={socialMediaDetails?.linkedin}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/linkedin-icon.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
             </View>
             {logoB64Str && (
               <Image
@@ -869,6 +908,18 @@ const getThemedStyles = ({ themeData = {} }) => {
     pageContainer: {
       margin: 20,
       padding: 10,
+    },
+    socialIcon: {
+        height: 40,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    socialContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 10,   
     }
 
   });

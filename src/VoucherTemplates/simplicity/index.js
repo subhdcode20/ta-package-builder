@@ -507,7 +507,7 @@ const HtmlPdfView = ({
                                 socialMediaDetails?.instagram && (<Link src={socialMediaDetails?.instagram}>
                                     <Image
                                         style={styles.socialIcon}
-                                        src={"/insta-icon.jpg"}
+                                        src={"/insta-icon.png"}
                                         resizeMode="contain"
                                     />
                                 </Link>)
@@ -516,7 +516,7 @@ const HtmlPdfView = ({
                                 socialMediaDetails?.website && (<Link src={socialMediaDetails?.website}>
                                     <Image
                                         style={styles.socialIcon}
-                                        src={"/website-icon.jpg"}
+                                        src={"/website-icon.png"}
                                         resizeMode="contain"
                                     />
                                 </Link>)
