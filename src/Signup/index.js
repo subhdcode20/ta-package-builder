@@ -257,7 +257,7 @@ const SignUp = () => {
                 required
                 size="small"
               />
-              <Typography sx={{ marginTop: "20px" }}>Add Logo*</Typography>
+              <Typography sx={{ marginTop: "20px" }}>Add Logo* (only PNG!)</Typography>
               <Button
                 variant="contained"
                 size="small"

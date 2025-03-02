@@ -250,11 +250,11 @@ const HtmlPdfView = ({
 
         <View style={styles.boxContainer2} wrap={false} break>
           {
-            !isEmptyObject(flights) && (<>
-              <Text style={styles.InfoTitle}>Flights</Text>
+            !isEmptyObject(flights) && flights?.arr && (<>
+              <Text style={styles.InfoTitle}>Arrival</Text>
               <View style={styles.transferContainer}>
                 <Text style={styles.transferText}>
-                  {`${flights?.arr ? `Arrival Flight for the trip: ${flights?.arr}.` : ''} ${flights?.dep ? `Departure Flight for the trip: ${flights?.dep}.` : ''}`}
+                  {`${flights?.arr ? `Arrival Flight for the trip: ${flights?.arr}.` : ''}`}
                 </Text>
               </View>
             </>)
@@ -265,6 +265,16 @@ const HtmlPdfView = ({
               {`Pick / Drop and all sightseeing transport is on private ${req?.cabType || 'Vehichle'}. We will welcome you at ${req?.pickUp}.`}
             </Text>
           </View>
+          {
+            !isEmptyObject(flights) && flights?.dep && (<>
+              <Text style={styles.InfoTitle}>Departure</Text>
+              <View style={styles.transferContainer}>
+                <Text style={styles.transferText}>
+                  {`${flights?.dep ? `Departure Flight for the trip: ${flights?.dep}.` : ''}`}
+                </Text>
+              </View>
+            </>)
+          }
         </View>
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />

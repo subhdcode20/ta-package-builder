@@ -85,7 +85,7 @@ const ReqCardView = ({ reqData = {} }) => {
                 <Typography variant="caption">Pick Up From: <b>{pickUp}</b></Typography>
                 &nbsp;
             </Box>
-            <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>
+            <Box sx={{display: 'flex', minWidth: '45%', m: 1}}>
                 {/* <KingBedIcon /> */}
                 <Typography variant="caption">Arrival Details:</Typography>
                 &nbsp;
@@ -99,7 +99,7 @@ const ReqCardView = ({ reqData = {} }) => {
                     onChange={(e) => dispatch(setArrFlightsData({"flightType": "arr", "flightText": e.target.value}))}
                 />
             </Box>
-            <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>
+            <Box sx={{display: 'flex', minWidth: '45%', m: 1, ml: 2}}>
                 {/* <KingBedIcon /> */}
                 <Typography variant="caption">Departure Details:</Typography>
                 &nbsp;

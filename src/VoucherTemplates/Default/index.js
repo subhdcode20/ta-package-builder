@@ -223,7 +223,6 @@ const HtmlPdfView = ({
           })
         }
       </Page>
-
       <Page style={styles.page} wrap={false}>
         <View style={{height: '100%'}}>
           {/* Left Column - Image */}
@@ -601,6 +600,18 @@ const getThemedStyles = ({ themeData = {} }) => {
       marginBottom: 30,
     },
     infoBox: {
+      width: '60%',
+      backgroundColor: '#30746c',
+      padding: 20,
+      borderRadius: 0,
+      alignSelf: 'flex-end',
+      position: 'absolute',
+      bottom: 40,
+      right: 30,
+      flexDirection: 'column',
+      marginBottom: 10,
+    },
+    infoBoxVouch: {
       width: '60%',
       backgroundColor: '#30746c',
       padding: 20,

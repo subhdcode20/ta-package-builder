@@ -39,7 +39,10 @@ export const templatesMap = {
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/agentflow-d0eec.firebasestorage.app/o/utility%2FSc-simplicty-thumbnail.jpg?alt=media&token=74a6798a-f487-453e-a2a3-049de02bfc0b",
         exPdf: "",
         width: '30%',
-    },
+    }
+}
+
+export const comingSoonTemplates = {
     "kerala": {
         name: "Coming Soon",
         viewComponent: KeralaTemplate,
