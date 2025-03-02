@@ -37,6 +37,15 @@ const HtmlPdfView = ({
         hotels = [],
         itiDesc = []
     },
+    voucherData: {
+        bookingConfirmId = '',
+        hotelConfirmIds = [],
+        transferConfirmIds = [],
+        ssConfirmIds = [],
+        arrConfirmId = [],
+        depConfirmId = []
+        // flightsConfirmId = ''
+    },
     userData: {
         phone,
         logoB64Str,
@@ -63,6 +72,51 @@ const HtmlPdfView = ({
     console.log("HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
     console.log("CHECK_ABOUT:", headerImage);
     const styles = getThemedStyles(themeData) || null;
+
+    const confirmIdData = [
+        {
+          key: "bookingConfirmId",
+          label: "Booking Confirmation",
+          value: bookingConfirmId,
+          type: 'string'
+        },
+        {
+          key: "arrConfirmId",
+          label: "Arrival Confirmation",
+          value: arrConfirmId,
+          type: 'string'
+        },
+        {
+          key: "hotelConfirmId",
+          label: "Hotel Confirmations",
+          value: hotelConfirmIds,
+          type: 'array'
+        },
+        {
+          key: "transfersConfirmId",
+          label: "Transfer Confirmations",
+          value: transferConfirmIds,
+          type: 'array'
+        },
+        {
+          key: "ssConfirmId",
+          label: "Sightseeing Confirmations",
+          value: ssConfirmIds,
+          type: 'array'
+        },
+        {
+          key: "depConfirmId",
+          label: "Departure Confirmation",
+          value: depConfirmId,
+          type: 'string'
+        },
+        // {
+        //   key: "ssConfirmId",
+        //   label: "Sightseeing Confirmations",
+        //   value: ssConfirmId
+        // }
+    ]
+
     if (!styles) return null;
     return (
         <Document>
@@ -136,6 +190,61 @@ const HtmlPdfView = ({
 
                 </View>
             </Page>
+
+            <Page style={[styles.page, styles.page2]} wrap>
+                <Image
+                    style={styles.backgroundImage}
+                    src={headerImage || _defaultHeaderImage}
+                    fixed
+                />
+                <Image
+                    style={styles.bgPole}
+                    src="/dirBanner.jpg"
+                    fixed
+                />
+                <Image
+                    style={styles.bgPic}
+                    src="/imgBanner.jpg"
+                    fixed
+                />
+
+                <View
+                    style={styles.daySection}
+                >
+                    <Text style={styles.dayTitle}>Confirmations:</Text>
+                    <View style={styles.dayDetails}>
+                        {
+                            confirmIdData.map(( data, confirmIdIndex) => {
+                                if(!data?.value || (Array.isArray(data?.value) && data?.value.length == 0)) return null;
+                                return (<>
+                                    <View>
+                                        {
+                                            (<View style={styles.flightContainer}>
+                                                <Text style={styles.InfoTitle1}>{data?.label}</Text>
+                                                {data?.value && data?.type == 'string' && (
+                                                    <Text style={styles.transferText}>
+                                                        {data?.value}
+                                                    </Text>
+                                                )}
+                                                {data?.value && data?.type == 'array' && (
+                                                    <View>
+                                                        {(data?.value || []).map((point, pointIndex) => (
+                                                            <Text key={pointIndex} style={styles.transferText}>
+                                                                {`${pointIndex + 1}. ${point?.text}`}
+                                                            </Text>
+                                                        ))}
+                                                    </View>
+                                                )}
+                                            </View>)
+                                        }
+                                    </View>
+                                </>)
+                            })
+                        }
+                    </View>
+                </View>
+            </Page>                                
+
             <Page style={[styles.page, styles.page2]} >
                 {/* {
                     headerImage && (<Image
@@ -164,7 +273,6 @@ const HtmlPdfView = ({
                     let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
                     return (
                         <>
-
                             <View
                                 key={currDayIndex}
                                 style={styles.daySection}
@@ -178,20 +286,20 @@ const HtmlPdfView = ({
                                             <>
                                                 {currDayIndex === 0 && (
                                                     <View style={styles.flightContainer}>
-                                                        <Text style={styles.InfoTitle1}>Arrival</Text>
+                                                        <Text style={styles.InfoTitle1}>Flight Arrival</Text>
                                                         <Text style={styles.transferText}>
                                                             {`${flights?.arr ? `${flights?.arr}.` : ''}`}
                                                         </Text>
                                                     </View>
                                                 )}
-                                                {/* {currDayIndex === itiDesc.length - 1 && (
+                                                {currDayIndex === itiDesc.length - 1 && (
                                                     <View style={styles.flightContainer}>
-                                                        <Text style={styles.InfoTitle1}>Departure</Text>
+                                                        <Text style={styles.InfoTitle1}>Flight Departure</Text>
                                                         <Text style={styles.transferText}>
                                                             {`${flights?.dep ? `${flights?.dep}.` : ''}`}
                                                         </Text>
                                                     </View>
-                                                )} */}
+                                                )}
                                             </>
                                         )
                                     }
@@ -248,34 +356,21 @@ const HtmlPdfView = ({
                                         </View>
                                     </View>
                                 </View>
-                                {
-                                    flights?.dep && (<>
-                                        {currDayIndex === itiDesc.length - 1 && (
-                                            <View style={styles.flightContainer}>
-                                                <Text style={styles.InfoTitle1}>Departure</Text>
-                                                <Text style={styles.transferText}>
-                                                    {`${flights?.dep ? `${flights?.dep}.` : ''}`}
-                                                </Text>
-                                            </View>
-                                        )}
-                                    </>)
-                                }
                                 <View style={styles.coverBg} />
                             </View>
                         </>
                     );
 
                 })}
-                
-                <View style={styles.boxContainer2} wrap={false} break>
-                    <Text style={styles.InfoTitle}>Transfer</Text>
-                    <View style={styles.transferContainer}>
-                        <Text style={styles.transferText}>
-                            {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
-                        </Text>
+                    <View style={styles.boxContainer2} wrap={false} break>
+                        <Text style={styles.InfoTitle}>Transfer</Text>
+                        <View style={styles.transferContainer}>
+                            <Text style={styles.transferText}>
+                                {`All tours and transfers are on private basis. A comfortable and clean ${req?.cabType || 'Vehichle'} will pick you up from ${req?.pickUp}.`}
+                            </Text>
+                        </View>
+                    <View style={styles.coverBg} />
                     </View>
-                <View style={styles.coverBg} />
-                </View>
 
                 {/* <View style={styles.boxContainer2} wrap={false}>
           <Text style={styles.InfoTitle}>Transfer</Text>
@@ -962,7 +1057,6 @@ const getThemedStyles = ({ themeData = {} }) => {
             marginTop: 10,
             marginBottom: 10,   
         }
-
     });
 }
 

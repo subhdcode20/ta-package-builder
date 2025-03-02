@@ -517,17 +517,54 @@ export const todoSlice = createSlice({
       state.activities[`${state?.currDayIndex}`] = newData;
     },
     setVoucherData: (state, action) => {
-      let { bookingConfirmId = '', hotelConfirmId = '', transfersConfirmId = '', 
-        arrConfirmId = '', depConfirmId = '', ssConfirmId = '' } = action?.payload;
-      state["voucherData"] = {
-        bookingConfirmId, 
-        hotelConfirmId, 
-        transfersConfirmId, 
-        arrConfirmId,
-        depConfirmId,
-        ssConfirmId
-      }
-    }
+      // let { bookingConfirmId = '', arrConfirmId = '', depConfirmId = '' } = action?.payload;
+      // {
+      //   bookingConfirmId, 
+      //   arrConfirmId, 
+      //   depConfirmId
+      // }
+      state["voucherData"] = action?.payload
+    },
+    updateConfirmIds: (state, action) => {
+      let { policyType = null, val = '', textIndex = null } = action.payload;
+      console.log("voucher policy edit ", policyType, val, textIndex, state?.userProfileData?.cancellationData.length)
+      if(!policyType || isNaN(textIndex)) return;
+      let newVoucherData = state?.voucherData || {};
+      let currArr = newVoucherData[policyType] || [];
+      let newArr = [ ...currArr ];
+      newArr[textIndex] = {"text": val};
+      console.log("policy edit 2 ", policyType, val, textIndex, newArr.length, newArr[textIndex], currArr.length);
+      newVoucherData[policyType] = newArr;
+    },
+    removeConfirmIds: (state, action) => {
+      let { policyType = null, deleteIndex = null } = action?.payload;
+      console.log("policy edit remove ", policyType, deleteIndex)
+      if(!policyType || isNaN(deleteIndex)) return;
+      let newVoucherData = state?.voucherData || {};
+      let currArr = newVoucherData[policyType] || [];
+      if(deleteIndex > currArr.length) return;
+      let newArr = [ ...currArr ];
+      if(newArr.length > 0) newArr.splice(deleteIndex, 1);
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newVoucherData[policyType] = newArr;
+    },
+    handleAddConfirmIds: (state, action) => {
+      let { policyType = null } = action?.payload;
+      console.log("policy edit remove ", policyType)
+      if(!policyType ) return;
+      let newVoucherData = state?.voucherData || {};
+      let currArr = newVoucherData[policyType] || null;
+      if(!currArr) currArr = [{ "text": "" }];
+      let newArr = [ ...currArr ];
+      newArr.push({text: ""});
+      console.log("handleRemovepolicy text final", newArr, currArr);
+      newVoucherData[policyType] = newArr;
+    },
+    submitVoucherData: (state, action) => { // Added this line
+      console.log("setVoucherData reducer", state, action.payload);
+      state.voucherData = action.payload?.voucherData;
+      // console.log("VoucherDataInsidePackageData:", state.voucherData);
+    },
   }
 });
 
@@ -568,7 +605,11 @@ export const {
   addDayItiText,
   setFirebaseIdToken,
   setCurrDayActivity,
-  setVoucherData
+  setVoucherData,
+  updateConfirmIds,
+  removeConfirmIds,
+  handleAddConfirmIds,
+  submitVoucherData
 } = todoSlice.actions;
 
 // this is for configureStore

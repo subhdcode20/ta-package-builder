@@ -48,6 +48,15 @@ const HtmlPdfView = ({
     hotels = [],
     itiDesc = []
   },
+  voucherData: {
+    bookingConfirmId = '',
+    hotelConfirmIds = [],
+    transferConfirmIds = [],
+    ssConfirmIds = [],
+    arrConfirmId = [],
+    depConfirmId = []
+    // flightsConfirmId = ''
+  },
   userData: {
     phone,
     logoB64Str,
@@ -74,6 +83,51 @@ const HtmlPdfView = ({
   console.log("HEADERimg_check default:", headerImage, cancellationData);
   console.log("CHECK_ABOUT:", aboutDestText);
   const styles = getThemedStyles(themeData) || null;
+
+  const confirmIdData = [
+    {
+      key: "bookingConfirmId",
+      label: "Booking Confirmation",
+      value: bookingConfirmId,
+      type: 'string'
+    },
+    {
+      key: "arrConfirmId",
+      label: "Arrival Confirmation",
+      value: arrConfirmId,
+      type: 'string'
+    },
+    {
+      key: "hotelConfirmId",
+      label: "Hotel Confirmations",
+      value: hotelConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "transfersConfirmId",
+      label: "Transfer Confirmations",
+      value: transferConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "ssConfirmId",
+      label: "Sightseeing Confirmations",
+      value: ssConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "depConfirmId",
+      label: "Departure Confirmation",
+      value: depConfirmId,
+      type: 'string'
+    },
+    // {
+    //   key: "ssConfirmId",
+    //   label: "Sightseeing Confirmations",
+    //   value: ssConfirmId
+    // }
+  ]
+
   if (!styles) return null;
   return (
     <Document>
@@ -102,7 +156,7 @@ const HtmlPdfView = ({
           ))}
         </View>
         {/* <View style={styles.headerText}> */}
-        <Text style={styles.title}>Travel Itinerary for {req?.destination || 'N/A'}</Text>
+        <Text style={styles.title}>Travel Voucher for {req?.destination || 'N/A'}</Text>
         {/* </View> */}
 
         {
@@ -162,7 +216,71 @@ const HtmlPdfView = ({
       </Page>
 
       <Page style={[styles.page, styles.page2]} >
+        {
+          confirmIdData.map(( data, confirmIdIndex) => {
+            // let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
+            if(!data?.value || (Array.isArray(data?.value) && data?.value.length == 0)) return null;
+            return (<>
+              {/* <View wrap={true} style={{ flex: 6, justifyContent: 'left', alignItems: 'left', paddingLeft: 30, paddingRight: 30, paddingTop: 20, paddingBottom: 30 }}>
+                <Text style={styles.InfoTitle}>{data?.label}</Text>
+                {data?.value && data?.type == 'string' && (
+                  <View style={styles.transferContainer}>
+                    <Text style={styles.transferText}>{data?.value}</Text>
+                  </View>
+                )}
+                {data?.value && data?.type == 'array' && (
+                  <View style={styles.lowerBox}>
+                    {(data?.value || []).map((point, pointIndex) => (
+                      <View style={styles.transferContainer}>
+                        <Text style={styles.transferText}>{point?.text}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View> */}
 
+              <View key={confirmIdIndex} style={styles.daySection} wrap={false}>
+
+                <View style={styles.boxContainer} wrap={true}>
+                  {/* Upper Half */}
+                  <View style={styles.upperBox}>
+                    <Text style={styles.dayTitle}>{data?.label}</Text>
+                    {data?.value && data?.type == 'string' && (
+                      <View style={styles.transferContainer}>
+                        <Text style={styles.transferText}>{data?.value}</Text>
+                      </View>
+                    )}
+                    {data?.value && data?.type == 'array' && (
+                      <View style={styles.hotelDetailsContainer}>
+                        {(data?.value || []).map((point, pointIndex) => (
+                          <View key={point?.text} style={styles.transferContainer}>
+                            <Text style={styles.transferText}>{point?.text}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </View>
+              
+              {logoB64Str && (
+                <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+              )}
+              <BackgroundImageGradient
+                imageSrc={headerImage || _defaultHeaderImage}
+              />
+            </>)
+          })
+        }
+        {logoB64Str && (
+          <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+        )}
+        <BackgroundImageGradient
+          imageSrc={headerImage || _defaultHeaderImage}
+        />
+      </Page>
+
+      <Page style={[styles.page, styles.page2]} >
         {itiDesc.map((itiCurrDay, currDayIndex) => {
           console.log("hotels mountain render", hotels, currDayIndex, itiDesc, currDayIndex < hotels.length)
           let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
@@ -250,11 +368,11 @@ const HtmlPdfView = ({
 
         <View style={styles.boxContainer2} wrap={false} break>
           {
-            !isEmptyObject(flights) && flights?.arr && (<>
-              <Text style={styles.InfoTitle}>Arrival</Text>
+            !isEmptyObject(flights) && (<>
+              <Text style={styles.InfoTitle}>Flights</Text>
               <View style={styles.transferContainer}>
                 <Text style={styles.transferText}>
-                  {`${flights?.arr ? `Arrival Flight for the trip: ${flights?.arr}.` : ''}`}
+                  {`${flights?.arr ? `Arrival Flight for the trip: ${flights?.arr}.` : ''} ${flights?.dep ? `Departure Flight for the trip: ${flights?.dep}.` : ''}`}
                 </Text>
               </View>
             </>)
@@ -265,16 +383,6 @@ const HtmlPdfView = ({
               {`Pick / Drop and all sightseeing transport is on private ${req?.cabType || 'Vehichle'}. We will welcome you at ${req?.pickUp}.`}
             </Text>
           </View>
-          {
-            !isEmptyObject(flights) && flights?.dep && (<>
-              <Text style={styles.InfoTitle}>Departure</Text>
-              <View style={styles.transferContainer}>
-                <Text style={styles.transferText}>
-                  {`${flights?.dep ? `Departure Flight for the trip: ${flights?.dep}.` : ''}`}
-                </Text>
-              </View>
-            </>)
-          }
         </View>
         {logoB64Str && (
           <Image style={styles.logoInContainer3} src={logoB64Str} resizeMode="contain" />
@@ -405,6 +513,7 @@ const HtmlPdfView = ({
               {phone && (<Text style={styles.footerText}>Phone : {phone}</Text>)}
               {address && (<Text style={styles.footerText}>Address : {address}</Text>)}
             </View>
+
             <View style={styles.socialContainer}>
               {
                 socialMediaDetails?.whatsapp && (<Link src={socialMediaDetails?.whatsapp}>
@@ -931,7 +1040,6 @@ const getThemedStyles = ({ themeData = {} }) => {
         marginTop: 10,
         marginBottom: 10,   
     }
-
   });
 }
 

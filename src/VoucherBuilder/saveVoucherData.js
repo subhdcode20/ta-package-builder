@@ -1,0 +1,133 @@
+import React, { useState } from 'react';
+import Button from "@mui/material/Button";
+import { useSelector, useDispatch } from 'react-redux';
+import { nanoid } from 'nanoid';
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { useNavigate, useParams } from "react-router-dom";
+import CircularProgress from '@mui/material/CircularProgress';
+import Fab from '@mui/material/Fab';
+
+import { submitVoucherData } from '../PackageBuilder/packBuilderSlice.js';
+import { db, auth } from "../firebaseConfig";
+import SnackbarMsg from "../Commons/snackbarMsg";
+
+const SavePackagePdf = () => {
+    const selectedPackHotels = useSelector((state) => state.packBuilderData.selectedHotels) || {};
+	const selectedItineraryText = useSelector((state) => state.packBuilderData.itineraryDesc) || {};
+	const totalDayPrices = useSelector((state) => state.packBuilderData.totalDayPrices) || [];
+	const finalPackPrice = useSelector((state) => state.packBuilderData.finalPackPrice) || '';
+	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || '';
+	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
+	const activitiesData = useSelector((state) => state.packBuilderData.activities) || {};
+	const voucherData = useSelector((state) => state.packBuilderData.voucherData) || {};
+    const userData = JSON.parse(localStorage.getItem("user"));
+	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
+	const [showSnackbar, setShowSnackbar] = useState({open: false});
+    const { reqId = null, packageId = null } = useParams();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const [ loading, setLoading ] = useState(false);
+
+    const savePackageWithPdf = async () => {
+		// TODO: handle data validation, show validation errors
+		setLoading(true);
+
+		//calculate Package Price
+		
+		try {
+			let newVoucherId = nanoid();
+			console.log("new pack save pdf", newVoucherId, finalTransferPrice, voucherData);
+			let finalHotelDetails = [...selectedPackHotels];
+			// .map((day, dayIndex) => {
+			// 	let dayHotels = { ...day?.hotels[0] };
+			// 	if(day?.hotels[0]?.roomRates) day.hotels[0]["roomRates"] = null;   //dayHotels.roomRates;
+			// 	// day.hotels[0] = dayHotels;
+			// 	return day;
+			// })
+			let finalPackDetails = {
+				// hotels: finalHotelDetails,
+				// flights: itiFlightsData,
+				// itiTexts: selectedItineraryText,
+				// activities: activitiesData,
+				voucherData: voucherData,
+				voucherId: newVoucherId,
+				// totalDayPrices,
+				// finalPackPrice,
+				// finalTransferPrice,
+				createdAt: Date.now(),
+				userId: userData?.phone,
+				reqId,
+                packageId,
+				destination: reqData?.destination,
+				noOfNights: reqData?.noOfNights,
+				startDate: reqData?.startDate,
+				trackingId: reqData?.trackingId
+			}
+			console.log("new pack post finalPackDetails ", newVoucherId, finalPackDetails);
+
+			// dispatch(submitVoucherData({ packageData: finalPackDetails}));
+			let vouchRef = await setDoc(doc(db, "vouchers", newVoucherId), finalPackDetails);
+			
+			let reqPackRef = doc(db, "requests", reqId);
+            let packRef = doc(db, "packages", packageId);
+			// const reqDoc = await getDoc(reqPackRef);
+			
+			// // Check if the document exists
+			// if (reqDoc.exists()) {
+			// 	const packageData = reqDoc.data()?.packages || []; 
+			
+			// 	await updateDoc(reqPackRef, {
+			// 		packages: [...packageData, newPackId] 
+			// 	});
+			// } else {
+			// 	await setDoc(reqPackRef, {
+			// 		packages: [newPackId],
+			// 	});
+			// }
+			
+			await setDoc(
+				packRef, 
+				{
+					vouchers: arrayUnion(newVoucherId)
+				},
+				{merge: true}
+			);
+
+
+			setShowSnackbar({open: true, message: 'Voucher saved!', severity: 'success', });
+			setLoading(false);
+		} catch (error) {
+			console.log("save voucher catch error ", error);
+			// alert("Error saving package.")
+			setShowSnackbar({open: true, message: 'Error saving voucher. Please try again or contact support', severity: 'error', });
+			setLoading(false);
+		}
+		// return;
+		// setTimeout(() => navigate(`/my-reqs?reqId=${reqId}`));
+    }
+
+    return (<>
+		{/* <Button size="small" variant="contained" onClick={savePackageWithPdf} sx={{ minWidth: "fit-content", my: 'auto' }}>
+			Save Package Details
+		</Button> */}
+
+		
+		<Fab variant="extended" size="medium" color="primary" sx={{ position: 'fixed', bottom: '2em', right: '2em' }}
+			onClick={savePackageWithPdf}
+		>
+			{/* { loading && <CircularProgress color="textSecondary" size="5px" sx={{ ml: 1, color: 'white' }} /> } */}
+			Save Voucher 
+		</Fab>
+		{showSnackbar && (
+			<SnackbarMsg
+				open={showSnackbar.open}
+				message={showSnackbar.message}
+				anchorOrigin={showSnackbar.anchorOrigin}
+				severity={showSnackbar.severity || "success"}
+				onClose={() => setShowSnackbar({ open: false })}
+			/>
+		)}
+	</>)
+}
+
+export default SavePackagePdf;

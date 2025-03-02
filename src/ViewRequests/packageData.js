@@ -50,7 +50,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                     Package {pkgIndex > 0 ? 'updated' : 'created'} on <b> {createdAt} </b>
                   </Typography>
                   <div>
-                    {/* <Button
+                    <Button
                       variant="contained"
                       color="primary"
                       href={`/voucher/${reqId}/${pkg?.packageId}` || ''}
@@ -58,7 +58,7 @@ const PackageData = ({ packageDetails = [], reqData = {} }) => {
                       sx={{ marginLeft: 2 }}
                     >
                       Create Voucher
-                    </Button> */}
+                    </Button>
                     <Button
                       variant="contained"
                       color="primary"
