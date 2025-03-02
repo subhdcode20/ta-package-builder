@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Image, Font, PDFViewer, Link } from '@react-pdf/renderer';
 import { fromUnixTime, format } from 'date-fns';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { tr } from 'date-fns/locale';
@@ -42,9 +42,12 @@ const HtmlPdfView = ({
   },
   voucherData: {
     bookingConfirmId = '',
-    hotelConfirmId = '',
-    transfersConfirmId = '',
-    flightsConfirmId = ''
+    hotelConfirmIds = [],
+    transferConfirmIds = [],
+    ssConfirmIds = [],
+    arrConfirmId = [],
+    depConfirmId = []
+    // flightsConfirmId = ''
   },
   userData: {
     phone,
@@ -54,6 +57,7 @@ const HtmlPdfView = ({
     address,
     companyInfo = {},
     paymentDetails = {},
+    socialMediaDetails = {}
   },
   userProfileData: {
     themeData = {},
@@ -67,10 +71,55 @@ const HtmlPdfView = ({
   totalPackPrice = ''
 }) => {
   console.log("Vouch HOTELS_DETAILS", JSON.stringify(hotels));
-  console.log("Vouch pdf template render ", req, logoB64Str, hotels);
-  console.log("Vouch HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
-  console.log("Vouch CHECK_ABOUT:", headerImage); //aboutDestText
+  console.log("Vouch pdf template render ", bookingConfirmId, hotelConfirmIds, transferConfirmIds, ssConfirmIds); //req, logoB64Str, hotels, 
+  // console.log("Vouch HEADERimg_check default:", headerImage, _defaultHeaderImage, cancellationData);
+  // console.log("Vouch CHECK_ABOUT:", headerImage); //aboutDestText
   const styles = getThemedStyles(themeData) || null;
+
+  const confirmIdData = [
+    {
+      key: "bookingConfirmId",
+      label: "Booking Confirmation",
+      value: bookingConfirmId,
+      type: 'string'
+    },
+    {
+      key: "arrConfirmId",
+      label: "Arrival Confirmation",
+      value: arrConfirmId,
+      type: 'string'
+    },
+    {
+      key: "hotelConfirmId",
+      label: "Hotel Confirmations",
+      value: hotelConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "transfersConfirmId",
+      label: "Transfer Confirmations",
+      value: transferConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "ssConfirmId",
+      label: "Sightseeing Confirmations",
+      value: ssConfirmIds,
+      type: 'array'
+    },
+    {
+      key: "depConfirmId",
+      label: "Departure Confirmation",
+      value: depConfirmId,
+      type: 'string'
+    },
+    // {
+    //   key: "ssConfirmId",
+    //   label: "Sightseeing Confirmations",
+    //   value: ssConfirmId
+    // }
+  ]
+
   if (!styles) return null;
   return (
     <Document>
@@ -98,7 +147,7 @@ const HtmlPdfView = ({
           }
           <View style={styles.body}>
             {/* <View style={styles.headerText}> */}
-            <Text style={styles.title}>Service Voucher for travel to {req?.destination || 'N/A'}</Text>
+            <Text style={styles.title}>Travel Voucher</Text>
             {/* </View> */}
 
             <View style={styles.infoBox}>
@@ -126,6 +175,55 @@ const HtmlPdfView = ({
           </View>
         </View>
       </Page>
+
+      <Page style={[styles.page, styles.page2]} >
+        {
+          headerImage && (<Image
+            style={styles.backgroundImage}
+            src={headerImage || _defaultHeaderImage}
+            fixed
+          />)
+        }
+        {
+          confirmIdData.map(( data, confirmIdIndex) => {
+            // let hotelsCurrDay = currDayIndex < hotels.length ? hotels[currDayIndex].hotels : [];
+            if(!data?.value || (Array.isArray(data?.value) && data?.value.length == 0)) return null;
+            return (<View key={confirmIdIndex} style={styles.daySection} wrap={false}>
+              <View style={styles.boxContainer}>
+                {/* Upper Half */}
+                <View style={styles.upperBox}>
+                  <Text style={styles.dayTitle}>{data?.label}</Text>
+                </View>
+
+                {/* Lower Half */}
+                {data?.value && data?.type == 'string' && (
+                  <View style={styles.lowerBox}>
+                    <Text style={styles.itiDescText}>{data?.value}</Text>
+                    {/* {itiDesc[currDayIndex].text.map((point, pointIndex) => (
+                      <Text key={pointIndex} style={styles.itiDescText}>
+                        {`${pointIndex + 1}. ${point}`}
+                      </Text>
+                    ))} */}
+                  </View>
+                )}
+                {data?.value && data?.type == 'array' && (
+                  <View style={styles.lowerBox}>
+                    {(data?.value || []).map((point, pointIndex) => (
+                      <Text key={pointIndex} style={styles.itiDescText}>
+                        {`${pointIndex + 1}. ${point?.text}`}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+                {logoB64Str && (
+                  <Image style={styles.logoInContainer} src={logoB64Str} resizeMode="contain" />
+                )}
+              </View>
+            </View>)
+          })
+        }
+      </Page>
+
       <Page style={styles.page} wrap={false}>
         <View style={{height: '100%'}}>
           {/* Left Column - Image */}
@@ -378,6 +476,44 @@ const HtmlPdfView = ({
               {email && (<Text style={styles.footerText}>Email : {email}</Text>)}
               {phone && (<Text style={styles.footerText}>Phone : {phone}</Text>)}
               {address && (<Text style={styles.footerText}>Address : {address}</Text>)}
+            </View>
+            <View style={styles.socialContainer}>
+              {
+                socialMediaDetails?.whatsapp && (<Link src={socialMediaDetails?.whatsapp}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/wa-icon-png.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.instagram && (<Link src={socialMediaDetails?.instagram}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/insta-icon.jpg"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.website && (<Link src={socialMediaDetails?.website}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/website-icon.jpg"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
+              {
+                socialMediaDetails?.linkedin && (<Link src={socialMediaDetails?.linkedin}>
+                    <Image
+                        style={styles.socialIcon}
+                        src={"/linkedin-icon.png"}
+                        resizeMode="contain"
+                    />
+                </Link>)
+              }
             </View>
           </View>
         </View>
@@ -839,6 +975,18 @@ const getThemedStyles = ({ themeData = {} }) => {
     pageContainer: {
       margin: 20,
       padding: 10,
+    },
+    socialIcon: {
+        height: 40,
+        marginLeft: 10,
+        marginRight: 10
+    },
+    socialContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        marginTop: 10,
+        marginBottom: 10,   
     }
 
   });

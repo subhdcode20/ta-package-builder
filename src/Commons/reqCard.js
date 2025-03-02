@@ -87,7 +87,7 @@ const ReqCardView = ({ reqData = {} }) => {
             </Box>
             <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>
                 {/* <KingBedIcon /> */}
-                <Typography variant="caption">Arrival Flights:</Typography>
+                <Typography variant="caption">Arrival Details:</Typography>
                 &nbsp;
                 <TextField
                     sx={{ width: "100%" }}
@@ -101,7 +101,7 @@ const ReqCardView = ({ reqData = {} }) => {
             </Box>
             <Box sx={{display: 'flex', minWidth: 'fit-content', m: 1}}>
                 {/* <KingBedIcon /> */}
-                <Typography variant="caption">Departure Flights:</Typography>
+                <Typography variant="caption">Departure Details:</Typography>
                 &nbsp;
                 <TextField
                     sx={{ width: "100%" }}

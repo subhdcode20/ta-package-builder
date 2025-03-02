@@ -10,12 +10,13 @@ import SnackbarMsg from "../Commons/snackbarMsg";
 import DayWiseTabs from "../PackageBuilder/dayWiseTabs.js";
 import { db, auth } from "../firebaseConfig";
 import { isEmptyObject, MainContext, readStreamData } from '../Utility.js';
-import { createEmptyPackageDataDayWise, submitPackageData, submitReqData, savePackageData } from '../PackageBuilder/packBuilderSlice.js';
+import { submitVoucherData, submitReqData, savePackageData } from '../PackageBuilder/packBuilderSlice.js';
 import ReqDataView from '../Commons/reqCard.js';
 // // import HtmlTemplate from '../PackagePdf/htmlTemplate.js';
 import VoucherPdfView from '../PackagePdf/voucherPdfIndex.js';
 import useTotalPackPrice from '../PackageBuilder/useTotalPackPrice.js';
-import SavePackagePdf from '../PackageBuilder/savePackagePdf.js';
+// import SavePackagePdf from '../PackageBuilder/savePackagePdf.js';
+import SaveVoucherData from './saveVoucherData.js';
 import ConfirmInputs from './confirmInputs.js';
 
 const DayWisePackageBuilder = () => {
@@ -74,6 +75,26 @@ const DayWisePackageBuilder = () => {
 	// 	setPackageData(storePackageData);
 	// }, [storePackageData]);
 
+	const getVoucherData = async (voucherId = null) => {
+		console.log("Yes voucher is THERE!", voucherId);
+		if(!voucherId) return;
+		let docSnapVouchers = await getDoc(doc(db, "vouchers", voucherId));
+		if (docSnapVouchers.exists()) {
+			const vouchData = docSnapVouchers.data()
+			console.log("DocSnapVoucherData", vouchData);
+			// setTimeout(() => {
+			// 	dispatch(submitPackageData({ packageData: vouchData }));
+			// });
+			setTimeout(() => {
+				dispatch(submitVoucherData({ voucherData: vouchData?.voucherData }));
+			});
+		} else {
+			console.error(`Voucher details not forund for ${voucherId}`);
+			// TODO show page error
+			return null;
+		}
+	}
+
 	const getPackageData = async (packageId) => {
 		console.log("Yes packages is THERE!", packageId);
 		let docSnapPackages = await getDoc(doc(db, "packages", packageId));
@@ -82,9 +103,13 @@ const DayWisePackageBuilder = () => {
 			// setTimeout(() => {
 			// 	dispatch(submitPackageData({ packageData: docSnapPackages.data() }));
 			// });
+			const data = docSnapPackages.data();
 			setTimeout(() => {
-				dispatch(savePackageData({ packageData: docSnapPackages.data() }));
+				dispatch(savePackageData({ packageData: data }));
 			});
+			let pkgVouchs = (data?.vouchers || [])  //.find((i) => i == packageId);
+			console.log("pkgVouchs::", data?.vouchers, packageId);
+			if(pkgVouchs && pkgVouchs.length > 0) getVoucherData(pkgVouchs[pkgVouchs.length - 1]);
 		} else {
 			console.error(`Package details not forund for ${reqId}`);
 			// TODO show page error
@@ -97,7 +122,7 @@ const DayWisePackageBuilder = () => {
 			if (!reqId) return; // TODO show page error
 			let docSnap = await getDoc(doc(db, "requests", reqId));
 			if (docSnap.exists()) {
-				console.log("booking user data ", docSnap.data());
+				console.log("voucher request data ", docSnap.data());
 				// setBookingPartnerDetails(docSnap.data());
 				// setReqData(docSnap.data());
 				const data = docSnap.data();
@@ -149,7 +174,8 @@ const DayWisePackageBuilder = () => {
             <VoucherPdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} />
 			{/* <PackagePdfView pkgSelectedHotels={storeSelectedHotels} reqData={reqData} /> */}
 		</Box>
-		<SavePackagePdf />
+		{/* <SavePackagePdf /> */}
+		<SaveVoucherData />
         {showSnackbar && (
 			<SnackbarMsg
 				open={showSnackbar.open}
