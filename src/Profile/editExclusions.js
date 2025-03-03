@@ -34,13 +34,13 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
         if(userProfileData) return;
         setLoading(true);
         let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
-        if (docSnapPdfData.exists()) {
-            console.log("Profile Date", docSnapPdfData.data());
-            let profileData = docSnapPdfData.data();
-            if(!profileData?.inclusions) profileData["inclusions"] = DEFAULT_POLICIES["inclusionsDefault"];
-            if(!profileData?.exclusions) profileData["exclusions"] = DEFAULT_POLICIES["exclusionsDefault"];
-            dispatch(setProfileData(profileData));
-        }
+        // if (docSnapPdfData.exists()) {
+        //     console.log("Profile Date", docSnapPdfData.data());
+        let profileData = docSnapPdfData.exists() ? docSnapPdfData.data() : {};
+        if(!profileData?.inclusions) profileData["inclusions"] = DEFAULT_POLICIES["inclusionsDefault"];
+        if(!profileData?.exclusions) profileData["exclusions"] = DEFAULT_POLICIES["exclusionsDefault"];
+        dispatch(setProfileData(profileData));
+        // }
         setLoading(false);
         // setCancellationData(cData);
 	}

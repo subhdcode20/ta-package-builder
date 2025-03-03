@@ -47,9 +47,9 @@ const ConfirmInputs = () => {
 			<Typography sx={{ fontWeight: 'bold', color: '#333' }}>
 			  Voucher Confirmations
 			</Typography>
-			<Button variant="contained" size="small" 
+			{/* <Button variant="contained" size="small" 
 				onClick={() => {}} sx={{ ml: 'auto', mr: 2 }}
-			>Save</Button>
+			>Save</Button> */}
 			{/* <div>
 			  <Button
 				variant="contained"
