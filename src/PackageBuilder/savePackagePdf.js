@@ -19,6 +19,7 @@ const SavePackagePdf = () => {
 	const finalTransferPrice = useSelector((state) => state.packBuilderData.finalTransferPrice) || '';
 	const itiFlightsData = useSelector((state) => state.packBuilderData.itiFlightsData) || {};
 	const activitiesData = useSelector((state) => state.packBuilderData.activities) || {};
+	const policyData = useSelector((state) => state.packBuilderData.userProfileData) || {}; 
 	const voucherData = useSelector((state) => state.packBuilderData.voucherData) || {};
     const userData = JSON.parse(localStorage.getItem("user"));
 	const reqData = useSelector((state) => state.packBuilderData.reqData) || {};
@@ -60,7 +61,8 @@ const SavePackagePdf = () => {
 				destination: reqData?.destination,
 				noOfNights: reqData?.noOfNights,
 				startDate: reqData?.startDate,
-				trackingId: reqData?.trackingId
+				trackingId: reqData?.trackingId,
+				policyData
 			}
 			console.log("new pack post finalPackDetails ", newPackId, finalPackDetails);
 
