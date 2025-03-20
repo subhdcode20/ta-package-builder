@@ -469,7 +469,7 @@ export const todoSlice = createSlice({
     },
     updatePolicyText: (state, action) => {
       let { policyType = null, val = '', textIndex = null } = action.payload;
-      console.log("policy edit ", policyType, val, textIndex, state?.userProfileData?.cancellationData.length)
+      console.log("policy edit ", policyType, val, textIndex)
       if(!policyType || isNaN(textIndex)) return;
       let newProfileData = state?.userProfileData || {};
       let currArr = newProfileData[policyType] || [];
@@ -527,7 +527,7 @@ export const todoSlice = createSlice({
     },
     updateConfirmIds: (state, action) => {
       let { policyType = null, val = '', textIndex = null } = action.payload;
-      console.log("voucher policy edit ", policyType, val, textIndex, state?.userProfileData?.cancellationData.length)
+      console.log("voucher policy edit ", policyType, val, textIndex)
       if(!policyType || isNaN(textIndex)) return;
       let newVoucherData = state?.voucherData || {};
       let currArr = newVoucherData[policyType] || [];

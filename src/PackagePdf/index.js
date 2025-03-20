@@ -41,6 +41,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 	let { companyInfo: { companyLogo: logoUrl } = {} } = userData || {};
 	// const firebaseIdToken = localStorage.getItem('afFirebaseIdToken');
 	const firebaseIdToken = useSelector((state) => state.packBuilderData.fbIdToken) || null;
+	const aboutDestText = useSelector(state => state.packBuilderData.aboutDestText) || '';
 	// const [templateData, setTemplateData] = useState(null)
 	const [headerImage, setHeaderImage] = useState("");
 	const {
@@ -122,7 +123,9 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
         setLoading(true);
 		let finalAboutDestText = await aiAboutDest(reqData?.destination);
         console.log("Get about destination", finalAboutDestText, userData.phone, reqData?.destination);
-		if(finalAboutDestText) dispatch(setProfileData({ ...userProfileData, "aboutDestText": finalAboutDestText}));
+		if(finalAboutDestText) dispatch(setAboutDest(finalAboutDestText));
+			
+		// dispatch(setProfileData({ ...userProfileData, "aboutDestText": finalAboutDestText}));
 
 		// setUserPdfData((prev) => {
 		// 	return { ...prev, aboutDestText: docSnapPdfData.data() };
@@ -206,7 +209,7 @@ const PackagePdf = ({ pkgSelectedHotels = [], reqData = {} 	 , totalPrice=null})
 					reqData={{ req: reqData, headerImage: headerImage}} 
 					userData={userPdfData}
 					totalPackPrice={formattedAmountINR(finalPackPrice)}
-					userProfileData={{ ...userProfileData, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
+					userProfileData={{ ...userProfileData, aboutDestText, cancellationData, paymentPolicy, inclusions, exclusions, headerImage }}
 					setHeaderImage={setHeaderImage}
 					templatesMap={templatesMap}
 				/>

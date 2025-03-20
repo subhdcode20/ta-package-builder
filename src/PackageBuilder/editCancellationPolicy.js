@@ -36,8 +36,10 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
         if(userProfileData) return;
         setLoading(true);
         let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
-        if (docSnapPdfData.exists()) {
-            let profileData = docSnapPdfData.data();
+        let profileData = docSnapPdfData.exists() ? docSnapPdfData.data() : {};
+
+        // if (docSnapPdfData.exists()) {
+        //     let profileData = docSnapPdfData.data();
             console.log("Profile Date cancel", profileData, profileData?.cancellationData);
             if(!profileData?.cancellationData) {
                 console.log("Profile Date cancel inside", profileData?.cancellationData, DEFAULT_POLICIES["cancellationPolicyDefault"]);
@@ -46,14 +48,14 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
             if(!profileData?.paymentPolicy) profileData["paymentPolicy"] = DEFAULT_POLICIES["paymentPolicyDefault"];
             console.log("Profile Date cancel final", profileData, profileData?.cancellationData);
             dispatch(setProfileData(profileData));
-        }
+        // }
         setLoading(false);
         // setCancellationData(cData);
 	}
 
     useEffect(() => {
+        console.log("ger profile edit cancellation ", userProfileData);
         if(!userProfileData) {
-            console.log("ger profile edit cancellation ", userProfileData);
             getCancellationPolicy();
         }
     }, [])
