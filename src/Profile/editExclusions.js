@@ -14,6 +14,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { setProfileData, handleRemovePolicyItem, updatePolicyText, handleAddPolicyItem } from '../PackageBuilder/packBuilderSlice.js';
 import { DEFAULT_POLICIES } from "../Constants.js";
+import { isEmptyObject } from "../Utility.js";
 
 const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     const userProfileData = useSelector((state) => state.packBuilderData.userProfileData) || null;
@@ -31,7 +32,7 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
 	const getProfileData = async () => {
 		// console.log(reqData, 'gemRes -- ');
         console.log("Get Profile Date", userData, userData.phone);
-        if(userProfileData) return;
+        // if(userProfileData) return;
         setLoading(true);
         let docSnapPdfData = await getDoc(doc(db, "userProfileData", userData.phone));
         // if (docSnapPdfData.exists()) {
@@ -39,6 +40,7 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
         let profileData = docSnapPdfData.exists() ? docSnapPdfData.data() : {};
         if(!profileData?.inclusions) profileData["inclusions"] = DEFAULT_POLICIES["inclusionsDefault"];
         if(!profileData?.exclusions) profileData["exclusions"] = DEFAULT_POLICIES["exclusionsDefault"];
+        console.log("exclusion userProfile data ", docSnapPdfData.data(), profileData);
         dispatch(setProfileData(profileData));
         // }
         setLoading(false);
@@ -46,8 +48,8 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
 	}
 
     useEffect(() => {
-        if(!userProfileData) {
-            console.log("ger profile edit exclusions ", userProfileData);
+        console.log("ger profile edit exclusions ", userProfileData, isEmptyObject(userProfileData));
+        if(!userProfileData || isEmptyObject(userProfileData)) {
             getProfileData();
         }
     }, [])
@@ -58,6 +60,7 @@ const EditCancellationPolicy = ({ setIsBrandEdited = () => {} }) => {
     }
 
     const handlePolicyItemUpdate = (data) => {
+        console.log("updatePolicyText ", data);
         dispatch(updatePolicyText(data));
         if(setIsBrandEdited) setIsBrandEdited(true);   
     }
