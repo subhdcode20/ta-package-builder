@@ -90,6 +90,7 @@ export const todoSlice = createSlice({
       state.itiFlightsData = packageData?.flights || {}
       state.activities = packageData?.activities || {}
       state.voucherData = packageData?.voucherData || {}
+      state.userProfileData = packageData?.policyData || {}
       console.log("savedHotelsCHECK1",  JSON.parse(JSON.stringify(newHotelArr)));
       console.log("savedHotelsCHECK2", state.selectedHotels);
       console.log("savedHotelsCHECK3", state.selectedRooms);

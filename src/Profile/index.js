@@ -34,6 +34,8 @@ import SelectTemplate from "./selectTemplate.js";
 import { isEmptyObject } from "../Utility.js";
 import SnackbarMsg from "../Commons/snackbarMsg";
 
+const WhatsappLinkBaseUrl = "https://wa.me/"
+
 const Profile = () => {
   // const user = JSON.parse(localStorage.getItem("user"));
   const userDataStore = useSelector((state) => state.packBuilderData.userData) || null;
@@ -97,8 +99,6 @@ const Profile = () => {
     await uploadBytes(fileRef, file);
     return getDownloadURL(fileRef);
   };
-
-  
 
   const handleLogoChange = async (e) => {
     const file = e.target.files[0];
@@ -398,7 +398,7 @@ const Profile = () => {
     fullWidth
     label="WhatsApp Number"
     name="whatsapp"
-    value={socialMediaDetails?.whatsapp || ''}
+    value={socialMediaDetails?.whatsapp || WhatsappLinkBaseUrl}
     onChange={(e) => handleSocialMediaChange("whatsapp", e.target.value)}
     variant="outlined"
     InputProps={{
